@@ -7,3 +7,89 @@ datasource db {
   provider = "postgresql"
 }
 
+model GameSession {
+  id         String        @id @default(uuid()) @db.Uuid
+  name       String
+  status     SessionStatus @default(LOBBY)
+  roomCode   String?       @unique
+  hostId     String? // client fingerprint of the host
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  startedAt  DateTime?
+  pausedAt   DateTime?
+  finishedAt DateTime?
+
+  players      Player[]
+  scoreEvents  ScoreEvent[]
+  participants SessionParticipant[]
+
+  @@index([roomCode])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SessionStatus {
+  LOBBY
+  ACTIVE
+  PAUSED
+  FINISHED
+}
+
+model Player {
+  id        String   @id @default(uuid()) @db.Uuid
+  sessionId String   @db.Uuid
+  name      String
+  color     String // hex color, e.g. "#3B82F6"
+  avatar    String? // emoji or initials
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session     GameSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  scoreEvents ScoreEvent[]
+
+  @@unique([sessionId, name])
+  @@index([sessionId])
+}
+
+model ScoreEvent {
+  id            String    @id @default(uuid()) @db.Uuid
+  sessionId     String    @db.Uuid
+  playerId      String    @db.Uuid
+  delta         Int // the change: +2, -1, +10, etc.
+  scoreBefore   Int // player's score before this event
+  scoreAfter    Int // player's score after this event
+  note          String? // optional context, e.g. "Longest Road"
+  reverted      Boolean   @default(false)
+  revertedAt    DateTime?
+  clientEventId String    @unique // client-generated UUID for idempotency
+  createdAt     DateTime  @default(now())
+
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  player  Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@index([playerId])
+  @@index([clientEventId])
+}
+
+model SessionParticipant {
+  id          String          @id @default(uuid()) @db.Uuid
+  sessionId   String          @db.Uuid
+  clientId    String // client-generated fingerprint (stored in localStorage)
+  displayName String? // optional label for this device, e.g. "Bob's phone"
+  role        ParticipantRole @default(SCORER)
+  joinedAt    DateTime        @default(now())
+  lastSeenAt  DateTime        @default(now())
+
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, clientId])
+  @@index([sessionId])
+}
+
+enum ParticipantRole {
+  HOST
+  SCORER
+  VIEWER
+}

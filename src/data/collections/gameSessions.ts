@@ -1,14 +1,14 @@
 import { createCollection } from "@tanstack/db";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import type { QueryClient } from "@tanstack/react-query";
-import { getSessions } from "@/server/functions/sessions";
+import { getGameSessions } from "@/server/functions/gameSessions";
 
-export const sessionsCollection = (queryClient: QueryClient) =>
+export const gameSessionsCollection = (queryClient: QueryClient) =>
 	createCollection(
 		queryCollectionOptions({
 			queryClient,
 			queryKey: ["sessions"],
-			queryFn: async () => getSessions(),
+			queryFn: async () => getGameSessions(),
 			getKey: (session) => session.id,
 		}),
 	);

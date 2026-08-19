@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>
+  body { margin:0; background:#efe9dd; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color:#a8431d; text-decoration:none; border-bottom:1px solid #d8cdb8; }
+  a:hover { color:#8a3517; border-bottom-color:#a8431d; }
+</style>
+</helmet>
+
+<section style="display:flex;flex-direction:column;gap:72px;padding:64px 72px 120px">
+
+  <div style="max-width:920px;display:flex;flex-direction:column;gap:16px">
+    <div style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.06em;color:#6b6354">SCOREPAD · MOBILE PWA · ARTBOARDS</div>
+    <h1 style="margin:0;font-size:40px;line-height:1.1;font-weight:700;color:#2b2620">A scorepad that competes with paper</h1>
+    <p style="margin:0;font-size:17px;line-height:1.55;color:#4a4238;text-wrap:pretty">Warm paper neutrals, one accent, flat surfaces, hairline edges — a ledger you can read at arm's length across a table. Ranked decisions and rejects are noted under each artboard. Every artboard is 390 × 844.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">The 7 × 7 problem</h2>
+      <span style="font-size:15px;color:#6b6354">7 Wonders, 7 players, 49 cells, 390px of portrait. One category at a time. The two rejected alternates — the sideways-scrolling grid and one-player-at-a-time — are cut.</span>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="1c" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#a8431d;padding:5px 8px;border-radius:4px">1c</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">One category at a time</span>
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a8431d;border:1px solid #a8431d;padding:4px 7px;border-radius:999px">RECOMMENDED</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">Sunday table</div>
+              <div style="font-size:13px;color:#6b6354">7 Wonders · 7 players</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 12px">
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ catStrip }}" as="c" hint-placeholder-count="7">
+                <div style="flex:1;height:44px;border-radius:4px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.04em">{{ c.s }}</div>
+                  <div style="font-size:10px;line-height:1">{{ c.mark }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 14px;border-bottom:2px solid #cfc5b0">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354">CATEGORY 4 OF 7</div>
+            <div style="font-size:28px;font-weight:700;margin-top:2px">Civilian</div>
+            <div style="font-size:13px;line-height:1.45;color:#6b6354;margin-top:2px">Blue cards — add the number printed on each.</div>
+          </div>
+          <div style="flex:1;overflow:hidden">
+            <sc-for list="{{ civRows }}" as="r" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:12px;height:71px;padding:0 16px;border-bottom:1px solid #d8cdb8">
+                <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fffdf7;background:{{ r.c }}">{{ r.i }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</div>
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">{{ r.sub }}</div>
+                </div>
+                <div style="width:72px;height:48px;flex:0 0 auto;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums">{{ r.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;border-top:1px solid #d8cdb8">
+            <div style="height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500">Next — Science  →</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#a8431d">The one I'd ship</div>
+          <div style="font-size:13px;line-height:1.5;color:#2b2620;margin-top:5px;text-wrap:pretty">49 cells become seven screens of seven rows: no horizontal scroll, no truncation, 72px rows, 48px cells. Three things it buys that the others don't — the category name and its rule get the full 390px (the French label wraps instead of clipping), the table hears one question at a time ("military?") which is how end-of-game scoring is actually called out loud, and every number sits beside its six peers, so an outlier is visible the instant it's typed. That peer check is the real error correction; a lone column has none.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Getting to the sheet</h2>
+      <span style="font-size:15px;color:#6b6354">Home, the shelf, and both empty states. Backup is a card in the list, not a settings row.</span>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="1d" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1d</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Home · one row swiped</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:0 16px 16px;flex:0 0 auto">
+            <div style="flex:1;font-size:26px;font-weight:700;letter-spacing:-.01em">Scorepad</div>
+            <div style="width:44px;height:44px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:500;color:#6b6354">EN</div>
+            <div style="width:44px;height:44px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;color:#6b6354">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;border-bottom:2px solid #cfc5b0;padding-bottom:6px">IN PROGRESS</div>
+            <div style="display:flex;align-items:center;gap:12px;background:#fffdf7;border:1px solid #a8431d;border-radius:12px;padding:14px;margin-top:12px">
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:18px;font-weight:600">Belote</span>
+                  <span style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354;border:1px solid #d8cdb8;border-radius:999px;padding:2px 6px">TALLY</span>
+                </div>
+                <div style="font-size:14px;color:#6b6354;margin-top:2px">Chez Marie · hand 14</div>
+                <div style="font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;margin-top:6px">512 – 468 <span style="color:#6b6354;font-weight:400;font-size:13px">of 501</span></div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">20 MIN AGO</div>
+                <div style="font-size:15px;font-weight:500;color:#a8431d;margin-top:8px">Resume →</div>
+              </div>
+            </div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;border-bottom:2px solid #cfc5b0;padding-bottom:6px;margin-top:22px">FINISHED · 3</div>
+            <sc-for list="{{ finished }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px;height:76px;border-bottom:1px solid #d8cdb8">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:17px;font-weight:500">{{ s.g }}</div>
+                  <div style="font-size:14px;color:#6b6354;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.meta }}</div>
+                </div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right">{{ s.when }}</div>
+                <div style="color:#a39882;font-size:18px">›</div>
+              </div>
+            </sc-for>
+            <div style="position:relative;height:76px;border-bottom:1px solid #d8cdb8;overflow:hidden">
+              <div style="position:absolute;inset:0;display:flex;justify-content:flex-end;align-items:center;background:#fbeeea">
+                <div style="width:96px;height:100%;background:#b3261e;color:#fffdf7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <span style="font-size:13px;font-weight:500">Delete</span>
+                </div>
+              </div>
+              <div style="position:absolute;inset:0 96px 0 -96px;display:flex;align-items:center;gap:12px;background:#f6f1e7;padding-right:12px">
+                <div style="flex:1;min-width:0;padding-left:96px">
+                  <div style="font-size:17px;font-weight:500">Uno</div>
+                  <div style="font-size:14px;color:#6b6354">Camping · Tom won · 512</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;padding:14px;margin-top:22px">
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;flex:1">BACKUP</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#a8431d">4 DAYS AGO</div>
+              </div>
+              <div style="font-size:14px;line-height:1.45;color:#2b2620;margin-top:6px;text-wrap:pretty">5 games live on this phone only. The JSON file is the whole backup.</div>
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <div style="flex:1;height:44px;border:1px solid #a8431d;border-radius:6px;color:#a8431d;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px;font-weight:500">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                  Export
+                </div>
+                <div style="flex:1;height:44px;border:1px solid #d8cdb8;border-radius:6px;color:#2b2620;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px;font-weight:500">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>
+                  Import
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;border-top:1px solid #d8cdb8;background:#f6f1e7">
+            <div style="height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:500">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+              New game
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Backup sits in the list because it is the only backup</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">It carries a live "4 days ago" stamp and turns amber past two weeks. Rejected: a settings screen (the brief allows only language and theme, so there is no screen to hide it in) and an overflow menu (an invisible affordance for the one irreversible risk in the product). Delete is a swipe, not a per-row bin icon — bins next to a resume target get mis-tapped in bad light.</div>
+        </div>
+      </div>
+
+      <div id="1e" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1e</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Home · first run</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:0 16px 16px;flex:0 0 auto">
+            <div style="flex:1;font-size:26px;font-weight:700;letter-spacing:-.01em">Scorepad</div>
+            <div style="width:44px;height:44px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:500;color:#6b6354">EN</div>
+            <div style="width:44px;height:44px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;color:#6b6354">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px;gap:0">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#a8431d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"></path><path d="M9 4v16"></path><path d="M14 4v16"></path><path d="M19 4v16"></path><path d="M22 6 2 18"></path></svg>
+            <div style="font-size:24px;font-weight:700;margin-top:28px">Nothing scored yet</div>
+            <div style="font-size:16px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Pick a game, add players, fill in the sheet. Ten games are built in, and everything stays on this phone.</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a39882;margin-top:24px">NO ACCOUNT · NO SERVER · WORKS OFFLINE</div>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:10px">
+            <div style="height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:500">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+              New game
+            </div>
+            <div style="height:48px;border-radius:6px;border:1px solid #d8cdb8;background:#fffdf7;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500;color:#2b2620">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>
+              Import a backup
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Import is on the empty state on purpose</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">A fresh device is exactly when someone needs their JSON back — new phone, reinstalled PWA, cleared storage. The three-word offline claim replaces an onboarding tour; there is nothing else to explain.</div>
+        </div>
+      </div>
+
+      <div id="1f" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1f</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Game picker · the shelf</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;font-size:22px;font-weight:700">Choose a game</div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 14px">
+            <div style="height:48px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;gap:10px;padding:0 12px;color:#a39882">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <span style="font-size:16px">Filter ten games</span>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <sc-for list="{{ games }}" as="g" hint-placeholder-count="10">
+                <div style="background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;overflow:hidden">
+                  <div style="height:64px;position:relative;background:repeating-linear-gradient(45deg,#ece4d4 0 5px,#f4eee2 5px 10px);border-bottom:1px solid #d8cdb8">
+                    <div style="position:absolute;left:8px;bottom:6px;font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.06em;color:#8a8272">BOX ART</div>
+                    <div style="position:absolute;right:6px;top:6px;font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.06em;color:#6b6354;background:#fffdf7;border:1px solid #d8cdb8;border-radius:999px;padding:2px 6px">{{ g.m }}</div>
+                  </div>
+                  <div style="padding:8px 10px 10px">
+                    <div style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.n }}</div>
+                    <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6b6354;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="background:#f6f1e7;border:1px dashed #c6bba4;border-radius:12px;overflow:hidden">
+                <div style="height:64px;display:flex;align-items:center;justify-content:center;color:#a39882">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"></path><path d="M9 4v16"></path><path d="M14 4v16"></path><path d="M19 4v16"></path></svg>
+                </div>
+                <div style="padding:8px 10px 10px">
+                  <div style="font-size:15px;font-weight:600">No template</div>
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6b6354;margin-top:2px">plain counter · 2–12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">A shelf is two-up with cover art, not a settings list</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Ten titles is small enough to recognise by box, too small to justify categories or a carousel. Art slots are 2:1 placeholders here — drop in real box shots and the shelf reads instantly. The SHEET / TALLY chip is doing load-bearing work: it tells you the shape of the screen you are about to get. Rejected: a one-line list (kills recognition), and alphabetical section headers (ten items need no index).</div>
+        </div>
+      </div>
+
+      <div id="1g" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1g</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Game picker · filter, no match</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;font-size:22px;font-weight:700">Choose a game</div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 14px">
+            <div style="height:48px;border:1px solid #a8431d;border-radius:6px;background:#fffdf7;display:flex;align-items:center;gap:10px;padding:0 12px;box-shadow:0 0 0 3px color-mix(in srgb,#a8431d 50%,transparent)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b6354" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <span style="font-size:16px;flex:1;color:#2b2620">krib</span>
+              <div style="width:26px;height:26px;border-radius:999px;background:#ece4d4;display:flex;align-items:center;justify-content:center;color:#6b6354;font-size:14px">×</div>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 36px">
+            <div style="font-size:22px;font-weight:700;text-wrap:pretty">No game matches “krib”</div>
+            <div style="font-size:16px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Ten games ship built in. Nothing else can be added — but you can keep score without a template.</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.7;color:#a39882;margin-top:22px;letter-spacing:.04em;text-wrap:pretty">CATAN · SPLENDOR · WINGSPAN · AZUL · TICKET TO RIDE · 7 WONDERS · UNO · WHIST · BELOTE · BLACK LADY</div>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:10px">
+            <div style="height:52px;border-radius:6px;border:1px solid #a8431d;color:#a8431d;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:500">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"></path><path d="M9 4v16"></path><path d="M14 4v16"></path><path d="M19 4v16"></path></svg>
+              Score “krib” with no template
+            </div>
+            <div style="height:48px;border-radius:6px;border:1px solid #d8cdb8;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500">Clear the filter</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">The empty state names the ten and offers the exit</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">A closed set of ten is a fact worth stating, so nobody hunts for Cribbage twice. The typed string is carried into the escape hatch — “Score krib with no template” — which turns a dead end into the session they wanted. Rejected: fuzzy suggestions ("did you mean Catan?"), which guess wrong at a table and cost a tap to undo.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Players, and the two team games</h2>
+      <span style="font-size:15px;color:#6b6354">Colour is picked in a sheet, never a dropdown. French on the tightest screen.</span>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="1h" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1h</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Player setup · colour sheet open</span>
+        </div>
+        <div style="position:relative;width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:22px;font-weight:700">Players</div>
+              <div style="font-size:13px;color:#6b6354">Wingspan · 1 to 5</div>
+            </div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#a8431d">5 / 5</div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px">
+            <sc-for list="{{ setupRows }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:10px;height:60px;border-bottom:1px solid #d8cdb8">
+                <div style="width:24px;color:#a39882;display:flex;align-items:center;justify-content:center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="9" cy="5" r="1.4"></circle><circle cx="9" cy="12" r="1.4"></circle><circle cx="9" cy="19" r="1.4"></circle><circle cx="15" cy="5" r="1.4"></circle><circle cx="15" cy="12" r="1.4"></circle><circle cx="15" cy="19" r="1.4"></circle></svg>
+                </div>
+                <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fffdf7;background:{{ p.c }}">{{ p.i }}</div>
+                <div style="flex:1;font-size:18px;font-weight:500">{{ p.n }}</div>
+                <div style="width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#a39882;font-size:18px">×</div>
+              </div>
+            </sc-for>
+            <div style="height:56px;border-bottom:1px dashed #c6bba4;display:flex;align-items:center;gap:10px;color:#6b6354">
+              <div style="width:24px"></div>
+              <div style="width:36px;height:36px;border-radius:999px;border:1px dashed #c6bba4;display:flex;align-items:center;justify-content:center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+              </div>
+              <div style="flex:1;font-size:17px">Add a player</div>
+            </div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;margin-top:20px;padding-bottom:6px;border-bottom:2px solid #cfc5b0">PLAYED RECENTLY</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+              <sc-for list="{{ recent }}" as="n" hint-placeholder-count="8">
+                <div style="height:40px;padding:0 14px;border:1px solid #d8cdb8;border-radius:999px;background:#fffdf7;display:flex;align-items:center;font-size:15px;color:#2b2620">{{ n }}</div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;border-top:1px solid #d8cdb8">
+            <div style="height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500">Start scoring</div>
+          </div>
+          <div style="position:absolute;inset:0;background:rgba(43,38,32,.5)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;background:#fffdf7;border-top:1px solid #d8cdb8;border-radius:12px 12px 0 0;box-shadow:0 -8px 24px rgba(43,38,32,.18);padding:18px 16px 24px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+              <div style="width:32px;height:32px;border-radius:999px;background:{{ cTeal }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">M</div>
+              <div style="flex:1;font-size:18px;font-weight:600">Marie’s colour</div>
+              <div style="width:32px;height:32px;border-radius:2px;display:flex;align-items:center;justify-content:center;color:#6b6354;font-size:18px">×</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+              <sc-for list="{{ palette }}" as="p" hint-placeholder-count="12">
+                <div style="height:48px;border-radius:6px;background:{{ p.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;border:2px solid {{ p.sel }};opacity:{{ p.op }}">{{ p.letter }}</div>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;line-height:1.45;color:#6b6354;margin-top:14px;text-wrap:pretty">Taken colours are dimmed. The initial stays on the token everywhere, so colour is never the only difference between two players.</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Names are typed once a year, so reuse beats typing</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Recent names are 40px pills under the list — tap four and the second game night is set up in four taps. Reorder is a grip handle rather than long-press-drag, because the list is short and a discoverable handle beats a hidden gesture on a phone somebody else is holding. Colour lives in a sheet with all twelve visible at 48px; a dropdown would hide exactly the comparison you need.</div>
+        </div>
+      </div>
+
+      <div id="1i" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1i</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Teams · blocked · français</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:47</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:22px;font-weight:700">Équipes</div>
+              <div style="font-size:13px;color:#6b6354">Belote · exactement 2 équipes</div>
+            </div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#a8431d">2 / 2</div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px">
+            <div style="display:flex;gap:10px;background:#f7efdd;border:1px solid #e0cfa8;border-radius:12px;padding:12px 14px">
+              <div style="color:#7a5a1e;flex:0 0 auto;padding-top:2px">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div style="font-size:14px;line-height:1.45;color:#7a5a1e;text-wrap:pretty">La belote se compte en équipes : chaque ligne est une équipe, pas une personne.</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;height:64px;border-bottom:1px solid #d8cdb8;margin-top:8px">
+              <div style="width:24px;color:#a39882;display:flex;align-items:center;justify-content:center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="9" cy="5" r="1.4"></circle><circle cx="9" cy="12" r="1.4"></circle><circle cx="9" cy="19" r="1.4"></circle><circle cx="15" cy="5" r="1.4"></circle><circle cx="15" cy="12" r="1.4"></circle><circle cx="15" cy="19" r="1.4"></circle></svg>
+              </div>
+              <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;background:{{ cBlue }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">A</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:18px;font-weight:500;border-bottom:2px solid #b3261e;padding-bottom:2px;display:inline-block">Marie &amp; Luc</div>
+              </div>
+              <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#a39882;font-size:18px">×</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;height:64px;border-bottom:1px solid #d8cdb8">
+              <div style="width:24px;color:#a39882;display:flex;align-items:center;justify-content:center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="9" cy="5" r="1.4"></circle><circle cx="9" cy="12" r="1.4"></circle><circle cx="9" cy="19" r="1.4"></circle><circle cx="15" cy="5" r="1.4"></circle><circle cx="15" cy="12" r="1.4"></circle><circle cx="15" cy="19" r="1.4"></circle></svg>
+              </div>
+              <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;background:{{ cOrange }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">B</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:18px;font-weight:500;border-bottom:2px solid #b3261e;padding-bottom:2px;display:inline-block">Marie &amp; Luc</div>
+              </div>
+              <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#a39882;font-size:18px">×</div>
+            </div>
+            <div style="display:flex;gap:10px;background:#fbeeea;border:1px solid #e6bdb4;border-radius:12px;padding:12px 14px;margin-top:14px">
+              <div style="color:#8a2418;flex:0 0 auto;padding-top:2px">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+              </div>
+              <div style="font-size:14px;line-height:1.45;color:#8a2418;text-wrap:pretty">Deux équipes portent le même nom. Renommez-en une pour continuer.</div>
+            </div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;margin-top:20px;padding-bottom:6px;border-bottom:2px solid #cfc5b0">NOMS RÉCENTS</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+              <div style="height:40px;padding:0 14px;border:1px solid #d8cdb8;border-radius:999px;background:#fffdf7;display:flex;align-items:center;font-size:15px">Sofia &amp; Tom</div>
+              <div style="height:40px;padding:0 14px;border:1px solid #d8cdb8;border-radius:999px;background:#fffdf7;display:flex;align-items:center;font-size:15px">Les filles</div>
+              <div style="height:40px;padding:0 14px;border:1px solid #d8cdb8;border-radius:999px;background:#fffdf7;display:flex;align-items:center;font-size:15px">Ana &amp; Ben</div>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;border-top:1px solid #d8cdb8">
+            <div style="height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500;opacity:.5">Commencer la partie</div>
+            <div style="font-size:13px;color:#6b6354;text-align:center;margin-top:8px">Corrigez les noms pour continuer</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">French is the layout test, not a translation pass</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">“Commencer la partie” is 19 characters against 13, and the team note runs two lines in French where English fits one — so every banner and button here is auto-height with 14px/1.45 text, never a fixed pill. The block is stated twice: the button dims and a plain line under it says why. Rejected: a toast (gone before it is read) and disabling with no explanation.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Entry, and the same sheet at night</h2>
+      <span style="font-size:15px;color:#6b6354">A custom keypad, and <a href="#1c">1c</a> in dark. Values update live; rows never reorder.</span>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="1j" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1j</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Scoresheet · keypad, mid-entry</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>20:51</span><span>100%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">Sunday table</div>
+              <div style="font-size:13px;color:#6b6354">7 Wonders · 7 players</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;align-items:baseline;gap:10px;padding:0 16px 12px;border-bottom:2px solid #cfc5b0">
+            <div style="font-size:24px;font-weight:700">Science</div>
+            <div style="flex:1;font-size:13px;color:#6b6354">sets of three score 7</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a8431d">5 OF 7</div>
+          </div>
+          <div style="flex:1;overflow:hidden">
+            <sc-for list="{{ sciRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;height:71px;padding:0 16px;border-bottom:1px solid #d8cdb8">
+                <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fffdf7;background:{{ r.c }}">{{ r.i }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</div>
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">{{ r.sub }}</div>
+                </div>
+                <div style="width:72px;height:48px;flex:0 0 auto;border:1px solid {{ r.bd }};border-radius:6px;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.ring }};display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums">{{ r.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;background:#fffdf7;border-top:1px solid #d8cdb8;border-radius:12px 12px 0 0;box-shadow:0 -8px 24px rgba(43,38,32,.14);padding:14px 16px 20px">
+            <div style="display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid #d8cdb8">
+              <div style="width:28px;height:28px;border-radius:999px;background:{{ cTeal }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">C</div>
+              <div style="flex:1">
+                <div style="font-size:16px;font-weight:600;line-height:1.2">Chloé</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">SCIENCE · 45 SO FAR</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:2px">
+                <div style="font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1">4</div>
+                <div style="width:2px;height:34px;background:#a8431d"></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                <div style="height:60px;border:1px solid #d8cdb8;border-radius:6px;background:{{ k.lbg }};color:{{ k.lfg }};display:flex;align-items:center;justify-content:center;font-size:{{ k.size }};font-weight:500;font-variant-numeric:tabular-nums">{{ k.k }}</div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <div style="width:96px;height:52px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;color:#6b6354">Clear</div>
+              <div style="flex:1;height:52px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500">Next — Dan  →</div>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#a8431d">Custom keypad, and rows that hold still</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Rejected the system keypad: unpredictable height, no room for a header saying <em>whose</em> number this is, an iOS zoom risk, and no ± for 7 Wonders military. Rejected steppers as the primary: Science reaches 31, and nobody taps +1 thirty-one times — they survive only as a long-press on the tally sheet's ±1. Keys are 60px under a 40px readout, and “Next — Dan” walks the column so the phone can be handed on without anyone hunting for a cell.</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">The distraction question is answered by <strong style="color:#2b2620">freezing position, not values</strong>: totals and rank labels recompute on every keystroke, but rows stay in seating order for the whole game. Nothing slides under a thumb mid-entry, and a tie reads <span style="font-family:ui-monospace,Menlo,monospace">2ND=</span> rather than being silently broken. Sorting happens once, on Results.</div>
+        </div>
+      </div>
+
+      <div id="1k" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1k</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Scoresheet · dark</span>
+        </div>
+        <div style="width:390px;height:844px;background:#201c16;color:#e6ddcc;border:1px solid #443c2f;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#a39882"><span>23:12</span><span>62%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:18px;color:#a39882">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">Sunday table</div>
+              <div style="font-size:13px;color:#a39882">7 Wonders · 7 players</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:18px;color:#a39882">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 12px">
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ catStripDark }}" as="c" hint-placeholder-count="7">
+                <div style="flex:1;height:44px;border-radius:4px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.04em">{{ c.s }}</div>
+                  <div style="font-size:10px;line-height:1">{{ c.mark }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px 14px;border-bottom:2px solid #554b3c">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a39882">CATEGORY 4 OF 7</div>
+            <div style="font-size:28px;font-weight:700;margin-top:2px">Civilian</div>
+            <div style="font-size:13px;line-height:1.45;color:#a39882;margin-top:2px">Blue cards — add the number printed on each.</div>
+          </div>
+          <div style="flex:1;overflow:hidden">
+            <sc-for list="{{ civRows }}" as="r" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:12px;height:71px;padding:0 16px;border-bottom:1px solid #443c2f">
+                <div style="width:36px;height:36px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#201c16;background:{{ r.d }}">{{ r.i }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</div>
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#a39882">{{ r.sub }}</div>
+                </div>
+                <div style="width:72px;height:48px;flex:0 0 auto;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums">{{ r.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;padding:14px 16px 20px;border-top:1px solid #443c2f">
+            <div style="height:52px;border-radius:6px;background:#e0824f;color:#201c16;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600">Next — Science  →</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Dimmed paper, not neutral black</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Dark keeps the warm hue (#201c16 surface, #2a241c cards) so a lit phone on a wooden table doesn't read as a hole punched in the night. Player colours lift to L 0.72 and their token text flips to ink — the same twelve hues, re-tuned per theme rather than reused. The accent button also flips to ink-on-amber, because amber with paper-white text fails contrast.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Tally mode — from two teams to twelve players</h2>
+      <span style="font-size:15px;color:#6b6354">Standings are the screen. The ledger gets its own.</span>
+    </div>
+
+    <div style="max-width:980px;display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:16px;line-height:1.55;color:#4a4238;text-wrap:pretty">A per-hand ledger laid across the screen — one column per player, one row per hand — only works while every player fits inside 390px: two teams, three at a squeeze. Black Lady seats seven, Uno ten. Widening that grid means horizontal scroll on the one screen the table stares at all evening, and the running totals, the only numbers anyone ever asks for, are the first thing scrolled off.</p>
+      <p style="margin:0;font-size:16px;line-height:1.55;color:#4a4238;text-wrap:pretty">So the primacy flips. <strong style="color:#2b2620">Standings become the screen</strong>: one row per player, stacked vertically, scaling from 2 to 12 by getting denser rather than wider. The per-hand ledger keeps every number but moves to its own screen (<a href="#2d">2d</a>) — it is audit material, opened to settle a dispute, not read continuously. And a hand is no longer two boxes: it is <strong style="color:#2b2620">one sheet that walks the table</strong> (<a href="#2c">2c</a>), the same gesture whether the table is two people or ten.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.04em;color:#6b6354;margin-top:2px">
+        <span style="border:1px solid #d8cdb8;border-radius:999px;padding:5px 10px;background:#f6f1e7">2–3 PLAYERS · ROOMY + INLINE LEDGER</span>
+        <span style="border:1px solid #d8cdb8;border-radius:999px;padding:5px 10px;background:#f6f1e7">4–6 · COMFORTABLE</span>
+        <span style="border:1px solid #d8cdb8;border-radius:999px;padding:5px 10px;background:#f6f1e7">7–12 · COMPACT</span>
+        <span style="border:1px solid #d8cdb8;border-radius:999px;padding:5px 10px;background:#f6f1e7">ONE LAYOUT · THREE DENSITIES · NO SIDEWAYS SCROLL</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="2a" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#a8431d;padding:5px 8px;border-radius:4px">2a</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Uno · 6 players · comfortable</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>21:04</span><span>82%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">Chez Marie</div>
+              <div style="font-size:13px;color:#6b6354">Uno · 6 players · to 500</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:0 16px 10px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">
+            <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">HAND 14 · CHLOÉ TOOK 60</span>
+            <span style="flex:0 0 auto;color:#a8431d">EDIT LAST</span>
+          </div>
+          <div style="flex:1;min-height:0;overflow:hidden;border-top:1px solid #d8cdb8">
+            <sc-for list="{{ unoRows }}" as="r" hint-placeholder-count="6">
+              <div style="height:102px;padding:0 16px;border-bottom:1px solid #d8cdb8;background:{{ r.bg }};display:flex;flex-direction:column;justify-content:center;gap:12px">
+                <div style="display:grid;grid-template-columns:18px 36px 1fr auto;align-items:center;gap:12px">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#a39882">{{ r.rk }}</div>
+                  <div style="width:36px;height:36px;border-radius:999px;background:{{ r.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600">{{ r.i }}</div>
+                  <div style="min-width:0">
+                    <div style="display:flex;align-items:center;gap:7px">
+                      <span style="font-size:18px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</span>
+                      <span style="font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.06em;color:#a8431d;border:1px solid #a8431d;border-radius:3px;padding:1px 4px;opacity:{{ r.tagOp }}">{{ r.tag }}</span>
+                    </div>
+                    <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:{{ r.tcol }}">{{ r.t }}</div>
+                    <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;margin-top:4px">{{ r.gap }}</div>
+                  </div>
+                </div>
+                <div style="height:3px;background:#ece4d4"><div style="width:{{ r.pct }};height:3px;background:{{ r.bar }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;background:#fffdf7;border-top:2px solid #cfc5b0;padding:12px 16px 20px">
+            <div style="height:60px;border-radius:8px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;gap:10px;font-size:18px;font-weight:600">
+              <span>Enter hand 15</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#a8431d">One row per player, so the table size changes the density and never the layout</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Vertical rows are the only axis a phone has to spare, and a row can carry more than a grid cell could: rank, colour, name, hands won, what the last hand added, the total at 38px, the distance to the target, and a bar showing the race. That is the whole state of the game read at arm's length, which is what the old ledger could never show for more than two.</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty"><strong style="color:#2b2620">Rows stay in seat order and never re-sort</strong> — rank is a number in the margin, not a position, so the person you are looking for is where they were last hand (the same rule the sheet mode follows; sorting happens once, on Results). The last hand is recapped as one mono line naming who scored, with the correction affordance beside it; the per-player deltas live in the rows themselves, where three-digit scores can't overflow. Rejected: a row of per-player chips above the list — at six players with three-digit hand scores the last chip is clipped, and it duplicated what every row already says.</div>
+        </div>
+      </div>
+
+      <div id="2b" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">2b</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Uno · 10 players · compact</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>23:12</span><span>44%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">New Year table</div>
+              <div style="font-size:13px;color:#6b6354">Uno · 10 players · to 500</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 16px 8px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">
+            <span>HAND 22 · ÉMILE TOOK 44</span><span style="color:#a8431d">EDIT LAST</span>
+          </div>
+          <div style="flex:1;min-height:0;overflow:hidden;border-top:1px solid #d8cdb8">
+            <sc-for list="{{ unoRows10 }}" as="r" hint-placeholder-count="10">
+              <div style="height:62px;padding:0 16px;border-bottom:1px solid #d8cdb8;background:{{ r.bg }};display:flex;flex-direction:column;justify-content:center;gap:7px">
+                <div style="display:grid;grid-template-columns:20px 26px 1fr auto;align-items:center;gap:10px">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#a39882">{{ r.rk }}</div>
+                  <div style="width:26px;height:26px;border-radius:999px;background:{{ r.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">{{ r.i }}</div>
+                  <div style="min-width:0;display:flex;align-items:baseline;gap:7px">
+                    <span style="font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</span>
+                    <span style="font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6b6354;white-space:nowrap">{{ r.gap }}</span>
+                  </div>
+                  <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:{{ r.tcol }}">{{ r.t }}</div>
+                </div>
+                <div style="height:2px;background:#ece4d4"><div style="width:{{ r.pct }};height:2px;background:{{ r.bar }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;background:#fffdf7;border-top:2px solid #cfc5b0;padding:10px 16px 18px">
+            <div style="height:56px;border-radius:8px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600">
+              <span>Enter hand 23</span>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Ten players still fit whole — the row sheds, it doesn't shrink to nothing</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">At seven players and up the row drops to 62px and gives up two things in a fixed order: the hands-won line, then the recap chips (replaced by one line of text). What survives is what a player looks for — colour, name, total, distance, race bar — and the total is still 26px, well above the 24px floor. Ten rows plus header and entry bar close at exactly 844: <strong style="color:#2b2620">no scrolling to see who is winning</strong>, at any legal table size. Twelve players scrolls two rows; twelve is past every game on the shelf.</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Rejected: a two-column standings grid at 5+ players — halves the name width, kills the race bar, and makes the reading order ambiguous for a list that is fundamentally ranked.</div>
+        </div>
+      </div>
+
+      <div id="2c" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#a8431d;padding:5px 8px;border-radius:4px">2c</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Entry sheet · 5 players · dark · français</span>
+        </div>
+        <div style="width:390px;height:844px;background:#201c16;color:#e6ddcc;border:1px solid #443c2f;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#a39882"><span>23:47</span><span>38%</span></div>
+          <div style="flex:1;min-height:0;position:relative;overflow:hidden">
+            <div style="padding:0 16px 12px;display:flex;align-items:center;gap:12px">
+              <div style="width:40px;height:40px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:18px;color:#a39882">←</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:18px;font-weight:600">Chez Marie</div>
+                <div style="font-size:13px;color:#a39882">Black Lady · 5 joueurs · à 100</div>
+              </div>
+            </div>
+            <sc-for list="{{ blRows }}" as="r" hint-placeholder-count="3">
+              <div style="height:62px;padding:0 16px;border-top:1px solid #443c2f;display:flex;align-items:center;gap:12px">
+                <div style="width:26px;height:26px;border-radius:999px;background:{{ r.d }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">{{ r.i }}</div>
+                <div style="flex:1;font-size:16px;font-weight:600">{{ r.n }}</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#a39882">{{ r.tot }}</div>
+              </div>
+            </sc-for>
+            <div style="position:absolute;inset:0;background:rgba(16,13,9,.66)"></div>
+          </div>
+          <div style="flex:0 0 auto;background:#2a241c;border-top:1px solid #443c2f;border-radius:14px 14px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.5);padding:10px 16px 20px">
+            <div style="width:36px;height:4px;border-radius:999px;background:#554b3c;margin:0 auto 12px"></div>
+            <div style="display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid #443c2f">
+              <div style="width:30px;height:30px;border-radius:999px;background:{{ cTeal }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">S</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:17px;font-weight:600;line-height:1.2">Sofia</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#a39882">MANCHE 9 · 26 À RÉPARTIR · 7 PLACÉS</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:2px">
+                <div style="font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1">19</div>
+                <div style="width:2px;height:32px;background:#e0824f"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;padding:12px 0">
+              <sc-for list="{{ blRows }}" as="r" hint-placeholder-count="5">
+                <div style="flex:1;min-width:0;border:1px solid {{ r.bd }};border-radius:6px;background:{{ r.bg }};padding:6px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="width:18px;height:18px;border-radius:999px;background:{{ r.d }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600">{{ r.i }}</div>
+                  <div style="font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ r.fg }}">{{ r.v }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                <div style="height:52px;border:1px solid #443c2f;border-radius:6px;background:{{ k.dbg }};color:{{ k.dfg }};display:flex;align-items:center;justify-content:center;font-size:{{ k.size }};font-weight:500;font-variant-numeric:tabular-nums">{{ k.k }}</div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <div style="width:88px;height:52px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;color:#a39882">Effacer</div>
+              <div style="flex:1;height:52px;border-radius:6px;background:#e0824f;color:#201c16;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:600">
+                <span>Tom</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#a8431d">One sheet walks the table: N numbers, N taps of the same key</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">The old design gave each team its own box because two boxes fit. Ten don't. Instead the sheet keeps <strong style="color:#2b2620">one keypad and moves the cursor</strong>: type, press the name of the next player, repeat; the last press saves the hand and closes the sheet. The chip row above the keypad is both progress bar and random access — tap any chip to jump back when someone corrects themselves two players later, which is the failure the strictly-sequential flow could not survive at this table size.</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Chips are player-sized, not fixed: at ten they lose the initial circle and keep the number. Black Lady is drawn here because it is the hard case — every player scores every hand, low wins, and the hand must total 26, so the header carries a live <em>26 à répartir · 7 placés</em> check and refuses a save that doesn't balance. Games without a fixed hand total simply don't show that line. Rejected: a modal per player (five dialogs a hand), and a spreadsheet-style row of five inputs with the system keyboard (each field ~62px wide, numbers unreadable, and the keyboard hides half of them).</div>
+        </div>
+      </div>
+
+      <div id="2d" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">2d</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Hand history · the ledger, on its own screen</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>21:06</span><span>81%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">×</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:20px;font-weight:700">Hand history</div>
+              <div style="font-size:13px;color:#6b6354">Chez Marie · 14 hands · 6 players</div>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;gap:0;margin:0 16px 12px;border:1px solid #d8cdb8;border-radius:8px;overflow:hidden;background:#fffdf7">
+            <div style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;background:#2b2620;color:#fffdf7">Per hand</div>
+            <div style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#6b6354">Running</div>
+          </div>
+          <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+            <div style="flex:0 0 auto;display:grid;grid-template-columns:44px repeat(6,60px);align-items:end;padding:0 0 8px 12px;border-bottom:2px solid #cfc5b0;background:#ece4d4">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354;padding-top:10px">HAND</div>
+              <sc-for list="{{ histHead }}" as="p" hint-placeholder-count="6">
+                <div style="display:flex;justify-content:center;padding-top:10px">
+                  <div style="width:24px;height:24px;border-radius:999px;background:{{ p.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">{{ p.i }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:1;min-height:0;overflow:hidden">
+              <sc-for list="{{ histRows }}" as="h" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:44px repeat(6,60px);align-items:center;height:56px;padding-left:12px;border-bottom:1px solid #d8cdb8">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#6b6354">{{ h.n }}</div>
+                  <sc-for list="{{ h.cells }}" as="c" hint-placeholder-count="6">
+                    <div style="text-align:center;font-size:18px;font-variant-numeric:tabular-nums;color:{{ c.fg }};font-weight:{{ c.w }}">{{ c.v }}</div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:0 0 auto;display:grid;grid-template-columns:44px repeat(6,60px);align-items:center;height:62px;padding-left:12px;border-top:2px solid #cfc5b0;background:#fffdf7">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">TOTAL</div>
+              <sc-for list="{{ histTotals }}" as="t" hint-placeholder-count="6">
+                <div style="text-align:center;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">{{ t.v }}</div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:12px 16px 22px;background:#f0e9db;border-top:1px solid #d8cdb8;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">
+            <span>HANDS 7–14 · SCROLL UP FOR EARLIER</span><span style="color:#a8431d">TAP A CELL TO FIX</span>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Sideways scroll is fine here, because nobody lives on this screen</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">The ledger keeps everything the old design showed and adds what it couldn't: any number of players, a per-hand / running toggle, and cell-level correction. It costs a horizontal scroll past six columns — the sixth is deliberately clipped at the edge so the affordance is visible without an instruction — and that trade is only acceptable because this screen is opened to settle an argument, not watched all evening. The two axes are labelled where they belong: players across the top as colour discs, hands down the pinned left column, totals pinned to the foot.</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Zeros are drawn as a faint interpunct so a scoring hand is legible at a glance — in Uno exactly one player scores per hand, and a grid of "0" would bury it.</div>
+        </div>
+      </div>
+
+      <div id="2e" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">2e</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Belote · 2 teams · roomy, ledger inline</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>22:38</span><span>71%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 12px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">←</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:18px;font-weight:600">Chez Marie</div>
+              <div style="font-size:13px;color:#6b6354">Belote · 15 hands · to 501</div>
+            </div>
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">⋯</div>
+          </div>
+          <div style="flex:0 0 auto;border-top:1px solid #d8cdb8">
+            <sc-for list="{{ beloteRows }}" as="r" hint-placeholder-count="2">
+              <div style="height:132px;padding:0 16px;border-bottom:1px solid #d8cdb8;background:{{ r.bg }};display:flex;flex-direction:column;justify-content:center;gap:14px">
+                <div style="display:grid;grid-template-columns:18px 40px 1fr auto;align-items:center;gap:12px">
+                  <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#a39882">{{ r.rk }}</div>
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ r.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600">{{ r.i }}</div>
+                  <div style="min-width:0">
+                    <div style="display:flex;align-items:center;gap:7px">
+                      <span style="font-size:19px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.n }}</span>
+                      <span style="font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.06em;color:#a8431d;border:1px solid #a8431d;border-radius:3px;padding:1px 4px;opacity:{{ r.tagOp }}">{{ r.tag }}</span>
+                    </div>
+                    <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;margin-top:3px">{{ r.sub }} · {{ r.gap }}</div>
+                  </div>
+                  <div style="font-size:52px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:{{ r.tcol }}">{{ r.t }}</div>
+                </div>
+                <div style="height:4px;background:#ece4d4"><div style="width:{{ r.pct }};height:4px;background:{{ r.bar }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;display:grid;grid-template-columns:44px 1fr 1fr;padding:9px 16px 7px;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354;border-bottom:1px solid #d8cdb8;background:#f0e9db">
+            <div>HAND</div><div style="text-align:right">MARIE &amp; LUC</div><div style="text-align:right">SOFIA &amp; TOM</div>
+          </div>
+          <div style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end">
+            <sc-for list="{{ beloteTail }}" as="h" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:44px 1fr 1fr;align-items:center;height:46px;padding:0 16px;border-bottom:1px solid #d8cdb8">
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#6b6354">{{ h.n }}</div>
+                <div style="display:flex;align-items:baseline;justify-content:flex-end;gap:8px">
+                  <span style="font-size:19px;font-weight:600;font-variant-numeric:tabular-nums">{{ h.a }}</span>
+                  <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354;min-width:34px;text-align:right">{{ h.ac }}</span>
+                </div>
+                <div style="display:flex;align-items:baseline;justify-content:flex-end;gap:8px">
+                  <span style="font-size:19px;font-weight:600;font-variant-numeric:tabular-nums">{{ h.b }}</span>
+                  <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354;min-width:34px;text-align:right">{{ h.bc }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;background:#fffdf7;border-top:2px solid #cfc5b0;padding:12px 16px 20px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354;padding-bottom:9px">MARIE &amp; LUC PASSED 501 · FINISH FROM ⋯ WHEN THE TABLE IS DONE</div>
+            <div style="height:58px;border-radius:8px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;gap:10px;font-size:18px;font-weight:600">
+              <span>Enter hand 16</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Two teams lose nothing — the ledger they used to live on comes back inline</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">The rework had to not regress the case it was built for. At two or three players the standings rows take the space they deserve (52px numerals, 40px discs) and the leftover height is filled by the last six hands, oldest above newest and anchored to the foot so the newest sits against the entry button — so a Belote table still sees hand-by-hand history without leaving the screen. At four players the block would show two hands and stop being useful, so it disappears and the ⋯ history takes over. <strong style="color:#2b2620">Same screen, same entry sheet, one conditional block.</strong></div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:10px;text-wrap:pretty">Passing the target is stated as a mono line above the entry button rather than a dismissible amber band or a dialog — it is a fact about the game, not an event needing acknowledgement, and it belongs next to the control it names.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Results — a tie stays a tie</h2>
+      <span style="font-size:15px;color:#6b6354">The 7 Wonders sheet from <a href="#1c">1c</a>, finished. Chloé and Émile both land on 65.</span>
+    </div>
+
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+      <div id="1n" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1n</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Results · light</span>
+        </div>
+        <div style="width:390px;height:844px;background:#f6f1e7;color:#2b2620;border:1px solid #d8cdb8;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#6b6354"><span>21:26</span><span>94%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;color:#6b6354">×</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:22px;font-weight:700">Sunday table</div>
+              <div style="font-size:13px;color:#6b6354">7 Wonders · finished 21:24</div>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px">
+            <div style="background:#fffdf7;border:1px solid #a8431d;border-radius:12px;padding:14px">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a8431d">JOINT WINNERS</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+                <div style="display:flex">
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ cTeal }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;border:2px solid #fffdf7">C</div>
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ cGreen }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;border:2px solid #fffdf7;margin-left:-10px">É</div>
+                </div>
+                <div style="flex:1;font-size:19px;font-weight:600;line-height:1.25;text-wrap:pretty">Chloé and Émile</div>
+                <div style="font-size:44px;font-weight:700;color:#a8431d;font-variant-numeric:tabular-nums;line-height:1">65</div>
+              </div>
+            </div>
+            <div style="background:#f7efdd;border:1px solid #e0cfa8;border-radius:12px;padding:12px 14px;margin-top:8px">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#7a5a1e">TIEBREAK · 7 WONDERS</div>
+              <div style="font-size:18px;font-weight:500;color:#2b2620;margin-top:6px">Most coins wins.</div>
+              <div style="font-size:13px;line-height:1.45;color:#7a5a1e;margin-top:6px;text-wrap:pretty">Scorepad won't decide it — the rule is here, the coins are on the table.</div>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px;margin-top:12px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;border-bottom:2px solid #cfc5b0;padding-bottom:4px">FINAL · 7 PLAYERS</div>
+            <sc-for list="{{ results }}" as="p" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:12px;height:46px;border-bottom:1px solid #d8cdb8">
+                <div style="width:26px;font-family:ui-monospace,Menlo,monospace;font-size:15px;color:#6b6354">{{ p.r }}{{ p.tie }}</div>
+                <div style="width:32px;height:32px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fffdf7;background:{{ p.c }}">{{ p.i }}</div>
+                <div style="flex:1;font-size:18px;font-weight:500">{{ p.n }}</div>
+                <div style="font-size:24px;font-weight:600;font-variant-numeric:tabular-nums">{{ p.t }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;padding:12px 16px 16px;border-top:1px solid #d8cdb8;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <div style="flex:1;height:46px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                Reopen
+              </div>
+              <div style="flex:1;height:46px;border:1px solid #d8cdb8;border-radius:6px;background:#fffdf7;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                Export
+              </div>
+            </div>
+            <div style="height:48px;border-radius:6px;background:#a8431d;color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500">Back to games</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">One winner block, however many winners there are</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Tied players share the block, share the rank number, and carry <span style="font-family:ui-monospace,Menlo,monospace">=</span> down the list. The tiebreak card states the game's rule as text and says out loud that the app won't apply it — the only honest option when the deciding data (coins in hand) was never entered. Rejected: a "resolve tie" button (invents a result), a coin-count prompt (a new data model for one edge case), and confetti.</div>
+        </div>
+      </div>
+
+      <div id="1o" style="width:390px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1o</span>
+          <span style="font-size:15px;font-weight:600;color:#2b2620">Results · dark</span>
+        </div>
+        <div style="width:390px;height:844px;background:#201c16;color:#e6ddcc;border:1px solid #443c2f;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.4">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:44px;flex:0 0 auto;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#a39882"><span>23:58</span><span>48%</span></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:0 16px 14px;flex:0 0 auto">
+            <div style="width:40px;height:40px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;font-size:18px;color:#a39882">×</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:22px;font-weight:700">Sunday table</div>
+              <div style="font-size:13px;color:#a39882">7 Wonders · finished 23:56</div>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;padding:0 16px">
+            <div style="background:#2a241c;border:1px solid #e0824f;border-radius:12px;padding:14px">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#e0824f">JOINT WINNERS</div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+                <div style="display:flex">
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ dTeal }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;border:2px solid #2a241c">C</div>
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ dGreen }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;border:2px solid #2a241c;margin-left:-10px">É</div>
+                </div>
+                <div style="flex:1;font-size:19px;font-weight:600;line-height:1.25;text-wrap:pretty">Chloé and Émile</div>
+                <div style="font-size:44px;font-weight:700;color:#e0824f;font-variant-numeric:tabular-nums;line-height:1">65</div>
+              </div>
+            </div>
+            <div style="background:#322616;border:1px solid #57431f;border-radius:12px;padding:12px 14px;margin-top:8px">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#e6c88f">TIEBREAK · 7 WONDERS</div>
+              <div style="font-size:18px;font-weight:500;color:#e6ddcc;margin-top:6px">Most coins wins.</div>
+              <div style="font-size:13px;line-height:1.45;color:#e6c88f;margin-top:6px;text-wrap:pretty">Scorepad won't decide it — the rule is here, the coins are on the table.</div>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 16px;margin-top:12px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a39882;border-bottom:2px solid #554b3c;padding-bottom:4px">FINAL · 7 PLAYERS</div>
+            <sc-for list="{{ results }}" as="p" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:12px;height:46px;border-bottom:1px solid #443c2f">
+                <div style="width:26px;font-family:ui-monospace,Menlo,monospace;font-size:15px;color:#a39882">{{ p.r }}{{ p.tie }}</div>
+                <div style="width:32px;height:32px;flex:0 0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#201c16;background:{{ p.d }}">{{ p.i }}</div>
+                <div style="flex:1;font-size:18px;font-weight:500">{{ p.n }}</div>
+                <div style="font-size:24px;font-weight:600;font-variant-numeric:tabular-nums">{{ p.t }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:0 0 auto;padding:12px 16px 16px;border-top:1px solid #443c2f;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <div style="flex:1;height:46px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                Reopen
+              </div>
+              <div style="flex:1;height:46px;border:1px solid #443c2f;border-radius:6px;background:#2a241c;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>
+                Export
+              </div>
+            </div>
+            <div style="height:48px;border-radius:6px;background:#e0824f;color:#201c16;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600">Back to games</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #d8cdb8;padding-top:12px">
+          <div style="font-size:14px;font-weight:600;color:#2b2620">Export lives next to the result, not only on Home</div>
+          <div style="font-size:13px;line-height:1.5;color:#6b6354;margin-top:5px;text-wrap:pretty">Finishing a game is the moment somebody wants to keep it, so Export is one of the three actions here. Reopen is deliberately as prominent — “finish” is a state, not a lock, and a mis-tap must be one tap to undo.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #cfc5b0;padding-bottom:12px;max-width:1400px">
+      <h2 style="margin:0;font-size:26px;font-weight:700;color:#2b2620">Foundations</h2>
+      <span style="font-size:15px;color:#6b6354">Every value here is in <a href="tokens.css">tokens.css</a>, ready to paste into a Tailwind 4 <span style="font-family:ui-monospace,Menlo,monospace;font-size:13px">@theme</span> block.</span>
+    </div>
+
+    <div id="1p" style="display:flex;flex-direction:column;gap:24px;max-width:1400px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:#fffdf7;background:#2b2620;padding:5px 8px;border-radius:4px">1p</span>
+        <span style="font-size:15px;font-weight:600;color:#2b2620">Twelve player colours, both themes</span>
+      </div>
+
+      <div style="background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:20px">
+        <div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;margin-bottom:12px">LIGHT — oklch(0.53 0.14 H) · paper-white letter · 4.6:1 min against #f6f1e7</div>
+          <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px">
+            <sc-for list="{{ palette }}" as="p" hint-placeholder-count="12">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="height:64px;border-radius:6px;background:{{ p.c }};color:#fffdf7;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600">{{ p.letter }}</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.04em;color:#6b6354">{{ p.i }} {{ p.hue }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#201c16;border-radius:8px;padding:20px 16px">
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#a39882;margin-bottom:12px">DARK — oklch(0.72 0.13 H) · ink letter · 5.9:1 min against #201c16</div>
+          <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:8px">
+            <sc-for list="{{ palette }}" as="p" hint-placeholder-count="12">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="height:64px;border-radius:6px;background:{{ p.d }};color:#201c16;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600">{{ p.letter }}</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.04em;color:#a39882">{{ p.n }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid #d8cdb8;padding-top:18px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#2b2620">Colour is never the only difference</div>
+            <div style="font-size:13px;line-height:1.55;color:#6b6354;margin-top:6px;text-wrap:pretty">Twelve hues cannot all be told apart under deuteranopia — anyone claiming otherwise is selling you a palette. So every token carries the player's initial at 15px/600, and rows are labelled with the full name; the colour is a fast index, not the identity. Assignment order is fixed and front-loaded for separability: <strong style="color:#2b2620">blue, orange, teal, magenta, green, red</strong> covers the common six-player table with pairwise-distinct hues under all three dichromacies. Colours 7–12 are only reached at a ten-player Uno, where the name is doing the work anyway.</div>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#2b2620">One lightness per theme, one chroma for all</div>
+            <div style="font-size:13px;line-height:1.55;color:#6b6354;margin-top:6px;text-wrap:pretty">Fixed L and C mean no hue shouts louder than another, and every token clears 4.5:1 with its letter. Values are re-derived per theme rather than reused: L 0.53 on paper, L 0.72 on dimmed paper. Taken colours dim to 32% in the picker instead of disappearing, so the grid never reflows under a thumb. The accent <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">#a8431d</span> and alarm <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">#b3261e</span> are deliberately excluded from the player palette — a player must never be mistaken for a state.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:stretch">
+        <div style="flex:1;min-width:520px;background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;padding:24px">
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;padding-bottom:10px;border-bottom:2px solid #cfc5b0">TYPE SCALE · SYSTEM-UI ONLY, NO WEBFONT</div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:0 20px;align-items:baseline">
+            <div style="font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;padding:14px 0;border-bottom:1px solid #d8cdb8">512</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">44 / 700 · tally total</div>
+            <div style="font-size:28px;font-weight:700;padding:14px 0;border-bottom:1px solid #d8cdb8">Civilian</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">28 / 700 · category</div>
+            <div style="font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;padding:14px 0;border-bottom:1px solid #d8cdb8">27</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">26 / 600 · cell</div>
+            <div style="font-size:22px;font-weight:700;padding:14px 0;border-bottom:1px solid #d8cdb8">Choose a game</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">22 / 700 · screen title</div>
+            <div style="font-size:18px;font-weight:500;padding:14px 0;border-bottom:1px solid #d8cdb8">Chloé</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">17–18 / 500 · row, button</div>
+            <div style="font-size:16px;padding:14px 0;border-bottom:1px solid #d8cdb8">Blue cards — add the number printed on each.</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">16 / 400 · body</div>
+            <div style="font-size:13px;color:#6b6354;padding:14px 0;border-bottom:1px solid #d8cdb8">Wingspan · 1 to 5 · note under a title</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0;border-bottom:1px solid #d8cdb8">13 / 400 · meta</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;padding:14px 0">CATEGORY 4 OF 7 · 45 SO FAR</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354;text-align:right;padding:14px 0">11 mono · eyebrow, running total</div>
+          </div>
+          <div style="font-size:13px;line-height:1.55;color:#6b6354;margin-top:16px;text-wrap:pretty;border-top:1px solid #d8cdb8;padding-top:14px">Eight steps: <strong style="color:#2b2620">11 · 13 · 16 · 17 · 18 · 22 · 26 · 28 · 44</strong>. Body is 16, not 14 — this phone is read across a table, and 14px is a desk size. Every number is <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">tabular-nums</span> so totals don't jitter as they recompute; small ledger figures and all-caps eyebrows are mono, everything else system-ui. Weights are 400 / 500 / 600 / 700 and nothing between.</div>
+        </div>
+
+        <div style="flex:1;min-width:400px;display:flex;flex-direction:column;gap:24px">
+          <div style="background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;padding:24px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;padding-bottom:14px;border-bottom:2px solid #cfc5b0">SPACING · 4px GRID</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:4px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">4 — icon to label</div></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:8px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">8 — key gap, chip gap</div></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:12px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">12 — row internals, tile gap</div></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:16px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">16 — screen gutter, everywhere</div></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:20px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">20 — bottom safe padding</div></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="width:32px;height:16px;background:#a8431d"></div><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">32 — between sections</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;border-top:1px solid #d8cdb8;padding-top:16px">
+              <div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354">HEIGHTS</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.9;color:#2b2620;margin-top:6px">40 — icon button<br>44 — chip, tap floor<br>46 — tally row<br>48 — cell, input<br>52 — primary button<br>56–60 — keypad key<br>72 — sheet row</div>
+              </div>
+              <div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354">RADIUS</div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+                  <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:22px;border:1px solid #6b6354;border-radius:4px"></div><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">4 chip, strip</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:22px;border:1px solid #6b6354;border-radius:6px"></div><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">6 button, cell</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:22px;border:1px solid #6b6354;border-radius:12px"></div><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">12 card, sheet</span></div>
+                  <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:22px;border:1px solid #6b6354;border-radius:999px"></div><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#6b6354">full token, pill</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:13px;line-height:1.55;color:#6b6354;margin-top:16px;text-wrap:pretty;border-top:1px solid #d8cdb8;padding-top:14px">Elevation is a hairline, not a shadow: surfaces are 1px <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">#d8cdb8</span> on <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px">#fffdf7</span>, and only the two floating things — the keypad and the colour sheet — cast one. Section rules are 2px, separators 1px. Motion: 120ms on a value change, 200ms on a sheet, nothing else moves.</div>
+          </div>
+
+          <div style="background:#fffdf7;border:1px solid #d8cdb8;border-radius:12px;padding:24px">
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.06em;color:#6b6354;padding-bottom:14px;border-bottom:2px solid #cfc5b0">APP ICON · FIVE STROKES</div>
+            <div style="display:flex;gap:20px;align-items:flex-start;margin-top:18px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+                <div style="width:128px;height:128px;border-radius:28px;background:#f6f1e7;border:1px solid #d8cdb8;display:flex;align-items:center;justify-content:center">
+                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M5 5v14" stroke="#2b2620"></path><path d="M9.5 5v14" stroke="#2b2620"></path><path d="M14 5v14" stroke="#2b2620"></path><path d="M18.5 5v14" stroke="#2b2620"></path><path d="M21 7 3 17" stroke="#a8431d" stroke-width="2.2"></path></svg>
+                </div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">LIGHT 512</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+                <div style="width:128px;height:128px;border-radius:28px;background:#2a241c;border:1px solid #443c2f;display:flex;align-items:center;justify-content:center">
+                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M5 5v14" stroke="#e6ddcc"></path><path d="M9.5 5v14" stroke="#e6ddcc"></path><path d="M14 5v14" stroke="#e6ddcc"></path><path d="M18.5 5v14" stroke="#e6ddcc"></path><path d="M21 7 3 17" stroke="#e0824f" stroke-width="2.2"></path></svg>
+                </div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">DARK TILE</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+                <div style="width:128px;height:128px;border-radius:28px;background:#f6f1e7;border:1px solid #d8cdb8;display:flex;align-items:center;justify-content:center;position:relative">
+                  <div style="position:absolute;inset:13px;border:1px dashed #c6bba4;border-radius:999px"></div>
+                  <svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M5 5v14" stroke="#2b2620"></path><path d="M9.5 5v14" stroke="#2b2620"></path><path d="M14 5v14" stroke="#2b2620"></path><path d="M18.5 5v14" stroke="#2b2620"></path><path d="M21 7 3 17" stroke="#a8431d" stroke-width="2.2"></path></svg>
+                </div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;color:#6b6354">MASKABLE · 80% SAFE</div>
+              </div>
+              <div style="flex:1;min-width:180px">
+                <div style="font-size:22px;font-weight:600;letter-spacing:.14em;color:#2b2620">SCOREPAD</div>
+                <div style="font-size:13px;line-height:1.55;color:#6b6354;margin-top:10px;text-wrap:pretty">A tally of five is the one mark that means "keeping score" in every language on the box, and it is four straight lines and a diagonal — no illustration, no dice, no pencil. The diagonal is the accent, so the icon carries the product's single colour. Wordmark is the name in 600 with 0.14em tracking; there is no logotype to draw.</div>
+                <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.7;color:#a39882;margin-top:12px;letter-spacing:.04em">SPLASH + INSTALL PROMPT NOT DRAWN — YOU SCOPED THEM OUT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1200},&quot;playerLightness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.53,&quot;min&quot;:0.4,&quot;max&quot;:0.68,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Player palette&quot;},&quot;playerLightnessDark&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.72,&quot;min&quot;:0.6,&quot;max&quot;:0.85,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Player palette&quot;},&quot;playerChroma&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.14,&quot;min&quot;:0.06,&quot;max&quot;:0.2,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Player palette&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const sg = v => v < 0 ? '\u2212' + (-v) : String(v);
+    const hues = [258, 52, 190, 330, 140, 20, 285];
+    const names = ['Ana', 'Ben', 'Chloé', 'Dan', 'Émile', 'Fran', 'Gus'];
+    const inits = ['A', 'B', 'C', 'D', 'É', 'F', 'G'];
+    const L = this.props.playerLightness ?? 0.53;
+    const CH = this.props.playerChroma ?? 0.14;
+    const DL = this.props.playerLightnessDark ?? 0.72;
+    const lc = h => 'oklch(' + L + ' ' + CH + ' ' + h + ')';
+    const dc = h => 'oklch(' + DL + ' ' + Math.max(0.02, CH - 0.01) + ' ' + h + ')';
+    const players = names.map((n, i) => ({ n, i: inits[i], c: lc(hues[i]), d: dc(hues[i]) }));
+
+    const catNames = ['Military', 'Treasury', 'Wonders', 'Civilian', 'Science', 'Commerce', 'Guilds'];
+    const catShort = ['MIL', 'TRS', 'WND', 'CIV', 'SCI', 'COM', 'GLD'];
+    const M = [
+      [5, 4, 10, 21, 9, 6, 8],
+      [-2, 2, 7, 14, 24, 4, 5],
+      [8, 3, 12, 18, 4, 9, 11],
+      [3, 5, 4, 27, 1, 7, 6],
+      [-1, 1, 10, 12, 31, 3, 9],
+      [6, 6, 7, 16, 9, 12, 4],
+      [1, 2, 0, 9, 16, 5, 7]
+    ];
+    const totals = M.map(r => r.reduce((a, b) => a + b, 0));
+    const rankOf = (arr, i) => { const v = arr[i]; return arr.filter(x => x > v).length + 1; };
+    const ord = n => n + (n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th');
+
+    const gridHead = players.map(p => ({ n: p.n, i: p.i, c: p.c }));
+    const gridRows = catNames.map((cn, j) => ({
+      name: cn, short: catShort[j],
+      cells: players.map((p, i) => ({ v: sg(M[i][j]) }))
+    }));
+    const gridTotals = players.map((p, i) => ({ t: String(totals[i]), r: ord(rankOf(totals, i)).toUpperCase() }));
+
+    const cum4 = M.map(r => r[0] + r[1] + r[2] + r[3]);
+    const civRows = players.map((p, i) => {
+      const rk = rankOf(cum4, i);
+      const tie = cum4.filter(x => x === cum4[i]).length > 1;
+      return { n: p.n, i: p.i, c: p.c, d: p.d, v: sg(M[i][3]), sub: cum4[i] + ' SO FAR · ' + ord(rk).toUpperCase() + (tie ? '=' : '') };
+    });
+
+    const catStrip = catShort.map((s, j) => {
+      const cur = j === 3, done = j < 3;
+      return {
+        s, mark: done ? '✓' : cur ? '●' : '',
+        bg: cur ? '#a8431d' : done ? '#ece4d4' : '#fffdf7',
+        fg: cur ? '#fffdf7' : done ? '#6b6354' : '#6b6354',
+        bd: cur ? '#a8431d' : '#d8cdb8'
+      };
+    });
+
+    const catStripDark = catShort.map((s, j) => {
+      const cur = j === 3, done = j < 3;
+      return {
+        s, mark: done ? '✓' : cur ? '●' : '',
+        bg: cur ? '#e0824f' : done ? '#181410' : '#2a241c',
+        fg: cur ? '#201c16' : '#a39882',
+        bd: cur ? '#e0824f' : '#443c2f'
+      };
+    });
+
+    const pagerDots = players.map((p, i) => ({
+      i: p.i,
+      bg: i === 2 ? p.c : i < 2 ? '#ece4d4' : '#fffdf7',
+      fg: i === 2 ? '#fffdf7' : '#6b6354',
+      ring: i === 2 ? p.c : '#d8cdb8',
+      op: i > 2 ? '0.75' : '1'
+    }));
+
+    const chloeRows = catNames.map((cn, j) => ({ name: cn, v: sg(M[2][j]) }));
+
+    const cum5 = [49, 45, 45, 39, 22, 35, 12];
+    const sciVals = ['9', '24', '4', '', '', '', ''];
+    const sciRows = players.map((p, i) => {
+      const rk = rankOf(cum5, i);
+      const tie = cum5.filter(x => x === cum5[i]).length > 1;
+      const active = i === 2, filled = sciVals[i] !== '';
+      return {
+        n: p.n, i: p.i, c: p.c, d: p.d,
+        v: filled ? sciVals[i] : '—',
+        sub: cum5[i] + ' SO FAR · ' + ord(rk).toUpperCase() + (tie ? '=' : ''),
+        bd: active ? '#a8431d' : '#d8cdb8',
+        bg: active ? '#fffdf7' : filled ? '#fffdf7' : '#f6f1e7',
+        fg: filled ? '#2b2620' : '#a39882',
+        ring: active ? '0 0 0 3px color-mix(in srgb, #a8431d 50%, transparent)' : 'none'
+      };
+    });
+
+    const games = [
+      { n: 'Catan', m: 'SHEET', meta: '6 categories · 3–4' },
+      { n: 'Splendor', m: 'SHEET', meta: '2 categories · 2–4' },
+      { n: 'Wingspan', m: 'SHEET', meta: '6 categories · 1–5' },
+      { n: 'Azul', m: 'SHEET', meta: '4 categories · 2–4' },
+      { n: 'Ticket to Ride', m: 'SHEET', meta: '5 categories · 2–5' },
+      { n: '7 Wonders', m: 'SHEET', meta: '7 categories · 3–7' },
+      { n: 'Uno', m: 'TALLY', meta: 'to 500 · 2–10' },
+      { n: 'Whist', m: 'TALLY', meta: 'to 5 · 2 teams' },
+      { n: 'Belote', m: 'TALLY', meta: 'to 501 · 2 teams' },
+      { n: 'Black Lady', m: 'TALLY', meta: 'to 100 · low wins · 3–7' }
+    ];
+
+    const finished = [
+      { g: '7 Wonders', s: 'Sunday table', meta: 'Chloé and Émile tied on 65', when: 'Yesterday', m: 'SHEET' },
+      { g: 'Wingspan', s: 'Thursday', meta: 'Sofia won · 87', when: '3 days ago', m: 'SHEET' },
+      { g: 'Azul', s: 'Kitchen table', meta: 'Luc won · 74', when: 'Last week', m: 'SHEET' }
+    ];
+
+    const recent = ['Marie', 'Luc', 'Sofia', 'Tom', 'Ana', 'Ben', 'Chloé', 'Dan'];
+
+    const setupRows = [
+      { n: 'Sofia', i: 'S', h: 258 }, { n: 'Tom', i: 'T', h: 52 },
+      { n: 'Marie', i: 'M', h: 190 }, { n: 'Luc', i: 'L', h: 330 },
+      { n: 'Ana', i: 'A', h: 140 }
+    ].map(r => ({ n: r.n, i: r.i, c: lc(r.h), d: dc(r.h) }));
+
+    const aAdd = [82, 0, 20, 100, 0, 54, 0, 76, 30, 0, 62, 24, 0, 64, 0];
+    const bAdd = [0, 90, 62, 0, 110, 20, 30, 0, 46, 20, 0, 0, 66, 0, 24];
+    const hands = []; let ac = 0, bc = 0;
+    for (let k = 0; k < 15; k++) {
+      const pa = ac; ac += aAdd[k]; bc += bAdd[k];
+      hands.push({
+        n: String(k + 1), a: String(aAdd[k]), b: String(bAdd[k]),
+        ac: String(ac), bc: String(bc),
+        flag: (ac >= 501 && pa < 501) ? '501' : ''
+      });
+    }
+    const handsDesc = hands.slice().reverse();
+    const handsTail = hands.slice(8);
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '\u00b1', '0', '\u232b'].map(k => {
+      const util = k === '\u00b1' || k === '\u232b';
+      return {
+        k,
+        lbg: util ? '#ece4d4' : '#fffdf7', lfg: util ? '#6b6354' : '#2b2620',
+        dbg: util ? '#181410' : '#2a241c', dfg: util ? '#a39882' : '#e6ddcc',
+        size: util ? '22px' : '28px'
+      };
+    });
+
+    // ── Tally, reworked for N players ──────────────────────────────
+    const stand = (cfg) => cfg.names.map((n, i) => {
+      const t = cfg.tot[i];
+      const better = cfg.tot.filter(x => cfg.low ? x < t : x > t).length;
+      const rk = better + 1;
+      const lead = rk === 1;
+      const pct = Math.min(100, Math.round(t / cfg.target * 100));
+      const gap = cfg.low ? cfg.target - t : cfg.target - t;
+      return {
+        rk: String(rk), n, i: cfg.inits[i], c: lc(cfg.hues[i]), d: dc(cfg.hues[i]),
+        t: String(t), pct: pct + '%',
+        gap: cfg.low ? gap + ' to bust' : gap + ' to go',
+        last: cfg.last[i] ? '+' + cfg.last[i] : '—',
+        sub: cfg.subs[i],
+        meta: (cfg.subs[i].replace(/ hands? won/, ' WON') + ' · ' + (cfg.last[i] ? '+' + cfg.last[i] + ' LAST' : 'NO SCORE')).toUpperCase(),
+        bg: lead ? '#fffdf7' : 'transparent',
+        tcol: lead ? '#a8431d' : '#2b2620',
+        bar: lead ? '#a8431d' : '#a39882',
+        tag: lead ? (cfg.low ? 'SAFEST' : 'LEADS') : '',
+        tagOp: lead ? '1' : '0'
+      };
+    });
+
+    const uno6 = {
+      names: ['Ana', 'Ben', 'Chloé', 'Dan', 'Émile', 'Fran'],
+      inits: ['A', 'B', 'C', 'D', 'É', 'F'],
+      hues: [258, 52, 190, 330, 140, 20],
+      tot: [181, 110, 345, 43, 47, 143],
+      last: [0, 0, 60, 0, 0, 0],
+      subs: ['3 hands won', '2 hands won', '5 hands won', '1 hand won', '1 hand won', '2 hands won'],
+      target: 500
+    };
+    const unoRows = stand(uno6);
+    const unoLast = uno6.names.map((n, i) => ({
+      i: uno6.inits[i], c: lc(uno6.hues[i]),
+      v: uno6.last[i] ? '+' + uno6.last[i] : '0',
+      bg: uno6.last[i] ? '#fffdf7' : '#f0e9db',
+      fg: uno6.last[i] ? '#2b2620' : '#a39882',
+      bd: uno6.last[i] ? '#a8431d' : '#d8cdb8'
+    }));
+
+    const unoRows10 = stand({
+      names: ['Ana', 'Ben', 'Chloé', 'Dan', 'Émile', 'Fran', 'Gus', 'Hana', 'Iris', 'Jon'],
+      inits: ['A', 'B', 'C', 'D', 'É', 'F', 'G', 'H', 'I', 'J'],
+      hues: [258, 52, 190, 330, 140, 20, 285, 215, 100, 355],
+      tot: [312, 205, 431, 118, 266, 180, 97, 344, 52, 231],
+      last: [0, 0, 0, 0, 44, 0, 0, 0, 0, 0],
+      subs: ['5 won', '3 won', '7 won', '2 won', '4 won', '3 won', '1 won', '6 won', '1 won', '4 won'],
+      target: 500
+    });
+
+    // Black Lady: low wins, every hand distributes exactly 26 points
+    const blNames = ['Marie', 'Luc', 'Sofia', 'Tom', 'Ana'];
+    const blInits = ['M', 'L', 'S', 'T', 'A'];
+    const blHues = [258, 52, 190, 330, 140];
+    const blVals = ['0', '7', '19', '', ''];
+    const blTot = [64, 81, 52, 73, 90];
+    const blRows = blNames.map((n, i) => {
+      const active = i === 2, filled = blVals[i] !== '' && !active;
+      return {
+        n, i: blInits[i], c: lc(blHues[i]), d: dc(blHues[i]),
+        v: blVals[i] === '' ? '—' : blVals[i],
+        tot: 'TOTAL ' + blTot[i],
+        bd: active ? '#e0824f' : '#443c2f',
+        bg: active ? '#332b21' : filled ? '#2a241c' : '#241f18',
+        fg: filled ? '#e6ddcc' : active ? '#e0824f' : '#8d8371'
+      };
+    });
+
+    const histNames = uno6.names, histInits = uno6.inits;
+    const histHead = histNames.map((n, i) => ({ i: histInits[i], c: lc(uno6.hues[i]) }));
+    const histMatrix = [
+      ['7', [88, 0, 0, 0, 0, 0]], ['8', [0, 0, 0, 43, 0, 0]],
+      ['9', [0, 66, 0, 0, 0, 0]], ['10', [0, 0, 52, 0, 0, 0]],
+      ['11', [39, 0, 0, 0, 0, 0]], ['12', [0, 0, 0, 0, 0, 81]],
+      ['13', [0, 44, 0, 0, 0, 0]], ['14', [0, 0, 60, 0, 0, 0]]
+    ];
+    const histRows = histMatrix.map(([n, vals]) => ({
+      n,
+      cells: vals.map(v => ({ v: v ? String(v) : '·', fg: v ? '#2b2620' : '#c6bba4', w: v ? '600' : '400' }))
+    }));
+    const histTotals = uno6.tot.map(t => ({ v: String(t) }));
+
+    const beloteRows = stand({
+      names: ['Marie & Luc', 'Sofia & Tom'],
+      inits: ['A', 'B'], hues: [258, 52],
+      tot: [512, 468], last: [0, 24],
+      subs: ['8 hands taken', '7 hands taken'],
+      target: 501
+    });
+    beloteRows[0].gap = 'passed 501';
+    beloteRows[0].tag = 'PASSED';
+    const beloteTail = hands.slice(9);
+
+    const results = [
+      { r: '1', n: 'Chloé', i: 'C', h: 190, t: '65' },
+      { r: '1', n: 'Émile', i: 'É', h: 140, t: '65' },
+      { r: '3', n: 'Ana', i: 'A', h: 258, t: '63' },
+      { r: '4', n: 'Fran', i: 'F', h: 20, t: '60' },
+      { r: '5', n: 'Ben', i: 'B', h: 52, t: '54' },
+      { r: '6', n: 'Dan', i: 'D', h: 330, t: '53' },
+      { r: '7', n: 'Gus', i: 'G', h: 285, t: '40' }
+    ].map(x => ({ ...x, c: lc(x.h), d: dc(x.h), tie: x.t === '65' ? '=' : '' }));
+
+    const palNames = ['Blue', 'Orange', 'Teal', 'Magenta', 'Green', 'Red', 'Violet', 'Sky', 'Olive', 'Rose', 'Jade', 'Amber'];
+    const palHues = [258, 52, 190, 330, 140, 20, 285, 215, 100, 355, 165, 70];
+    const palette = palNames.map((n, i) => ({
+      n, i: String(i + 1).padStart(2, '0'), letter: 'ABCDEFGHIJKL'[i],
+      c: lc(palHues[i]), d: dc(palHues[i]),
+      hue: 'H ' + palHues[i],
+      sel: i === 2 ? '#2b2620' : 'transparent',
+      op: (i === 0 || i === 1 || i === 3 || i === 4) ? '0.32' : '1'
+    }));
+
+    const swatch = {
+      cBlue: lc(258), cOrange: lc(52), cTeal: lc(190), cGreen: lc(140),
+      dBlue: dc(258), dOrange: dc(52), dTeal: dc(190), dGreen: dc(140)
+    };
+
+    return { ...swatch, gridHead, gridRows, gridTotals, civRows, catStrip, catStripDark, pagerDots, chloeRows, sciRows, games, finished, recent, setupRows, handsDesc, handsTail, keys, results, palette,
+      unoRows, unoLast, unoRows10, blRows, histHead, histRows, histTotals, beloteRows, beloteTail };
+  }
+}
+</script>
+</body>
+</html>

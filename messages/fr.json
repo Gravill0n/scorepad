@@ -1,0 +1,6 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "home_page": "Accueil",
+  "language_label": "Langue",
+  "current_locale": "Langue actuelle : {locale}"
+}

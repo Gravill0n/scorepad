@@ -554,17 +554,25 @@ card · tiebreak card (conditional) · `FINAL · N PLAYERS` ranked list at 46px 
   result), a coin-count prompt (a new data model for one edge case), and confetti.
 - **Ranked rows (46px):** rank number (+ `=` on a tie) · token · name · total.
 - Below the ranking, per-category or per-hand takeaways in mono 11.
-- **Footer:** `Reopen` and `Export` side by side, then `Back to games`. Export is here
-  because finishing a game is the moment somebody wants to keep it; Reopen is deliberately
-  as prominent — "finished" is a state, not a lock, and a mis-tap must be one tap to undo.
+- **Footer:** a three-up row of `Play again` · `Reopen` · `Export` at `--h-tap`, then
+  `Back to games` full width. Export is here because finishing a game is the moment somebody
+  wants to keep it; Reopen is deliberately as prominent — "finished" is a state, not a lock,
+  and a mis-tap must be one tap to undo. **`Play again` duplicates the session and opens the
+  new one** — same template, same players, same colour indices, empty rounds — which is the
+  same operation Home's swipe-`Duplicate` performs, offered at the moment the table actually
+  asks for it.
 
 **Writes:** sets `status: "finished"` and `finishedAt`. `Reopen` returns the session to
-`active` and clears `finishedAt`.
+`active` and clears `finishedAt`. `Play again` writes a new session and leaves the finished
+one untouched.
 
-> **Handoff prose vs. artboard:** the README lists `Play again` and `Done` as the footer
-> actions; `1n` and `1o` draw `Reopen`, `Export` and `Back to games`. The artboards win.
-> Home's swipe-`Duplicate` already covers "same players, same game", so nothing is lost —
-> flagged in Open Questions rather than silently dropped.
+> **Approved departure from `1n` / `1o`.** The artboards draw three actions; the handoff
+> prose lists `Play again`, and it is reinstated as a fourth — decided 2026-08-19. The
+> paired row becomes three-up rather than gaining a band, so the screen's height budget is
+> unchanged; at 390px that is three ~111px buttons inside the 16px gutters at 12px gaps,
+> which holds `Rejouer` / `Rouvrir` / `Exporter` in French. Verify the fit against the
+> artboard before building — if French forces a fourth band, the band heights above are what
+> gives, not the button. `Done` from the prose stays cut; `Back to games` is that action.
 
 ### Cross-screen rules
 
@@ -695,10 +703,10 @@ Specific and testable:
 - ~~`Add a custom game`~~ — **decided: cut from v1.** `1g` shows `Clear filter` instead. Tell
   the designer, so the button comes out of `1g`.
 - ~~The inline ledger at ≤3 players~~ — **decided: keep it.** `2e` ships as drawn.
-- The handoff prose lists `Play again` (same players, same game) among the Results actions;
-  the artboards draw `Reopen`, `Export` and `Back to games`. Home's swipe-`Duplicate`
-  already covers the same-players-again case, so the spec implements the artboard. Worth a
-  line back to the designer to confirm nothing was lost.
+- ~~`Play again` on Results~~ — **decided: reinstated as a fourth footer action**, a
+  deliberate departure from `1n` / `1o` approved 2026-08-19. It duplicates the session and
+  opens it. Home's swipe-`Duplicate` stays; the two share one function. Tell the designer,
+  so the footer row comes back as three-up.
 - Do finished sessions become immutable, with "reopen" as an explicit action? `1n` draws
   `Reopen` as a peer of `Export`, so: no, and reopening is one tap.
 - Is a service worker needed in v1 for offline, given the bundle is static and cacheable

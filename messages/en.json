@@ -98,5 +98,8 @@
   "sheet_cell_empty": "{player}: not entered",
   "sheet_go_to_category": "Category {n}, {label}",
   "sheet_entered_count": "{done} of {total} entered",
-  "menu_open": "More"
+  "menu_open": "More",
+  "sheet_clear": "Clear",
+  "sheet_next_player": "Next — {name}",
+  "sheet_close_keypad": "Close the keypad"
 }

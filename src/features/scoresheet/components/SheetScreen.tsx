@@ -4,16 +4,37 @@ import { BackLink } from "@/components/BackLink";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useSettings } from "@/hooks/useSettings";
 import { ranking } from "@/lib/scoring";
+import { updateSession } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";
-import type { Session } from "@/types/session";
+import type { Round, Session } from "@/types/session";
 import { gameName } from "@/utils/gameName";
+import { fromNumber, type KeypadValue, toNumber } from "@/utils/keypadValue";
 import { CategoryHead } from "./CategoryHead";
 import { CategoryStrip } from "./CategoryStrip";
+import { KeypadPanel } from "./KeypadPanel";
 import { PagerDots } from "./PagerDots";
 import { SheetRow } from "./SheetRow";
 
 /** Sheet mode holds exactly one round, forever. */
 const entriesOf = (session: Session) => session.rounds[0] ?? {};
+
+/**
+ * The round with one cell rewritten. An empty cell is **removed**, not stored
+ * as zero: Results warns about a cell nobody filled in, and it can only do
+ * that if "empty" and "scored nothing" stay different on disk.
+ */
+const withCell = (
+	round: Round,
+	playerId: string,
+	key: string,
+	value: number | undefined,
+): Round => {
+	const cells = { ...(round[playerId] ?? {}) };
+	if (value === undefined) delete cells[key];
+	else cells[key] = value;
+
+	return { ...round, [playerId]: cells };
+};
 
 /**
  * The scoresheet for `mode: "sheet"` (`1c`, `1k`).
@@ -28,15 +49,62 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 	const { locale } = useSettings();
 	const [current, setCurrent] = useState(0);
 	const [focused, setFocused] = useState<string | null>(null);
+	/**
+	 * What is being typed, as a string: "-" is a minus waiting for digits and ""
+	 * is an empty cell, neither of which a number can hold. The database still
+	 * receives a number on every keystroke — there is no save action anywhere.
+	 */
+	const [typed, setTyped] = useState<KeypadValue>("");
 
 	const category = session.categories[current];
 	const entries = entriesOf(session);
 	const ranked = ranking(session);
 	const isLast = current === session.categories.length - 1;
+	const focusedPlayer = session.players.find((player) => player.id === focused);
 
 	if (!category) return null;
 
 	const valueFor = (playerId: string, key: string) => entries[playerId]?.[key];
+
+	/** Every keystroke lands on disk. There is no save action in this app. */
+	const write = (playerId: string, value: number | undefined) => {
+		void updateSession(session.id, {
+			rounds: [withCell(entries, playerId, category.key, value)],
+		});
+	};
+
+	const focusOn = (playerId: string) => {
+		setFocused(playerId);
+		setTyped(fromNumber(valueFor(playerId, category.key)));
+	};
+
+	const onType = (next: KeypadValue) => {
+		if (!focused) return;
+		setTyped(next);
+		write(focused, toNumber(next));
+	};
+
+	/**
+	 * The primary names who is next while there is a next player, and names the
+	 * next category once the column is walked. The button always says where the
+	 * phone is going.
+	 */
+	const seat = session.players.findIndex((player) => player.id === focused);
+	const nextPlayer = session.players[seat + 1];
+	const primaryLabel = nextPlayer
+		? m.sheet_next_player({ name: nextPlayer.name })
+		: isLast
+			? m.sheet_see_results()
+			: m.sheet_next_category();
+
+	const onPrimary = () => {
+		if (nextPlayer) {
+			focusOn(nextPlayer.id);
+			return;
+		}
+		setFocused(null);
+		if (!isLast) setCurrent(current + 1);
+	};
 	const isCategoryDone = (index: number) => {
 		const key = session.categories[index]?.key;
 		return (
@@ -101,29 +169,48 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 							value={valueFor(player.id, category.key)}
 							focused={focused === player.id}
 							locale={locale}
-							onFocus={() => setFocused(player.id)}
+							onFocus={() =>
+								focused === player.id ? setFocused(null) : focusOn(player.id)
+							}
 						/>
 					);
 				})}
 			</ul>
 
-			<div className="shrink-0 border-line border-t px-4 pt-3 pb-5">
-				<PagerDots
-					dots={session.players.map((player) => ({
-						id: player.id,
-						entered: valueFor(player.id, category.key) !== undefined,
-					}))}
+			{focusedPlayer ? (
+				<KeypadPanel
+					player={focusedPlayer}
+					categoryLabel={category.label}
+					total={
+						ranked.find((rank) => rank.player.id === focusedPlayer.id)?.total ??
+						0
+					}
+					value={typed}
+					primaryLabel={primaryLabel}
+					onChange={onType}
+					onClear={() => onType("")}
+					onPrimary={onPrimary}
+					onDismiss={() => setFocused(null)}
 				/>
+			) : (
+				<div className="shrink-0 border-line border-t px-4 pt-3 pb-5">
+					<PagerDots
+						dots={session.players.map((player) => ({
+							id: player.id,
+							entered: valueFor(player.id, category.key) !== undefined,
+						}))}
+					/>
 
-				<button
-					type="button"
-					onClick={() => setCurrent(current + 1)}
-					disabled={isLast}
-					className="btn-primary mt-3 flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)] disabled:opacity-50"
-				>
-					{isLast ? m.sheet_see_results() : m.sheet_next_category()} →
-				</button>
-			</div>
+					<button
+						type="button"
+						onClick={() => setCurrent(current + 1)}
+						disabled={isLast}
+						className="btn-primary mt-3 flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)] disabled:opacity-50"
+					>
+						{isLast ? m.sheet_see_results() : m.sheet_next_category()} →
+					</button>
+				</div>
+			)}
 		</div>
 	);
 };

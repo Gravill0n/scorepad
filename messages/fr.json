@@ -98,5 +98,8 @@
   "sheet_cell_empty": "{player} : rien de saisi",
   "sheet_go_to_category": "Catégorie {n}, {label}",
   "sheet_entered_count": "{done} sur {total} saisis",
-  "menu_open": "Plus"
+  "menu_open": "Plus",
+  "sheet_clear": "Effacer",
+  "sheet_next_player": "Suivant — {name}",
+  "sheet_close_keypad": "Fermer le pavé"
 }

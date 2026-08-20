@@ -466,19 +466,27 @@ player counts, a task 32 question at twelve.
 **Description:** Header, 48px filter field, two-up tile grid at 12px gaps / 16px gutters.
 
 **Acceptance criteria:**
-- [ ] Tile art is **generated**: `--color-paper-dim` field with a hairline carrying the name
+- [x] Tile art is **generated**: `--color-paper-dim` field with a hairline carrying the name
       set like a box spine (uppercase, `--text-screen`, `--tracking-wordmark`,
       `--color-ink-soft`). One treatment for all tiles, no per-game hue, no image assets.
-- [ ] Meta line derived from the template: `{n} categories · {min}–{max}` for sheet,
+- [x] Meta line derived from the template: `{n} categories · {min}–{max}` for sheet,
       `to {targetScore} · {min}–{max}` for tally, `to {targetScore} · 2 teams` when
       `entry` is `"team"`.
-- [ ] No-match state shows `Clear filter`. **No `Add a custom game` button** — it is cut.
-- [ ] The art field is a self-contained component so real box art is a later swap inside it.
+- [x] No-match state shows `Clear filter`. **No `Add a custom game` button** — it is cut.
+      *Note:* `1g`'s footer slot is not an authoring button but `Score "krib" with no
+      template`, which the counter tile now covers. Not built; owed to the designer.
+- [x] The art field is a self-contained component so real box art is a later swap inside it.
 
 **Verification:** Filter to no match, clear, all tiles return in one tap. Tapping a tile
-routes to `/new/players` carrying `templateId`.
+routes to `/new/players` carrying `templateId`. *All asserted in `GameShelf.test.tsx`; the
+id travels as a search param, so a reload keeps the chosen game.*
 
-- [ ] **The shelf shows all eleven templates, counter included**, and the filter placeholder
+*Note:* eleven tiles is one grid row more than `1f` was drawn for. The row came out of the
+art field (64 → 48) rather than out of the shelf, so the screen still fits 390 × 844. The
+grid carries an `overflow-y-auto` safety valve for shorter viewports, where clipping the
+last row out of reach would be worse than a scroll. Owed to the designer.
+
+- [x] **The shelf shows all eleven templates, counter included**, and the filter placeholder
       is `Filter {n} games` with the count derived from the registry length — decided
       2026-08-19, so the copy cannot drift when a twelfth template lands. `1f`'s literal
       "ten" is superseded.
@@ -491,16 +499,26 @@ routes to `/new/players` carrying `templateId`.
 `PLAYED RECENTLY` pills, pinned 52px primary.
 
 **Acceptance criteria:**
-- [ ] Title is `Players` / `Teams` (`Équipes`) driven by `entry`; a team template's
+- [x] Title is `Players` / `Teams` (`Équipes`) driven by `entry`; a team template's
       `setupNote` renders as an info banner above the rows.
-- [ ] Row: colour token · name input · **visible grip handle** for reorder · `×` to remove.
-      Reorder is the handle, never a hidden long-press.
-- [ ] Dashed `Add a player` row beneath.
-- [ ] `PLAYED RECENTLY` renders 40px tap-to-add pills from `meta.recentNames`.
-- [ ] Colours are handed out **in palette order** as players are added.
+- [x] Row: colour token · name input · **visible grip handle** for reorder · `×` to remove.
+      Reorder is the handle, never a hidden long-press. **`@dnd-kit/core` + `@dnd-kit/sortable`
+      approved 2026-08-20** over react-dnd, which needs a second package for touch, was last
+      published in 2022 and has no keyboard path. The grip carries the sensors, so one handle
+      serves a thumb, a mouse and the arrow keys. Row order follows `1h` (grip first).
+- [x] Dashed `Add a player` row beneath, hidden at the template's maximum.
+- [x] `PLAYED RECENTLY` renders tap-to-add pills from `meta.recentNames` — **44px, not the
+      artboard's 40**: the thumb floor is a contract, and task 32 asserts it.
+- [x] Colours are handed out **in palette order** as players are added, and a colour freed
+      by a removed row is reused before the palette advances.
 
-**Verification:** Four pills = a four-player table in four taps. Reordering rewrites
-`sortOrder` and nothing else.
+**Verification:** Four pills = a four-player table in four taps — asserted, and it holds
+because a pill fills the first empty row before it adds one. Reordering rewrites order and
+nothing else, asserted over the pure row helpers.
+
+*Note:* rows are `--h-cell` (48) per `SPEC.md` rather than `1h`'s 60, and the body carries an
+`overflow-y-auto` safety valve — twelve counter players plus the recent block do not fit 844
+at any row height. Owed to the designer.
 
 **Dependencies:** 15. **Scope:** M.
 
@@ -509,16 +527,20 @@ routes to `/new/players` carrying `templateId`.
 **Description:** The shared `BottomSheet` (decision 3) and the colour picker on top of it.
 
 **Acceptance criteria:**
-- [ ] Sheet: `--radius-card` on top corners only, `--shadow-sheet`, `--scrim` behind,
+- [x] Sheet: `--radius-card` on top corners only, `--shadow-sheet`, `--scrim` behind,
       `--dur-sheet` 200ms with `--ease`, dismissed by swipe-down or backdrop tap.
-- [ ] Colour sheet: header (token, `Marie's colour`, `×`), a 4 × 3 grid of 56px swatches each
-      carrying **its index number and letter**, one line of copy about the initial.
-- [ ] Taken colours dim to 32% and are **non-selectable — they dim, never disappear**, so the
+- [x] Colour sheet: header (token, `Marie's colour`, `×`), a 4 × 3 grid of 56px swatches each
+      carrying **its index number and letter**, one line of copy about the initial. `1h` draws
+      6 × 2 at 48px with the letter only; **the spec's grid was chosen 2026-08-20** — bigger
+      targets, and the index is what the database stores. Owed to the designer.
+- [x] Taken colours dim to 32% and are **non-selectable — they dim, never disappear**, so the
       grid cannot reflow under a thumb. Selected takes a 2px ink ring.
-- [ ] Never a dropdown.
+- [x] Never a dropdown.
 
 **Verification:** Component test — a taken colour refuses selection and the grid keeps its
-twelve positions.
+twelve positions. The sheet's own suite covers all three ways out (×, scrim, Esc) and found a
+real defect: the scrim path started the exit animation without setting the flag its listener
+reads, so a sheet dismissed by tapping outside animated away and never unmounted.
 
 **Dependencies:** 16. **Scope:** M.
 
@@ -527,16 +549,22 @@ twelve positions.
 **Description:** Blocking validation and the write that starts the game.
 
 **Acceptance criteria:**
-- [ ] Blocking is **stated twice**: the primary dims *and* a plain auto-height line beneath
+- [x] Blocking is **stated twice**: the primary dims *and* a plain auto-height line beneath
       it says why, in `--color-alarm-ink` on `--color-alarm-bg`. Never a toast, never a pill.
-- [ ] Rules: player count inside the template range; names non-empty and unique within the
-      session (the drawn case is duplicate team names).
-- [ ] On continue: create the session with its snapshot, call `navigator.storage.persist()`
+- [x] Rules: player count inside the template range; names non-empty and unique within the
+      session (the drawn case is duplicate team names). One reason at a time, count first.
+      Uniqueness is case-insensitive and trimmed — two rows called `Marie` and ` marie ` carry
+      the same token and the same initial.
+- [x] On continue: create the session with its snapshot, call `navigator.storage.persist()`
       if not yet granted and **log the boolean result** (**success criterion 8**), write
-      `recentNames`, route to `/session/$id`.
+      `recentNames`, route to `/session/$id`. The persist call is deliberately not awaited into
+      the navigation: a slow permission prompt must not stand between somebody and the first
+      hand.
 
-**Verification:** Two identically-named teams block with the French copy from `1i`; the
-banner is auto-height at 14px/1.45 and wraps rather than truncating.
+**Verification:** Two identically-named teams block, asserted, with `1i`'s French copy in
+`messages/fr.json`. The banner is auto-height and asserted to carry no fixed height — at
+`--text-meta` (13), since 14 is not on the token scale and a literal size in a component is a
+bug. Owed to the designer.
 
 **Dependencies:** 17, 9. **Scope:** S.
 

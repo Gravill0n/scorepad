@@ -1,4 +1,4 @@
-import type { Session } from "@/types/session";
+import { type Session, sessionSchema } from "@/types/session";
 
 const DB_NAME = "bgc";
 
@@ -170,16 +170,41 @@ export const closeDatabase = (): void => {
 	void pending?.then((db) => db.close()).catch(() => undefined);
 };
 
+/**
+ * Storage is not a trusted source. Records outlive the app version that wrote
+ * them, survive devtools edits, and arrive from imported backups. A record that
+ * does not match the schema is left in storage untouched and reported — never
+ * deleted, and never returned as if it were a session.
+ *
+ * Unknown keys are dropped by the schema. Ordered migrations, not silent
+ * passthrough, are how this app changes a record's shape.
+ */
+const validate = (record: unknown): Session | undefined => {
+	const result = sessionSchema.safeParse(record);
+	if (result.success) return result.data;
+
+	const id = (record as { id?: unknown })?.id;
+	console.error(
+		`Ignoring session "${String(id)}": it does not match the schema.`,
+		result.error.issues,
+	);
+	return undefined;
+};
+
 export const getSession = async (id: string): Promise<Session | undefined> => {
 	const db = await openDatabase();
 	const store = db.transaction("sessions", "readonly").objectStore("sessions");
-	return fromRequest<Session | undefined>(store.get(id));
+	const record = await fromRequest<unknown>(store.get(id));
+	return record === undefined ? undefined : validate(record);
 };
 
 export const getAllSessions = async (): Promise<Session[]> => {
 	const db = await openDatabase();
 	const store = db.transaction("sessions", "readonly").objectStore("sessions");
-	return fromRequest<Session[]>(store.getAll());
+	const records = await fromRequest<unknown[]>(store.getAll());
+	return records
+		.map(validate)
+		.filter((session): session is Session => session !== undefined);
 };
 
 export const putSession = async (session: Session): Promise<void> => {

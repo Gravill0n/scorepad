@@ -176,6 +176,99 @@ describe("sessions", () => {
 	});
 });
 
+describe("reading a record that does not match the schema", () => {
+	/** Writes straight past the typed API, the way corruption actually arrives. */
+	const putRaw = async (record: unknown) => {
+		const db = await openDatabase();
+		const transaction = db.transaction("sessions", "readwrite");
+		transaction.objectStore("sessions").put(record);
+		await new Promise((resolve) => {
+			transaction.oncomplete = resolve;
+		});
+	};
+
+	const countStored = async () => {
+		const db = await openDatabase();
+		const store = db
+			.transaction("sessions", "readonly")
+			.objectStore("sessions");
+		return new Promise<number>((resolve) => {
+			const request = store.count();
+			request.onsuccess = () => resolve(request.result);
+		});
+	};
+
+	beforeEach(() => {
+		vi.spyOn(console, "error").mockImplementation(() => undefined);
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it("keeps the good sessions when one is structurally broken", async () => {
+		await putSession(session({ id: "good" }));
+		await putRaw({ id: "broken", name: "Broken", players: "not an array" });
+
+		const all = await getAllSessions();
+		expect(all.map((s) => s.id)).toEqual(["good"]);
+	});
+
+	it("reports a broken record rather than dropping it silently", async () => {
+		await putRaw({ id: "broken", name: "Broken" });
+		await getAllSessions();
+
+		expect(console.error).toHaveBeenCalled();
+		expect(vi.mocked(console.error).mock.calls[0]?.join(" ")).toContain(
+			"broken",
+		);
+	});
+
+	it("leaves the broken record in storage rather than deleting it", async () => {
+		await putRaw({ id: "broken", name: "Broken" });
+		await getAllSessions();
+
+		expect(await countStored()).toBe(1);
+	});
+
+	it("returns undefined for a single broken session", async () => {
+		await putRaw({ id: "broken", name: "Broken" });
+		expect(await getSession("broken")).toBeUndefined();
+	});
+
+	it("resolves a corrupted cell to zero rather than losing the whole game", async () => {
+		// A NaN in one cell is not a reason to make an evening's game vanish.
+		// scoring.ts already treats a non-finite entry as zero; this is the same
+		// rule applied at the storage boundary.
+		await putRaw({
+			...session({ id: "s1" }),
+			rounds: [{ p1: { hand: Number.NaN }, p2: { hand: 78 } }],
+		});
+
+		const read = await getSession("s1");
+		expect(read?.rounds[0]?.p1?.hand).toBe(0);
+		expect(read?.rounds[0]?.p2?.hand).toBe(78);
+	});
+
+	it("drops a key the schema does not define, rather than passing it through", async () => {
+		// The deliberate trade-off: a record written by a newer app version loses
+		// its new fields when an older version reads and rewrites it. Ordered
+		// migrations are how this app changes a record's shape; silent
+		// passthrough would be a second, competing mechanism, and it would cost
+		// exact typing on every property access in the app.
+		await putRaw({ ...session({ id: "s1" }), fieldFromTheFuture: 42 });
+
+		const read = await getSession("s1");
+		expect(read && "fieldFromTheFuture" in read).toBe(false);
+	});
+
+	it("accepts a well-formed session unchanged", async () => {
+		const written = session();
+		await putSession(written);
+		expect(await getSession("s1")).toEqual(written);
+	});
+});
+
 describe("meta", () => {
 	it("returns undefined for an untouched setting, which is not a stored default", async () => {
 		expect(await getMeta("locale")).toBeUndefined();

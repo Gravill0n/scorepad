@@ -9,14 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/root.layout'
-import { Route as testDotpageRouteImport } from './routes/test.page'
 import { Route as homeDotpageRouteImport } from './routes/home.page'
 
-const testDotpageRoute = testDotpageRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const homeDotpageRoute = homeDotpageRouteImport.update({
   id: '/',
   path: '/',
@@ -25,39 +19,28 @@ const homeDotpageRoute = homeDotpageRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof homeDotpageRoute
-  '/test': typeof testDotpageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof homeDotpageRoute
-  '/test': typeof testDotpageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof homeDotpageRoute
-  '/test': typeof testDotpageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test'
-  id: '__root__' | '/' | '/test'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   homeDotpageRoute: typeof homeDotpageRoute
-  testDotpageRoute: typeof testDotpageRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof testDotpageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -70,7 +53,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   homeDotpageRoute: homeDotpageRoute,
-  testDotpageRoute: testDotpageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

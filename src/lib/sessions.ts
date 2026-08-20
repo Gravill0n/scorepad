@@ -89,8 +89,29 @@ const subscribe = (listener: () => void) => {
 export const getSessions = (): Session[] => loaded;
 
 const publish = (next: Session[]) => {
-	loaded = next;
+	// Frozen because task 12 sorts this list. A caller reaching for .sort() or
+	// .push() would otherwise rewrite the store in place, with no subscriber
+	// notified — a silent corruption that fails loudly instead.
+	loaded = Object.freeze(next) as Session[];
 	for (const listener of listeners) listener();
+};
+
+let writes: Promise<unknown> = Promise.resolve();
+
+/**
+ * Every write here is read-modify-write. Two in flight at once both read the
+ * same starting session, and whichever publishes last silently reverts the
+ * other — a rename lost to a score entered at the same moment, with no save
+ * action anywhere to notice and retry. Serialising them costs one promise
+ * chain; a session is small and a write is a single IndexedDB transaction.
+ */
+const serialize = <T>(operation: () => Promise<T>): Promise<T> => {
+	const result = writes.then(operation, operation);
+	writes = result.then(
+		() => undefined,
+		() => undefined,
+	);
+	return result;
 };
 
 export const useSessions = (): Session[] =>
@@ -129,95 +150,101 @@ const mustFind = async (id: string): Promise<Session> => {
 
 // ---- Operations -------------------------------------------------------------
 
-export const createSession = async ({
+export const createSession = ({
 	template,
 	players,
 	name,
 	locale,
 	now = new Date(),
-}: CreateSessionInput): Promise<Session> => {
-	const timestamp = now.toISOString();
+}: CreateSessionInput): Promise<Session> =>
+	serialize(async () => {
+		const timestamp = now.toISOString();
 
-	return persist({
-		id: crypto.randomUUID(),
-		name: name ?? defaultSessionName(template, now, locale),
-		templateId: template.id,
-		// The snapshot. Optional fields are spread conditionally so an absent one
-		// stays absent rather than being stored as an explicit undefined.
-		mode: template.mode,
-		categories: template.categories.map((category) => ({ ...category })),
-		win: template.win,
-		...(template.targetScore !== undefined && {
-			targetScore: template.targetScore,
-		}),
-		...(template.tiebreakNote !== undefined && {
-			tiebreakNote: template.tiebreakNote,
-		}),
-		...(template.handTotal !== undefined && { handTotal: template.handTotal }),
-		...(template.entry !== undefined && { entry: template.entry }),
-		players: players.map((player, index) => ({
+		return persist({
 			id: crypto.randomUUID(),
-			name: player.name,
-			colorIndex: player.colorIndex,
-			sortOrder: index,
-		})),
-		// A sheet is a tally with exactly one round, and it never grows.
-		rounds: template.mode === "sheet" ? [{}] : [],
-		status: "active",
-		createdAt: timestamp,
-		updatedAt: timestamp,
+			name: name ?? defaultSessionName(template, now, locale),
+			templateId: template.id,
+			// The snapshot. Optional fields are spread conditionally so an absent one
+			// stays absent rather than being stored as an explicit undefined.
+			mode: template.mode,
+			categories: template.categories.map((category) => ({ ...category })),
+			win: template.win,
+			...(template.targetScore !== undefined && {
+				targetScore: template.targetScore,
+			}),
+			...(template.tiebreakNote !== undefined && {
+				tiebreakNote: template.tiebreakNote,
+			}),
+			...(template.handTotal !== undefined && {
+				handTotal: template.handTotal,
+			}),
+			...(template.entry !== undefined && { entry: template.entry }),
+			players: players.map((player, index) => ({
+				id: crypto.randomUUID(),
+				name: player.name,
+				colorIndex: player.colorIndex,
+				sortOrder: index,
+			})),
+			// A sheet is a tally with exactly one round, and it never grows.
+			rounds: template.mode === "sheet" ? [{}] : [],
+			status: "active",
+			createdAt: timestamp,
+			updatedAt: timestamp,
+		});
 	});
-};
 
-export const updateSession = async (
+export const updateSession = (
 	id: string,
 	patch: SessionPatch,
-): Promise<Session> => {
-	const current = await mustFind(id);
-	const merged: Session = {
-		...current,
-		...patch,
-		updatedAt: new Date().toISOString(),
-	};
+): Promise<Session> =>
+	serialize(async () => {
+		const current = await mustFind(id);
+		const merged: Session = {
+			...current,
+			...patch,
+			updatedAt: new Date().toISOString(),
+		};
 
-	// Reopening a finished session clears the stamp rather than storing an
-	// explicit undefined, which `"finishedAt" in session` would still see.
-	if ("finishedAt" in patch && patch.finishedAt === undefined) {
-		delete merged.finishedAt;
-	}
+		// Reopening a finished session clears the stamp rather than storing an
+		// explicit undefined, which `"finishedAt" in session` would still see.
+		if ("finishedAt" in patch && patch.finishedAt === undefined) {
+			delete merged.finishedAt;
+		}
 
-	return persist(merged);
-};
+		return persist(merged);
+	});
 
 /**
  * Home's swipe action and Results' `Play again` are the same call: a new active
  * session with the same template, snapshot and players, and no scores. The
  * original is never touched.
  */
-export const duplicateSession = async (id: string): Promise<Session> => {
-	const source = await mustFind(id);
-	const timestamp = new Date().toISOString();
-	const names = (await getAllSessions()).map((session) => session.name);
+export const duplicateSession = (id: string): Promise<Session> =>
+	serialize(async () => {
+		const source = await mustFind(id);
+		const timestamp = new Date().toISOString();
+		const names = (await getAllSessions()).map((session) => session.name);
 
-	const copy: Session = {
-		...source,
-		id: crypto.randomUUID(),
-		name: nextCopyName(source.name, names),
-		players: source.players.map((player) => ({
-			...player,
+		const copy: Session = {
+			...source,
 			id: crypto.randomUUID(),
-		})),
-		rounds: source.mode === "sheet" ? [{}] : [],
-		status: "active",
-		createdAt: timestamp,
-		updatedAt: timestamp,
-	};
-	delete copy.finishedAt;
+			name: nextCopyName(source.name, names),
+			players: source.players.map((player) => ({
+				...player,
+				id: crypto.randomUUID(),
+			})),
+			rounds: source.mode === "sheet" ? [{}] : [],
+			status: "active",
+			createdAt: timestamp,
+			updatedAt: timestamp,
+		};
+		delete copy.finishedAt;
 
-	return persist(copy);
-};
+		return persist(copy);
+	});
 
-export const removeSession = async (id: string): Promise<void> => {
-	await deleteSession(id);
-	publish(loaded.filter((session) => session.id !== id));
-};
+export const removeSession = (id: string): Promise<void> =>
+	serialize(async () => {
+		await deleteSession(id);
+		publish(loaded.filter((session) => session.id !== id));
+	});

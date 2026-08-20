@@ -210,6 +210,27 @@ describe("updateSession", () => {
 		expect(updated.status).toBe("active");
 	});
 
+	it("does not lose a concurrent write to a different field", async () => {
+		// Every write is read-modify-write. Two in flight at once both read the
+		// same starting session, and the later publish silently reverts the
+		// earlier one. There is no save action to notice it and retry.
+		const session = await createSession({
+			template: belote,
+			players: twoTeams,
+		});
+		const [nous] = session.players;
+		if (!nous) throw new Error("expected a player");
+
+		await Promise.all([
+			updateSession(session.id, { name: "Renamed" }),
+			updateSession(session.id, { rounds: [{ [nous.id]: { hand: 82 } }] }),
+		]);
+
+		const after = getSessions().find((s) => s.id === session.id);
+		expect(after?.name).toBe("Renamed");
+		expect(after?.rounds[0]?.[nous.id]?.hand).toBe(82);
+	});
+
 	it("rejects an id that does not exist rather than creating one", async () => {
 		await expect(updateSession("nope", { name: "x" })).rejects.toThrow();
 		expect(await getAllSessions()).toEqual([]);
@@ -299,6 +320,15 @@ describe("duplicateSession", () => {
 		expect(third.name).toBe("Belote 12 Apr (3)");
 	});
 
+	it("gives two concurrent duplicates different names", async () => {
+		const original = await scored();
+		const [first, second] = await Promise.all([
+			duplicateSession(original.id),
+			duplicateSession(original.id),
+		]);
+		expect(first?.name).not.toBe(second?.name);
+	});
+
 	it("rejects duplicating a session that does not exist", async () => {
 		await expect(duplicateSession("nope")).rejects.toThrow();
 	});
@@ -381,6 +411,15 @@ describe("useSessions", () => {
 		await createSession({ template: belote, players: twoTeams });
 
 		await waitFor(() => expect(result.current).toHaveLength(1));
+	});
+
+	it("hands back a list the caller cannot mutate", async () => {
+		// Task 12 sorts this list. A caller reaching for .sort() or .push()
+		// would rewrite the store in place, with no subscriber notified.
+		await createSession({ template: belote, players: twoTeams });
+		expect(() => {
+			getSessions().push({} as never);
+		}).toThrow();
 	});
 
 	it("hands back a stable reference when nothing has changed", () => {

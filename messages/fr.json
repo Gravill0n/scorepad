@@ -22,5 +22,12 @@
   "home_winner": "{name} gagne",
   "home_joint_winners": "{names} à égalité",
   "badge_sheet": "Feuille",
-  "badge_tally": "Manches"
+  "badge_tally": "Manches",
+  "row_duplicate": "Dupliquer",
+  "row_delete": "Supprimer",
+  "row_actions": "Actions pour {name}",
+  "delete_title": "Supprimer cette partie ?",
+  "delete_body": "{name} et tous ses scores seront effacés de ce téléphone. C'est irréversible.",
+  "delete_cancel": "Conserver",
+  "delete_confirm": "Supprimer"
 }

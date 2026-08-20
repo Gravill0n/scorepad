@@ -22,5 +22,12 @@
   "home_winner": "{name} won",
   "home_joint_winners": "{names} tied",
   "badge_sheet": "Sheet",
-  "badge_tally": "Tally"
+  "badge_tally": "Tally",
+  "row_duplicate": "Duplicate",
+  "row_delete": "Delete",
+  "row_actions": "Actions for {name}",
+  "delete_title": "Delete this game?",
+  "delete_body": "{name} and every score in it are removed from this phone. This cannot be undone.",
+  "delete_cancel": "Keep it",
+  "delete_confirm": "Delete"
 }

@@ -392,9 +392,9 @@ Owed to the designer.
 decision 4 above. No per-row bin icon anywhere.
 
 **Acceptance criteria:**
-- [ ] Delete opens **the app's one confirmation dialog**; duplicate acts immediately, with no
+- [x] Delete opens **the app's one confirmation dialog**; duplicate acts immediately, with no
       rename prompt, and the new active session appears at the top of the list.
-- [ ] The actions are reachable without the gesture (keyboard/AT), since the pane is a real
+- [x] The actions are reachable without the gesture (keyboard/AT), since the pane is a real
       scroll container with real buttons.
 
 **Verification:** Test: duplicate produces a session with the same players and colour

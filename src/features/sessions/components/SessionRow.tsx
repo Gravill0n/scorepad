@@ -47,42 +47,40 @@ export const InProgressRow = ({
 	session: Session;
 	stamp: string;
 }) => (
-	<li>
-		<Link
-			to="/session/$id"
-			params={{ id: session.id }}
-			className="mt-3 flex items-center gap-3 rounded-card border border-accent bg-card p-3.5"
-		>
-			<span className="min-w-0 flex-1">
-				<span className="flex items-center gap-2">
-					<span className="truncate text-strong font-[var(--weight-semi)] text-ink">
-						{gameName(session)}
+	<Link
+		to="/session/$id"
+		params={{ id: session.id }}
+		className="mt-3 flex items-center gap-3 rounded-card border border-accent bg-card p-3.5"
+	>
+		<span className="min-w-0 flex-1">
+			<span className="flex items-center gap-2">
+				<span className="truncate text-strong font-[var(--weight-semi)] text-ink">
+					{gameName(session)}
+				</span>
+				<ModeBadge mode={session.mode} />
+			</span>
+
+			<span className="mt-0.5 block truncate text-meta text-ink-soft">
+				{session.name} · {progressLabel(session)}
+			</span>
+
+			<span className="num mt-1.5 block text-body font-[var(--weight-medium)] text-ink">
+				{sessionTotals(session).join(" – ")}
+				{session.targetScore === undefined ? null : (
+					<span className="ml-1 text-meta font-[var(--weight-normal)] text-ink-soft">
+						{m.home_of_target({ target: session.targetScore })}
 					</span>
-					<ModeBadge mode={session.mode} />
-				</span>
-
-				<span className="mt-0.5 block truncate text-meta text-ink-soft">
-					{session.name} · {progressLabel(session)}
-				</span>
-
-				<span className="num mt-1.5 block text-body font-[var(--weight-medium)] text-ink">
-					{sessionTotals(session).join(" – ")}
-					{session.targetScore === undefined ? null : (
-						<span className="ml-1 text-meta font-[var(--weight-normal)] text-ink-soft">
-							{m.home_of_target({ target: session.targetScore })}
-						</span>
-					)}
-				</span>
+				)}
 			</span>
+		</span>
 
-			<span className="shrink-0 text-right">
-				<Stamp>{stamp}</Stamp>
-				<span className="mt-2 block text-body font-[var(--weight-medium)] text-accent">
-					{m.home_resume()} →
-				</span>
+		<span className="shrink-0 text-right">
+			<Stamp>{stamp}</Stamp>
+			<span className="mt-2 block text-body font-[var(--weight-medium)] text-accent">
+				{m.home_resume()} →
 			</span>
-		</Link>
-	</li>
+		</span>
+	</Link>
 );
 
 const winnerLabel = (session: Session) => {
@@ -107,28 +105,26 @@ export const FinishedRow = ({
 		session.win === "lowest" ? Math.min(...totals) : Math.max(...totals);
 
 	return (
-		<li>
-			<Link
-				to="/session/$id/results"
-				params={{ id: session.id }}
-				className="flex items-center gap-3 border-line border-b py-4"
-			>
-				<span className="min-w-0 flex-1">
-					<span className="block truncate text-row font-[var(--weight-medium)] text-ink">
-						{gameName(session)}
-					</span>
-					<span className="mt-0.5 block truncate text-meta text-ink-soft">
-						{session.name} · {winnerLabel(session)}
-						{totals.length > 0 ? ` · ${best}` : ""}
-					</span>
+		<Link
+			to="/session/$id/results"
+			params={{ id: session.id }}
+			className="flex items-center gap-3 border-line border-b py-4"
+		>
+			<span className="min-w-0 flex-1">
+				<span className="block truncate text-row font-[var(--weight-medium)] text-ink">
+					{gameName(session)}
 				</span>
-				<Stamp>{stamp}</Stamp>
-				<ChevronRight
-					size={18}
-					className="shrink-0 text-ink-faint"
-					aria-hidden="true"
-				/>
-			</Link>
-		</li>
+				<span className="mt-0.5 block truncate text-meta text-ink-soft">
+					{session.name} · {winnerLabel(session)}
+					{totals.length > 0 ? ` · ${best}` : ""}
+				</span>
+			</span>
+			<Stamp>{stamp}</Stamp>
+			<ChevronRight
+				size={18}
+				className="shrink-0 text-ink-faint"
+				aria-hidden="true"
+			/>
+		</Link>
 	);
 };

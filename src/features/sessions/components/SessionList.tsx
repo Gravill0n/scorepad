@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { useSettings } from "@/app/provider";
 import { Eyebrow } from "@/components/Eyebrow";
+import { duplicateSession, removeSession } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";
 import type { Session } from "@/types/session";
 import { relativeTime } from "@/utils/relativeTime";
+import { DeleteSessionDialog } from "./DeleteSessionDialog";
 import { FinishedRow, InProgressRow } from "./SessionRow";
+import { SwipeRow } from "./SwipeRow";
 
 /** The 2px rule under each section heading (`1d`). */
 const SectionHeading = ({ children }: { children: string }) => (
@@ -21,6 +25,7 @@ const SectionHeading = ({ children }: { children: string }) => (
  */
 export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 	const { locale } = useSettings();
+	const [pendingDelete, setPendingDelete] = useState<Session | null>(null);
 
 	// A copy: the store's array is frozen, and sorting in place would rewrite it.
 	const byRecency = [...sessions].sort((a, b) =>
@@ -37,11 +42,17 @@ export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 					<SectionHeading>{m.home_in_progress()}</SectionHeading>
 					<ul>
 						{active.map((session) => (
-							<InProgressRow
+							<SwipeRow
 								key={session.id}
-								session={session}
-								stamp={relativeTime(session.updatedAt, now, locale)}
-							/>
+								label={session.name}
+								onDuplicate={() => void duplicateSession(session.id)}
+								onDelete={() => setPendingDelete(session)}
+							>
+								<InProgressRow
+									session={session}
+									stamp={relativeTime(session.updatedAt, now, locale)}
+								/>
+							</SwipeRow>
 						))}
 					</ul>
 				</>
@@ -56,14 +67,31 @@ export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 					</div>
 					<ul>
 						{finished.map((session) => (
-							<FinishedRow
+							<SwipeRow
 								key={session.id}
-								session={session}
-								stamp={relativeTime(session.updatedAt, now, locale)}
-							/>
+								label={session.name}
+								onDuplicate={() => void duplicateSession(session.id)}
+								onDelete={() => setPendingDelete(session)}
+							>
+								<FinishedRow
+									session={session}
+									stamp={relativeTime(session.updatedAt, now, locale)}
+								/>
+							</SwipeRow>
 						))}
 					</ul>
 				</>
+			)}
+
+			{pendingDelete && (
+				<DeleteSessionDialog
+					name={pendingDelete.name}
+					onCancel={() => setPendingDelete(null)}
+					onConfirm={() => {
+						void removeSession(pendingDelete.id);
+						setPendingDelete(null);
+					}}
+				/>
 			)}
 		</div>
 	);

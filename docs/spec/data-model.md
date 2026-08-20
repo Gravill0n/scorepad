@@ -44,6 +44,7 @@ type Session = {
 	rounds: Round[];            // sheet mode: exactly one, forever
 	status: "active" | "finished";
 	createdAt: string;          // ISO 8601
+	updatedAt: string;          // ISO 8601 — bumped by every write
 	finishedAt?: string;
 };
 
@@ -65,6 +66,14 @@ them. Colours are assigned in palette order 1, 2, 3… as players are added — 
 hues are pairwise distinct under protan/deutan/tritan, so front-loading is what makes a
 six-player table readable. The rendered token always carries the player's initial; colour is
 an index, never the identity.
+
+**`updatedAt` is what "most recently touched" means.** Home orders active sessions by it
+and renders it as the row's relative stamp (`20 MIN AGO`), and neither is expressible from
+`createdAt`: resuming last week's Belote has to lift it to the top of the list, not leave it
+below a game created yesterday and never played. Every write in `lib/sessions.ts` bumps it —
+scoring a cell, renaming, adding a late player, finishing — and that module is the only
+writer, so it cannot drift. *Added 2026-08-20, during task 9; the field was missing and
+`SPEC.md` §Home already depended on it.*
 
 **`sortOrder` is seat order and is never rewritten by scoring.** Rows hold their position
 all evening — rank is displayed in the margin, not used to sort. Sorting happens exactly

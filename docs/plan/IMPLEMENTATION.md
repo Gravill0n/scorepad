@@ -298,18 +298,24 @@ on `useSyncExternalStore`. **In `lib/`, not in a feature** (decision 6): both fe
 sessions, and this is what stops the cross-feature import.
 
 **Acceptance criteria:**
-- [ ] `create` snapshots `categories`, `win`, `targetScore`, `tiebreakNote`, `handTotal` and
+- [x] `create` snapshots `categories`, `win`, `targetScore`, `tiebreakNote`, `handTotal` and
       `entry` from the template. **A later template edit can never move a played score.**
-- [ ] `duplicate` copies `templateId`, the snapshot and `players` (names + `colorIndex`),
+- [x] `duplicate` copies `templateId`, the snapshot and `players` (names + `colorIndex`),
       with a new `id`, new `createdAt`, `status: "active"` and empty `rounds`.
-- [ ] `duplicateSession` names the copy with a numeric suffix — `Belote 12 Apr` →
+- [x] `duplicateSession` names the copy with a numeric suffix — `Belote 12 Apr` →
       `Belote 12 Apr (2)`, incrementing past an existing `(2)` — with no prompt. Renaming
       afterwards is the ⋯ menu's job (task 22).
-- [ ] Every write persists immediately. There is no save action and no flush.
-- [ ] Imports `lib/db.ts` and types only. No React beyond the hook, no `features/`.
+- [x] Every write persists immediately. There is no save action and no flush.
+- [x] Imports `lib/db.ts` and types only. No React beyond the hook, no `features/`.
 
 **Verification:** A test creating a session from a template, mutating a cell, reloading the
 store from IndexedDB and reading the same value back.
+
+**`updatedAt` added to `Session` (approved 2026-08-20).** `SPEC.md` §Home orders active
+sessions "most recently touched first" and stamps each row with a relative time, and neither
+is expressible from `createdAt` — resuming last week's game has to lift it to the top.
+`data-model.md` is updated; `lib/sessions.ts` is the only writer, so it cannot drift.
+Task 12 sorts on it.
 
 **Dependencies:** 8, 7. **Scope:** M.
 

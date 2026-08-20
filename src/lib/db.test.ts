@@ -39,6 +39,7 @@ const session = (overrides: Partial<Session> = {}): Session => ({
 	rounds: [{ p1: { hand: 82 }, p2: { hand: 78 } }],
 	status: "active",
 	createdAt: "2026-04-12T19:30:00.000Z",
+	updatedAt: "2026-04-12T19:30:00.000Z",
 	...overrides,
 });
 

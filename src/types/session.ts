@@ -27,6 +27,8 @@ export type Session = {
 	status: "active" | "finished";
 	/** ISO 8601 */
 	createdAt: string;
+	/** ISO 8601 — bumped by every write. "Most recently touched" is this. */
+	updatedAt: string;
 	finishedAt?: string;
 };
 

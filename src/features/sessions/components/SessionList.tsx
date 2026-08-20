@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Eyebrow } from "@/components/Eyebrow";
 import { useSettings } from "@/hooks/useSettings";
 import { getMeta } from "@/lib/db";
 import { duplicateSession, removeSession } from "@/lib/sessions";
@@ -8,15 +7,9 @@ import type { Session } from "@/types/session";
 import { relativeTime } from "@/utils/relativeTime";
 import { BackupCard } from "./BackupCard";
 import { DeleteSessionDialog } from "./DeleteSessionDialog";
+import { SectionHeading } from "./SectionHeading";
 import { FinishedRow, InProgressRow } from "./SessionRow";
 import { SwipeRow } from "./SwipeRow";
-
-/** The 2px rule under each section heading (`1d`). */
-const SectionHeading = ({ children }: { children: string }) => (
-	<div className="border-line-strong border-b-2 pb-1.5">
-		<Eyebrow>{children}</Eyebrow>
-	</div>
-);
 
 /**
  * Home's list (`1d`): in progress, then finished, most recently touched first

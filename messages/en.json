@@ -29,5 +29,14 @@
   "delete_title": "Delete this game?",
   "delete_body": "{name} and every score in it are removed from this phone. This cannot be undone.",
   "delete_cancel": "Keep it",
-  "delete_confirm": "Delete"
+  "delete_confirm": "Delete",
+  "backup_eyebrow": "Backup",
+  "backup_summary": "{count} games live on this phone only. The JSON file is the whole backup.",
+  "backup_export": "Export",
+  "backup_import": "Import",
+  "backup_imported": "{imported} restored, {skipped} already here",
+  "backup_unreadable": "{count} could not be read",
+  "backup_error_not_json": "That file is not valid JSON.",
+  "backup_error_not_a_backup": "That file is not a Scorepad backup.",
+  "backup_error_too_new": "That backup was written by a newer version of Scorepad."
 }

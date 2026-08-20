@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSettings } from "@/app/provider";
 import { Eyebrow } from "@/components/Eyebrow";
+import { getMeta } from "@/lib/db";
 import { duplicateSession, removeSession } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";
 import type { Session } from "@/types/session";
 import { relativeTime } from "@/utils/relativeTime";
+import { BackupCard } from "./BackupCard";
 import { DeleteSessionDialog } from "./DeleteSessionDialog";
 import { FinishedRow, InProgressRow } from "./SessionRow";
 import { SwipeRow } from "./SwipeRow";
@@ -26,6 +28,13 @@ const SectionHeading = ({ children }: { children: string }) => (
 export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 	const { locale } = useSettings();
 	const [pendingDelete, setPendingDelete] = useState<Session | null>(null);
+	const [lastExportedAt, setLastExportedAt] = useState<string | null>(null);
+
+	useEffect(() => {
+		void getMeta("lastExportedAt").then((stamp) =>
+			setLastExportedAt(stamp ?? null),
+		);
+	}, []);
 
 	// A copy: the store's array is frozen, and sorting in place would rewrite it.
 	const byRecency = [...sessions].sort((a, b) =>
@@ -82,6 +91,12 @@ export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 					</ul>
 				</>
 			)}
+
+			<BackupCard
+				sessionCount={sessions.length}
+				lastExportedAt={lastExportedAt}
+				onExported={setLastExportedAt}
+			/>
 
 			{pendingDelete && (
 				<DeleteSessionDialog

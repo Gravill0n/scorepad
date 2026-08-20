@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Plus, Tally5, Upload } from "lucide-react";
+import { Plus, Tally5 } from "lucide-react";
 import { Eyebrow } from "@/components/Eyebrow";
 import { templates } from "@/lib/templates/registry";
 import { m } from "@/paraglide/messages";
+import { ImportControl } from "./ImportControl";
 
 /**
  * First run (`1e`). The whole list is replaced by one empty state — no
@@ -45,13 +46,10 @@ export const EmptyHome = () => (
 				{m.home_new_game()}
 			</Link>
 
-			<button
-				type="button"
+			<ImportControl
 				className="flex h-[var(--h-cell)] items-center justify-center gap-2 rounded-ctrl border border-line bg-card text-body font-[var(--weight-medium)] text-ink"
-			>
-				<Upload size={16} aria-hidden="true" />
-				{m.home_import_backup()}
-			</button>
+				label={m.home_import_backup()}
+			/>
 		</div>
 	</>
 );

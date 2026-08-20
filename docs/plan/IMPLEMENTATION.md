@@ -410,13 +410,13 @@ eyebrow, relative `meta.lastExportedAt` (`NEVER` when unset, `--color-advisory` 
 days), a line counting the games that live on this phone only, then `Export` and `Import`.
 
 **Acceptance criteria:**
-- [ ] Export writes a JSON file of all sessions and sets `meta.lastExportedAt`.
-- [ ] Import accepts the same format and **merges by `id`, skipping duplicates**.
-- [ ] **Import validates entry values at the boundary.** A backup file is untrusted input:
+- [x] Export writes a JSON file of all sessions and sets `meta.lastExportedAt`.
+- [x] Import accepts the same format and **merges by `id`, skipping duplicates**.
+- [x] **Import validates entry values at the boundary.** A backup file is untrusted input:
       `scoring.ts` resolves a non-numeric entry to zero so nothing downstream sees `NaN`,
       but silently zeroing a corrupted score is a worse outcome than refusing the file.
       Rejecting it is import's job, not the scoring core's.
-- [ ] Import is reachable from the first-run footer too (task 11).
+- [x] Import is reachable from the first-run footer too (task 11).
 
 **Verification:** **Success criterion 5** — export → wipe IndexedDB → import → all sessions
 restored byte-identical, as an automated round-trip test over the store.

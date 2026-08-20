@@ -29,5 +29,14 @@
   "delete_title": "Supprimer cette partie ?",
   "delete_body": "{name} et tous ses scores seront effacés de ce téléphone. C'est irréversible.",
   "delete_cancel": "Conserver",
-  "delete_confirm": "Supprimer"
+  "delete_confirm": "Supprimer",
+  "backup_eyebrow": "Sauvegarde",
+  "backup_summary": "{count} parties n'existent que sur ce téléphone. Le fichier JSON est la seule sauvegarde.",
+  "backup_export": "Exporter",
+  "backup_import": "Importer",
+  "backup_imported": "{imported} restaurées, {skipped} déjà présentes",
+  "backup_unreadable": "{count} illisibles",
+  "backup_error_not_json": "Ce fichier n'est pas du JSON valide.",
+  "backup_error_not_a_backup": "Ce fichier n'est pas une sauvegarde Scorepad.",
+  "backup_error_too_new": "Cette sauvegarde vient d'une version plus récente de Scorepad."
 }

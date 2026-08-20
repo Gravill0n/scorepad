@@ -95,6 +95,11 @@ describe("roundScore", () => {
 		expect(roundScore({}, "marie", categories)).toBe(0);
 	});
 
+	it("reads a non-numeric entry as zero rather than letting NaN propagate", () => {
+		const round = { marie: { board: Number.NaN, rows: 3 } } as unknown as Round;
+		expect(roundScore(round, "marie", categories)).toBe(6);
+	});
+
 	it("ignores a category the round holds but the session does not", () => {
 		const round: Round = { marie: { board: 10, dropped_category: 999 } };
 		expect(roundScore(round, "marie", categories)).toBe(10);
@@ -226,6 +231,20 @@ describe("ranking", () => {
 			win: "lowest",
 		});
 		expect(result[0]?.player.id).toBe("marie");
+	});
+
+	it("never produces rank 0, even for a corrupted entry", () => {
+		const rounds = [
+			{ marie: { points: Number.NaN }, luc: { points: 10 } },
+		] as unknown as Round[];
+		const result = ranking({
+			players: [marie, luc],
+			rounds,
+			categories,
+			win: "highest",
+		});
+		expect(result.every((r) => r.rank >= 1)).toBe(true);
+		expect(result.every((r) => Number.isFinite(r.total))).toBe(true);
 	});
 
 	it("returns an empty list for a session with no players", () => {

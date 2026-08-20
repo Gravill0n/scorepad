@@ -138,6 +138,32 @@ describe("validateTemplate", () => {
 		expect(validateTemplate(valid({ entry: "team" }), "catan")).toEqual([]);
 	});
 
+	it("rejects a win direction that is neither highest nor lowest", () => {
+		const template = valid({ win: "Highest" as Template["win"] });
+		expect(validateTemplate(template, "catan")).toHaveLength(1);
+	});
+
+	it("rejects a mode that is neither sheet nor tally", () => {
+		const template = valid({ mode: "banana" as Template["mode"] });
+		expect(validateTemplate(template, "catan")).toHaveLength(1);
+	});
+
+	it("rejects a players array with only one entry", () => {
+		const players = [3] as unknown as Template["players"];
+		expect(validateTemplate(valid({ players }), "catan")).toHaveLength(1);
+	});
+
+	it("rejects an empty players array", () => {
+		const players = [] as unknown as Template["players"];
+		expect(validateTemplate(valid({ players }), "catan")).toHaveLength(1);
+	});
+
+	it("rejects a fractional player count", () => {
+		expect(
+			validateTemplate(valid({ players: [2.5, 4] }), "catan"),
+		).toHaveLength(1);
+	});
+
 	it("reports every problem at once rather than stopping at the first", () => {
 		const broken = valid({
 			id: "wrong",

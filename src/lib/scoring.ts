@@ -15,11 +15,14 @@ export const roundScore = (
 	playerId: string,
 	categories: Category[],
 ): number =>
-	categories.reduce(
-		(sum, category) =>
-			sum + cellScore(round[playerId]?.[category.key] ?? 0, category),
-		0,
-	);
+	categories.reduce((sum, category) => {
+		const entered = round[playerId]?.[category.key];
+		// Missing data resolves to a defined zero. `?? 0` alone would let a
+		// NaN from a corrupted import propagate into every total and out
+		// through ranking, where NaN !== NaN yields rank 0.
+		const value = Number.isFinite(entered) ? (entered as number) : 0;
+		return sum + cellScore(value, category);
+	}, 0);
 
 /** A sheet is a tally with exactly one round, so this is the total in both modes. */
 export const playerTotal = (

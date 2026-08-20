@@ -389,6 +389,10 @@ days), a line counting the games that live on this phone only, then `Export` and
 **Acceptance criteria:**
 - [ ] Export writes a JSON file of all sessions and sets `meta.lastExportedAt`.
 - [ ] Import accepts the same format and **merges by `id`, skipping duplicates**.
+- [ ] **Import validates entry values at the boundary.** A backup file is untrusted input:
+      `scoring.ts` resolves a non-numeric entry to zero so nothing downstream sees `NaN`,
+      but silently zeroing a corrupted score is a worse outcome than refusing the file.
+      Rejecting it is import's job, not the scoring core's.
 - [ ] Import is reachable from the first-run footer too (task 11).
 
 **Verification:** **Success criterion 5** — export → wipe IndexedDB → import → all sessions

@@ -53,10 +53,18 @@ export const validateTemplate = (
 		}
 	}
 
-	const [min, max] = template.players;
-	if (min < 1) problems.push(`players minimum ${min} is below 1`);
-	if (max < min)
-		problems.push(`players maximum ${max} is below minimum ${min}`);
+	if (
+		!Array.isArray(template.players) ||
+		template.players.length !== 2 ||
+		!template.players.every((n) => Number.isInteger(n))
+	) {
+		problems.push("players must be exactly two integers, [min, max]");
+	} else {
+		const [min, max] = template.players;
+		if (min < 1) problems.push(`players minimum ${min} is below 1`);
+		if (max < min)
+			problems.push(`players maximum ${max} is below minimum ${min}`);
+	}
 
 	if (template.handTotal !== undefined) {
 		if (!isNonZeroInteger(template.handTotal)) {
@@ -67,8 +75,20 @@ export const validateTemplate = (
 		}
 	}
 
-	// Widened deliberately: Template says this is already narrow, but the value
-	// arrives from JSON and the point of validation is to catch what TS cannot.
+	// The next three are widened deliberately. Template already narrows them, but
+	// registry.ts casts the imported JSON with `as Template[]`, so TypeScript is
+	// not actually checking these values — and `win` silently reverses the
+	// ranking direction if it is wrong.
+	const mode: string = template.mode;
+	if (mode !== "sheet" && mode !== "tally") {
+		problems.push(`mode "${mode}" must be "sheet" or "tally"`);
+	}
+
+	const win: string = template.win;
+	if (win !== "highest" && win !== "lowest") {
+		problems.push(`win "${win}" must be "highest" or "lowest"`);
+	}
+
 	const entry: string | undefined = template.entry;
 	if (entry !== undefined && entry !== "player" && entry !== "team") {
 		problems.push(`entry "${entry}" must be "player" or "team"`);

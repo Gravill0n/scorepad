@@ -569,7 +569,34 @@ bug. Owed to the designer.
 **Dependencies:** 17, 9. **Scope:** S.
 
 ### ✅ Checkpoint D — A session can be born
-- [ ] Home → picker → setup → a persisted session, offline, in French, no scroll anywhere.
+- [x] Home → picker → setup → a persisted session, offline, in French — one walk through
+      the **real route tree** in `src/routes/newSession.flow.test.tsx`: first run in French,
+      the shelf counting its own eleven games, `1i`'s duplicate-team block in French, then a
+      Belote session in IndexedDB with the template snapshotted and both names in
+      `meta.recentNames`. A second test walks the same path with `fetch` and
+      `XMLHttpRequest` stubbed and asserts **neither is ever called**.
+- [ ] **No scroll anywhere is not asserted** — jsdom has no layout engine, so this is
+      arithmetic, not measurement, and task 32 owns the real check at 390 × 844:
+
+      | Screen | Worst legal case | Content height |
+      |---|---|---|
+      | Picker | 11 tiles, 6 rows | 52 + 62 + 660 + 20 = **794** |
+      | Setup | 12 counter rows, all named | 52 + 576 + 86 = **714** |
+      | Setup | 12 rows, none named (transient) | + banner + recent block ≈ **866** |
+
+      Against 800 (844 less the status band). The last row is why both screens keep an
+      `overflow-y-auto` safety valve: clipping a row out of reach is worse than a scroll.
+
+**The review found four defects, all fixed in `7d92035`:** picking a colour unmounted an open
+modal `<dialog>`, skipping `--dur-sheet` and dropping focus instead of returning it to the
+token that opened the sheet; taken swatches were `disabled`, so the grid that deliberately
+never reflows was invisible to the keyboard; the tile's generated art repeated the game name
+into the accessible name (`Wingspan Wingspan sheet…`); and the palette index sat at 80%
+opacity, where `--player-ink` no longer clears 4.5:1.
+
+`PLAYED RECENTLY` now hides rather than dims when the table is full and named. The pills can
+do nothing at that point, and the ~92px they occupy is exactly what a twelve-player counter
+needs to fit 844.
 
 ---
 

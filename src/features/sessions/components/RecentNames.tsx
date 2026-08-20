@@ -19,7 +19,10 @@ export const RecentNames = ({
 	full: boolean;
 	onPick: (name: string) => void;
 }) => {
-	if (names.length === 0) return null;
+	// Hidden rather than dimmed once the table is full and named: the pills can
+	// do nothing at that point, and the ~92px they occupy is the difference
+	// between a twelve-player counter fitting 844 and scrolling.
+	if (names.length === 0 || full) return null;
 
 	return (
 		<div className="mt-5">
@@ -29,10 +32,9 @@ export const RecentNames = ({
 					<li key={name}>
 						<button
 							type="button"
-							disabled={full}
 							onClick={() => onPick(name)}
 							aria-label={m.setup_recent_add({ name })}
-							className="flex h-[var(--h-tap)] items-center rounded-token border border-line bg-card px-3.5 text-body text-ink disabled:opacity-50"
+							className="flex h-[var(--h-tap)] items-center rounded-token border border-line bg-card px-3.5 text-body text-ink"
 						>
 							{name}
 						</button>

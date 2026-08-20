@@ -274,3 +274,32 @@ describe("choosing a colour", () => {
 		expect((token as HTMLElement).style.background).toContain("--player-07");
 	});
 });
+
+describe("the height the screen has to live in", () => {
+	it("drops the recent block once the table is full and named", async () => {
+		await putMeta("recentNames", ["Marie", "Luc"]);
+		await renderSetup("belote");
+		await screen.findByRole("button", { name: "Add Marie" });
+
+		fireEvent.click(screen.getByRole("button", { name: "Add Marie" }));
+		fireEvent.click(screen.getByRole("button", { name: "Add Luc" }));
+
+		// Belote is exactly two teams: with both named, a pill has nowhere to go,
+		// and the ~92px it occupies is the difference between a twelve-player
+		// counter fitting 844 and scrolling.
+		expect(screen.queryByText("Played recently")).toBeNull();
+	});
+
+	it("brings it back the moment there is a row to fill", async () => {
+		await putMeta("recentNames", ["Marie", "Luc"]);
+		await renderSetup("belote");
+		await screen.findByRole("button", { name: "Add Marie" });
+
+		fireEvent.click(screen.getByRole("button", { name: "Add Marie" }));
+		fireEvent.click(screen.getByRole("button", { name: "Add Luc" }));
+		const [first] = nameFields();
+		fireEvent.change(first as HTMLInputElement, { target: { value: "" } });
+
+		expect(screen.getByText("Played recently")).toBeDefined();
+	});
+});

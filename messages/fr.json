@@ -74,5 +74,15 @@
   "colour_swatch": "Couleur {n}",
   "colour_swatch_taken": "Couleur {n}, déjà prise",
   "colour_note": "Les couleurs déjà prises sont estompées. L'initiale reste sur la pastille partout, pour que la couleur ne soit jamais la seule différence entre deux joueurs.",
-  "setup_recolor": "Couleur de {name}"
+  "setup_recolor": "Couleur de {name}",
+  "setup_error_too_few": "{game} demande au moins {min} joueurs.",
+  "setup_error_too_few_teams": "{game} demande {min} équipes.",
+  "setup_error_too_many": "{game} accepte au plus {max} joueurs.",
+  "setup_error_too_many_teams": "{game} accepte au plus {max} équipes.",
+  "setup_error_empty": "Chaque joueur doit avoir un nom.",
+  "setup_error_empty_teams": "Chaque équipe doit avoir un nom.",
+  "setup_error_duplicate": "Deux joueurs portent le même nom. Renommez-en un pour continuer.",
+  "setup_error_duplicate_teams": "Deux équipes portent le même nom. Renommez-en une pour continuer.",
+  "setup_fix_names": "Corrigez les noms pour continuer",
+  "setup_fix_count": "Corrigez la composition pour continuer"
 }

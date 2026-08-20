@@ -6,7 +6,8 @@ import {
 	RouterProvider,
 } from "@tanstack/react-router";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { closeDatabase, putMeta } from "@/lib/db";
+import { AppProvider } from "@/app/provider";
+import { closeDatabase, getAllSessions, getMeta, putMeta } from "@/lib/db";
 import { templates } from "@/lib/templates/registry";
 import type { Template } from "@/types/template";
 import { PlayerSetup } from "./PlayerSetup";
@@ -29,18 +30,27 @@ const renderSetup = async (id: string) => {
 	const setup = createRoute({
 		getParentRoute: () => root,
 		path: "/new/players",
-		component: () => <PlayerSetup template={find(id)} />,
+		component: () => (
+			<AppProvider>
+				<PlayerSetup template={find(id)} />
+			</AppProvider>
+		),
 	});
 	const picker = createRoute({
 		getParentRoute: () => root,
 		path: "/new",
 		component: () => <p>shelf</p>,
 	});
+	const sheet = createRoute({
+		getParentRoute: () => root,
+		path: "/session/$id",
+		component: () => <p>scoresheet</p>,
+	});
 
 	render(
 		<RouterProvider
 			router={createRouter({
-				routeTree: root.addChildren([setup, picker]),
+				routeTree: root.addChildren([setup, picker, sheet]),
 				history: createMemoryHistory({ initialEntries: ["/new/players"] }),
 			})}
 		/>,
@@ -131,5 +141,94 @@ describe("player setup", () => {
 		expect(nameFields()).toHaveLength(1);
 		fireEvent.click(firstButton(/Remove/));
 		expect(nameFields()).toHaveLength(1);
+	});
+});
+
+describe("blocking validation and the write that starts the game", () => {
+	const type = (field: HTMLInputElement, value: string) =>
+		fireEvent.change(field, { target: { value } });
+
+	const primary = () => screen.getByRole("button", { name: "Start scoring" });
+
+	it("blocks an unnamed row, and says so twice", async () => {
+		await renderSetup("wingspan");
+
+		expect((primary() as HTMLButtonElement).disabled).toBe(true);
+		expect(screen.getByRole("alert").textContent).toContain(
+			"Every player needs a name.",
+		);
+		expect(screen.getByText("Fix the names to continue")).toBeDefined();
+	});
+
+	it("blocks two teams that share a name — the case 1i is drawn on", async () => {
+		await renderSetup("belote");
+		const [first, second] = nameFields();
+		type(first as HTMLInputElement, "Marie & Luc");
+		type(second as HTMLInputElement, "Marie & Luc");
+
+		expect((primary() as HTMLButtonElement).disabled).toBe(true);
+		expect(screen.getByRole("alert").textContent).toContain(
+			"Two teams share a name. Rename one to continue.",
+		);
+	});
+
+	it("states the reason in prose, not in a fixed pill", async () => {
+		await renderSetup("belote");
+		const banner = screen.getByRole("alert");
+		// Auto-height and wrapping: the French string is the longer one, and the
+		// container is sized for it.
+		expect(banner.className).not.toMatch(/\bh-\[/);
+		expect(banner.className).toContain("leading-normal");
+		expect(banner.className).toContain("text-alarm-ink");
+		expect(banner.className).toContain("bg-alarm-bg");
+	});
+
+	it("unblocks the moment the table is playable", async () => {
+		await renderSetup("wingspan");
+		const [first, second] = nameFields();
+		type(first as HTMLInputElement, "Marie");
+		type(second as HTMLInputElement, "Luc");
+
+		expect((primary() as HTMLButtonElement).disabled).toBe(false);
+		expect(screen.queryByRole("alert")).toBeNull();
+	});
+
+	it("creates the session, remembers the names and opens the scoresheet", async () => {
+		await renderSetup("wingspan");
+		const [first, second] = nameFields();
+		type(first as HTMLInputElement, "Marie");
+		type(second as HTMLInputElement, "Luc");
+
+		fireEvent.click(primary());
+		await screen.findByText("scoresheet");
+
+		const stored = await getAllSessions();
+		expect(stored).toHaveLength(1);
+		expect(stored[0]?.players.map((player) => player.name)).toEqual([
+			"Marie",
+			"Luc",
+		]);
+		// The snapshot came from the template, so a later template edit cannot
+		// move a played score.
+		expect(stored[0]?.categories).toHaveLength(6);
+		expect(await getMeta("recentNames")).toEqual(["Marie", "Luc"]);
+	});
+
+	it("asks for durable storage, since IndexedDB is the only copy", async () => {
+		const persist = vi.fn().mockResolvedValue(true);
+		vi.stubGlobal("navigator", {
+			...navigator,
+			storage: { persist, persisted: vi.fn().mockResolvedValue(false) },
+		});
+
+		await renderSetup("wingspan");
+		const [first, second] = nameFields();
+		type(first as HTMLInputElement, "Marie");
+		type(second as HTMLInputElement, "Luc");
+		fireEvent.click(primary());
+		await screen.findByText("scoresheet");
+
+		expect(persist).toHaveBeenCalled();
+		vi.unstubAllGlobals();
 	});
 });

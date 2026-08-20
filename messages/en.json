@@ -74,5 +74,15 @@
   "colour_swatch": "Colour {n}",
   "colour_swatch_taken": "Colour {n}, already taken",
   "colour_note": "Taken colours are dimmed. The initial stays on the token everywhere, so colour is never the only difference between two players.",
-  "setup_recolor": "Colour for {name}"
+  "setup_recolor": "Colour for {name}",
+  "setup_error_too_few": "{game} needs at least {min} players.",
+  "setup_error_too_few_teams": "{game} needs {min} teams.",
+  "setup_error_too_many": "{game} takes at most {max} players.",
+  "setup_error_too_many_teams": "{game} takes at most {max} teams.",
+  "setup_error_empty": "Every player needs a name.",
+  "setup_error_empty_teams": "Every team needs a name.",
+  "setup_error_duplicate": "Two players share a name. Rename one to continue.",
+  "setup_error_duplicate_teams": "Two teams share a name. Rename one to continue.",
+  "setup_fix_names": "Fix the names to continue",
+  "setup_fix_count": "Fix the line-up to continue"
 }

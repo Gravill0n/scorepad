@@ -12,13 +12,16 @@ import {
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useNavigate } from "@tanstack/react-router";
 import { Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BackLink } from "@/components/BackLink";
 import { ScreenHeader } from "@/components/ScreenHeader";
+import { useSettings } from "@/hooks/useSettings";
 import { getMeta } from "@/lib/db";
 import { m } from "@/paraglide/messages";
 import type { Template } from "@/types/template";
+import { startSession } from "../api/startSession";
 import {
 	addRow,
 	fillFirstEmpty,
@@ -29,9 +32,11 @@ import {
 	renameRow,
 	type SetupRow,
 } from "../utils/setupRows";
+import { validateSetup } from "../utils/validateSetup";
 import { ColorSheet } from "./ColorSheet";
 import { PlayerSetupRow } from "./PlayerSetupRow";
 import { RecentNames } from "./RecentNames";
+import { problemAction, SetupProblemBanner } from "./SetupProblemBanner";
 
 /** `Wingspan · 1 to 5`, `Belote · exactement 2 équipes`. */
 const subtitle = (template: Template) => {
@@ -59,8 +64,12 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 	const [recent, setRecent] = useState<string[]>([]);
 	/** The row whose colour sheet is open, if any. */
 	const [recoloring, setRecoloring] = useState<string | null>(null);
+	const [starting, setStarting] = useState(false);
+	const { locale } = useSettings();
+	const navigate = useNavigate();
 	const max = template.players[1];
 	const isTeam = template.entry === "team";
+	const problem = validateSetup(rows, template);
 
 	useEffect(() => {
 		void getMeta("recentNames").then((names) => setRecent(names ?? []));
@@ -74,6 +83,20 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 			coordinateGetter: sortableKeyboardCoordinates,
 		}),
 	);
+
+	const onStart = async () => {
+		if (problem !== null || starting) return;
+		setStarting(true);
+		try {
+			const session = await startSession({ template, rows, locale });
+			await navigate({ to: "/session/$id", params: { id: session.id } });
+		} catch (error) {
+			// The write failed, so the session does not exist. Staying on the
+			// screen with the typed names intact is the only useful outcome.
+			console.error("could not start the session", error);
+			setStarting(false);
+		}
+	};
 
 	const onDragEnd = ({ active, over }: DragEndEvent) => {
 		if (!over || active.id === over.id) return;
@@ -152,6 +175,10 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 					</button>
 				)}
 
+				{problem !== null && (
+					<SetupProblemBanner problem={problem} template={template} />
+				)}
+
 				<RecentNames
 					names={recent}
 					onPick={(name) =>
@@ -183,10 +210,20 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 			<div className="shrink-0 border-line border-t px-4 pt-3.5 pb-5">
 				<button
 					type="button"
-					className="btn-primary flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)]"
+					onClick={() => void onStart()}
+					disabled={problem !== null || starting}
+					className="btn-primary flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)] disabled:opacity-50"
 				>
 					{m.setup_start()}
 				</button>
+
+				{/* Stated twice: the primary dims, and this says what to do about
+				    it. Auto-height, because the French line is the longer one. */}
+				{problem !== null && (
+					<p className="mt-2 text-center text-meta leading-normal text-alarm-ink text-pretty">
+						{problemAction(problem)}
+					</p>
+				)}
 			</div>
 		</div>
 	);

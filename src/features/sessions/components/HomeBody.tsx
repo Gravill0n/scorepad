@@ -1,7 +1,9 @@
+import type { Session } from "@/types/session";
 import { EmptyHome } from "./EmptyHome";
+import { SessionList } from "./SessionList";
 
 type HomeBodyProps = {
-	sessionCount: number;
+	sessions: Session[];
 	status: "loading" | "ready";
 };
 
@@ -12,8 +14,8 @@ type HomeBodyProps = {
  * because it has not been read yet, and rendering the first-run state from that
  * would tell somebody with twenty games that they have none.
  */
-export const HomeBody = ({ sessionCount, status }: HomeBodyProps) => {
+export const HomeBody = ({ sessions, status }: HomeBodyProps) => {
 	if (status === "loading") return <div className="flex-1" />;
-	if (sessionCount === 0) return <EmptyHome />;
-	return <div className="flex-1" />;
+	if (sessions.length === 0) return <EmptyHome />;
+	return <SessionList sessions={sessions} />;
 };

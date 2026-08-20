@@ -368,16 +368,21 @@ copy, the eyebrow `NO ACCOUNT · NO SERVER · WORKS OFFLINE`, and a footer carry
 `FINISHED · N` → finished sessions. Never re-sorted by game or name.
 
 **Acceptance criteria:**
-- [ ] In-progress row: game name + `SHEET`/`TALLY` badge; session name · `hand N` or
+- [x] In-progress row: game name + `SHEET`/`TALLY` badge; session name · `hand N` or
       `category N of M`; the standing line (`512 – 468`, with `of 501` in ink-soft when the
       snapshot has a `targetScore`); relative time; `Resume →`.
-- [ ] Finished row: game name; `session · winner · score`; relative time; chevron.
-- [ ] Rows route to `/session/$id`, or to `/session/$id/results` when finished.
-- [ ] Relative time is a shared util in `src/utils/` with its own test (`20 MIN AGO`,
+- [x] Finished row: game name; `session · winner · score`; relative time; chevron.
+- [x] Rows route to `/session/$id`, or to `/session/$id/results` when finished.
+- [x] Relative time is a shared util in `src/utils/` with its own test (`20 MIN AGO`,
       `4 DAYS AGO`, `NEVER`).
 
 **Verification:** Test with a fixture of both statuses; the list is the only scrolling
 surface on the screen.
+
+*Note:* the artboard's row uses 10 / 14 / 15px type, none of which is on `tokens.css`'s
+scale (11 / 13 / 16 / 17 / 18 / 22 / 26 / 28 / 44). The build snaps to the nearest token,
+since `tokens.css` is the normative artifact and a literal size in a component is a bug.
+Owed to the designer.
 
 **Dependencies:** 11. **Scope:** M.
 

@@ -51,7 +51,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 				getMeta("theme"),
 				getMeta("locale"),
 			]);
-			if (!cancelled) setStored({ theme: savedTheme, locale: savedLocale });
+			// Merged, not replaced. This read finishes after the first paint, so
+			// a setting tapped in the meantime is already in `current` — writing
+			// the stored object wholesale would revert it, and the only symptom
+			// would be a toggle that sometimes does nothing.
+			if (!cancelled) {
+				setStored((current) => ({
+					theme: current.theme ?? savedTheme,
+					locale: current.locale ?? savedLocale,
+				}));
+			}
 		})();
 		return () => {
 			cancelled = true;

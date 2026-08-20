@@ -11,7 +11,7 @@ function Home() {
 	return (
 		<div className="flex h-dvh flex-col">
 			<HomeHeader />
-			<HomeBody sessionCount={sessions.length} status={useSessionsStatus()} />
+			<HomeBody sessions={sessions} status={useSessionsStatus()} />
 		</div>
 	);
 }

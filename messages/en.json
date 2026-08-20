@@ -12,5 +12,15 @@
   "home_switch_to_light": "Switch to light theme",
   "home_switch_language": "Switch language to {locale}",
   "relative_never": "Never",
-  "relative_just_now": "Just now"
+  "relative_just_now": "Just now",
+  "home_in_progress": "In progress",
+  "home_finished": "Finished · {count}",
+  "home_progress_hand": "hand {n}",
+  "home_progress_category": "category {n} of {total}",
+  "home_of_target": "of {target}",
+  "home_resume": "Resume",
+  "home_winner": "{name} won",
+  "home_joint_winners": "{names} tied",
+  "badge_sheet": "Sheet",
+  "badge_tally": "Tally"
 }

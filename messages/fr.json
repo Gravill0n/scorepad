@@ -12,5 +12,15 @@
   "home_switch_to_light": "Passer au thème clair",
   "home_switch_language": "Changer la langue pour {locale}",
   "relative_never": "Jamais",
-  "relative_just_now": "À l'instant"
+  "relative_just_now": "À l'instant",
+  "home_in_progress": "En cours",
+  "home_finished": "Terminées · {count}",
+  "home_progress_hand": "manche {n}",
+  "home_progress_category": "catégorie {n} sur {total}",
+  "home_of_target": "sur {target}",
+  "home_resume": "Reprendre",
+  "home_winner": "{name} gagne",
+  "home_joint_winners": "{names} à égalité",
+  "badge_sheet": "Feuille",
+  "badge_tally": "Manches"
 }

@@ -184,6 +184,29 @@ describe("a touched setting", () => {
 		expect(document.documentElement.lang).toBe("fr");
 	});
 
+	it("keeps a choice made before the stored settings have arrived", async () => {
+		// The load effect resolves after the tap. If it replaces the settings
+		// object wholesale it reverts the choice that was just made, and the
+		// only symptom is a toggle that sometimes does nothing.
+		await putMeta("theme", "light");
+
+		renderApp();
+		await act(async () => {
+			screen.getByRole("button", { name: "dark" }).click();
+		});
+
+		// Let the pending read land on top.
+		await act(async () => {
+			await getMeta("schemaVersion");
+		});
+		await act(async () => {
+			await getMeta("schemaVersion");
+		});
+
+		expect(documentTheme()).toBe("dark");
+		expect(await getMeta("theme")).toBe("dark");
+	});
+
 	it("goes back to the OS once meta is cleared", async () => {
 		await putMeta("theme", "dark");
 		const first = renderApp();

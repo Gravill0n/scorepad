@@ -38,5 +38,15 @@
   "backup_unreadable": "{count} could not be read",
   "backup_error_not_json": "That file is not valid JSON.",
   "backup_error_not_a_backup": "That file is not a Scorepad backup.",
-  "backup_error_too_new": "That backup was written by a newer version of Scorepad."
+  "backup_error_too_new": "That backup was written by a newer version of Scorepad.",
+  "back": "Back",
+  "picker_title": "Choose a game",
+  "picker_filter": "Filter {count} games",
+  "picker_clear_filter": "Clear the filter",
+  "picker_no_match_title": "No game matches “{query}”",
+  "picker_no_match_copy": "{count} games ship built in and nothing else can be added. The counter keeps score for anything that is not here.",
+  "picker_meta_sheet": "{count} categories · {min}–{max}",
+  "picker_meta_tally": "to {target} · {min}–{max}",
+  "picker_meta_teams": "to {target} · 2 teams",
+  "picker_meta_players": "{min}–{max}"
 }

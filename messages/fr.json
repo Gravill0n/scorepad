@@ -38,5 +38,15 @@
   "backup_unreadable": "{count} illisibles",
   "backup_error_not_json": "Ce fichier n'est pas du JSON valide.",
   "backup_error_not_a_backup": "Ce fichier n'est pas une sauvegarde Scorepad.",
-  "backup_error_too_new": "Cette sauvegarde vient d'une version plus récente de Scorepad."
+  "backup_error_too_new": "Cette sauvegarde vient d'une version plus récente de Scorepad.",
+  "back": "Retour",
+  "picker_title": "Choisir un jeu",
+  "picker_filter": "Filtrer les {count} jeux",
+  "picker_clear_filter": "Effacer le filtre",
+  "picker_no_match_title": "Aucun jeu ne correspond à « {query} »",
+  "picker_no_match_copy": "{count} jeux sont inclus et aucun autre ne peut être ajouté. Le compteur tient les scores de tout le reste.",
+  "picker_meta_sheet": "{count} catégories · {min}–{max}",
+  "picker_meta_tally": "jusqu'à {target} · {min}–{max}",
+  "picker_meta_teams": "jusqu'à {target} · 2 équipes",
+  "picker_meta_players": "{min}–{max}"
 }

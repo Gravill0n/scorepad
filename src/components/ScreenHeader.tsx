@@ -26,7 +26,7 @@ export const ScreenHeader = ({
 	<header className="flex min-h-[var(--h-primary)] shrink-0 items-center gap-3 px-4">
 		{leading}
 		<div className="min-w-0 flex-1">
-			<h1 className="truncate font-[var(--weight-semi)] text-strong text-ink">
+			<h1 className="truncate font-[var(--weight-bold)] text-screen text-ink">
 				{title}
 			</h1>
 			{subtitle ? (

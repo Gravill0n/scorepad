@@ -8,6 +8,7 @@ import {
 	sessionTotals,
 	sessionWinners,
 } from "../utils/summary";
+import { ModeBadge } from "./ModeBadge";
 
 /** The game's display name lives in the template, not in the snapshot. */
 const gameName = (session: Session) =>
@@ -23,12 +24,6 @@ const progressLabel = (session: Session) => {
 				total: progress.total,
 			});
 };
-
-const ModeBadge = ({ mode }: { mode: Session["mode"] }) => (
-	<span className="rounded-token border border-line px-1.5 py-0.5 font-mono text-eyebrow tracking-eyebrow text-ink-soft uppercase">
-		{mode === "sheet" ? m.badge_sheet() : m.badge_tally()}
-	</span>
-);
 
 const Stamp = ({ children }: { children: string }) => (
 	<span className="font-mono text-eyebrow text-ink-soft uppercase">

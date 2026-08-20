@@ -84,5 +84,8 @@
   "setup_error_duplicate": "Deux joueurs portent le même nom. Renommez-en un pour continuer.",
   "setup_error_duplicate_teams": "Deux équipes portent le même nom. Renommez-en une pour continuer.",
   "setup_fix_names": "Corrigez les noms pour continuer",
-  "setup_fix_count": "Corrigez la composition pour continuer"
+  "setup_fix_count": "Corrigez la composition pour continuer",
+  "keypad_sign": "Positif ou négatif",
+  "keypad_backspace": "Effacer un chiffre",
+  "keypad_digit": "{digit}"
 }

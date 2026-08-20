@@ -84,5 +84,8 @@
   "setup_error_duplicate": "Two players share a name. Rename one to continue.",
   "setup_error_duplicate_teams": "Two teams share a name. Rename one to continue.",
   "setup_fix_names": "Fix the names to continue",
-  "setup_fix_count": "Fix the line-up to continue"
+  "setup_fix_count": "Fix the line-up to continue",
+  "keypad_sign": "Positive or negative",
+  "keypad_backspace": "Delete one digit",
+  "keypad_digit": "{digit}"
 }

@@ -10,5 +10,7 @@
   "home_import_backup": "Importer une sauvegarde",
   "home_switch_to_dark": "Passer au thème sombre",
   "home_switch_to_light": "Passer au thème clair",
-  "home_switch_language": "Changer la langue pour {locale}"
+  "home_switch_language": "Changer la langue pour {locale}",
+  "relative_never": "Jamais",
+  "relative_just_now": "À l'instant"
 }

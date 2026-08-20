@@ -10,5 +10,7 @@
   "home_import_backup": "Import a backup",
   "home_switch_to_dark": "Switch to dark theme",
   "home_switch_to_light": "Switch to light theme",
-  "home_switch_language": "Switch language to {locale}"
+  "home_switch_language": "Switch language to {locale}",
+  "relative_never": "Never",
+  "relative_just_now": "Just now"
 }

@@ -352,9 +352,11 @@ copy, the eyebrow `NO ACCOUNT · NO SERVER · WORKS OFFLINE`, and a footer carry
 `New game` **and** `Import a backup`.
 
 **Acceptance criteria:**
-- [ ] Renders when zero sessions exist. No onboarding carousel, no dialog.
-- [ ] `New game` routes to `/new`.
-- [ ] Fits 390 × 844 in French.
+- [x] Renders when zero sessions exist. No onboarding carousel, no dialog.
+- [x] `New game` routes to `/new`.
+- [x] Fits 390 × 844 in French — the French strings render and the layout has no fixed
+      heights outside tokens. **The actual 390 × 844 fit is not asserted here:** jsdom has
+      no layout engine, so it is task 32's job with a real viewport.
 
 **Verification:** Component test on an empty store; visual check against `1e`.
 

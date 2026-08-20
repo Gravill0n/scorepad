@@ -2,5 +2,13 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Accueil",
   "language_label": "Langue",
-  "current_locale": "Langue actuelle : {locale}"
+  "current_locale": "Langue actuelle : {locale}",
+  "home_empty_title": "Rien de marqué",
+  "home_empty_copy": "Choisissez un jeu, ajoutez les joueurs, remplissez la feuille. {count} jeux sont inclus, et tout reste sur ce téléphone.",
+  "home_offline_promise": "Sans compte · Sans serveur · Fonctionne hors ligne",
+  "home_new_game": "Nouvelle partie",
+  "home_import_backup": "Importer une sauvegarde",
+  "home_switch_to_dark": "Passer au thème sombre",
+  "home_switch_to_light": "Passer au thème clair",
+  "home_switch_language": "Changer la langue pour {locale}"
 }

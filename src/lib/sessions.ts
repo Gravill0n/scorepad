@@ -117,8 +117,21 @@ const serialize = <T>(operation: () => Promise<T>): Promise<T> => {
 export const useSessions = (): Session[] =>
 	useSyncExternalStore(subscribe, getSessions, getSessions);
 
+/**
+ * "loading" until the first read finishes. Without it every screen that asks
+ * `sessions.length === 0` claims the user has no games during the read, and
+ * Home flashes its first-run empty state at somebody with twenty sessions.
+ */
+let status: "loading" | "ready" = "loading";
+const getStatus = () => status;
+
+export const useSessionsStatus = (): "loading" | "ready" =>
+	useSyncExternalStore(subscribe, getStatus, getStatus);
+
 export const loadSessions = async (): Promise<Session[]> => {
-	publish(await getAllSessions());
+	const all = await getAllSessions();
+	status = "ready";
+	publish(all);
 	return loaded;
 };
 

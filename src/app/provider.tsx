@@ -6,6 +6,7 @@ import {
 	useState,
 } from "react";
 import { getMeta, putMeta } from "@/lib/db";
+import { loadSessions } from "@/lib/sessions";
 import {
 	getLocale,
 	setLocale as setParaglideLocale,
@@ -55,6 +56,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		return () => {
 			cancelled = true;
 		};
+	}, []);
+
+	// One read at boot; every screen reads the store from then on.
+	useEffect(() => {
+		void loadSessions();
 	}, []);
 
 	// An untouched install keeps following the OS, including while it is open.

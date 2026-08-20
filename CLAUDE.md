@@ -64,6 +64,19 @@ px height, radius or ms duration in a component is a bug** — take it from a to
   carries the player's initial.
 - Size every container for the French string. Validation banners and buttons are
   auto-height, never fixed pills.
+
+**Not every token is a Tailwind utility.** Tailwind 4 only picks up the namespaces it
+knows, and a class built on the others compiles to *nothing* — silently, with a green
+build. Verified against the compiled CSS:
+
+| Tokens | How to use them |
+|---|---|
+| `--color-*`, `--text-*`, `--tracking-*`, `--font-*`, `--radius-*`, `--shadow-*` | Direct: `bg-paper`, `text-eyebrow`, `rounded-card`, `shadow-sheet` |
+| `--h-*`, `--weight-*`, `--dur-*`, `--ease` | Arbitrary value: `h-[var(--h-tap)]`, `font-[var(--weight-semi)]`, `duration-[var(--dur-sheet)]` |
+| `--space-*` | Already Tailwind's default 4px scale — `p-4` **is** `--space-4`. Don't "fix" these. |
+
+`font-semi` and `h-primary` look right, lint clean and do nothing. If a style has no
+effect, check this table first.
 - Bottom sheets are the only overlay. The one dialog in the app confirms deleting a session.
 - Every screen fits 390 × 844 in French at its worst-case player count. Only Home's list
   and Hand history scroll.

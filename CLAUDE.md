@@ -22,12 +22,12 @@ documentation written after the fact.
 bun install
 bun dev              # vite dev --port 3000
 bun run build        # static bundle, no server entry
-bun test             # vitest run
+bun run test         # vitest run (`bun test` runs Bun's own runner, not vitest)
 bun run lint         # biome check .
 bun run lint:fix     # biome check --write .
 ```
 
-Run `bun run lint` and `bun test` before committing.
+Run `bun run lint` and `bun run test` before committing.
 
 ## Architecture
 

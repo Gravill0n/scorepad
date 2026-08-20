@@ -607,13 +607,18 @@ needs to fit 844.
 **Description:** The shared 3 × 4 keypad (`1–9`, `±`, `0`, `⌫`) — no `<input>`, ever.
 
 **Acceptance criteria:**
-- [ ] 60px keys at 8px gaps, digits at 26 on card fill, utilities on `--color-paper-dim`.
-- [ ] `±` toggles sign on any value shape including empty and `0`; `⌫` removes one digit and
-      returns to the empty state, not to `0`.
-- [ ] Key size and the action row clear 44px.
+- [x] 60px keys at 8px gaps, digits at 26 on card fill, utilities on `--color-paper-dim`.
+- [x] `±` toggles sign on any value shape including empty and `0`; `⌫` removes one digit and
+      returns to the empty state, not to `0`. Writing the test settled a rule the task left
+      open: `⌫` on `-4` leaves `-`, not `""` — the sign was typed deliberately, it is the same
+      state `±` produces on an empty cell, and one press should never delete two things.
+- [x] Key size and the action row clear 44px.
 
 **Verification:** Component test walking `±` and `⌫` over every value shape — this is one of
-the three surfaces where a mis-tap costs data.
+the three surfaces where a mis-tap costs data. The rules are a pure module
+(`utils/keypadValue.ts`) with a case per shape; the component test walks them through real
+taps. Five digits is the cap: past any seed template's score, and it keeps the readout on
+one line.
 
 **Dependencies:** 10. **Scope:** S.
 
@@ -623,14 +628,16 @@ the three surfaces where a mis-tap costs data.
 footer with pager dots.
 
 **Acceptance criteria:**
-- [ ] **Chip text = first three letters of the *translated* label, uppercased**; if two
+- [x] **Chip text = first three letters of the *translated* label, uppercased**; if two
       collide within a template, both fall back to their 1-based index. Chip states:
       done = `--color-paper-dim` + ✓, current = accent fill + `●`, future = card + hairline.
       Any chip is tappable to revisit its category.
-- [ ] Row: 28px token with initial · name at 17 · mono 11 `<total> SO FAR · <ordinal>` with
-      `=` on a tie · right-aligned 64×48 cell in its empty/filled/focused states.
-- [ ] Empty cell renders an em-dash in `--color-ink-faint` and scores 0.
-- [ ] Dark (`1k`) is the same structure; the accent primary uses `.btn-primary` so dark
+- [x] Row: 28px token with initial · name at 17 · mono 11 `<total> SO FAR · <ordinal>` with
+      `=` on a tie · right-aligned 64×48 cell in its empty/filled/focused states. Ordinals are
+      a tested util — `1st/2nd/3rd`, `1er/2e` — not a suffix table written twice.
+- [x] Empty cell renders an em-dash in `--color-ink-faint` and scores 0, and is **absent**
+      from the round rather than stored as zero, so Results can still warn about it.
+- [x] Dark (`1k`) is the same structure; the accent primary uses `.btn-primary` so dark
       accent carries ink, not paper.
 
 **Verification:** 7 players × 7 categories in French fits 390 × 844 with no frame scroll.
@@ -643,14 +650,22 @@ The abbreviation function has its own unit test including the collision fallback
 **Description:** The keypad sheet and the write path.
 
 **Acceptance criteria:**
-- [ ] Sheet header: active player's token, name, mono status line (`SCIENCE · 45 SO FAR`),
-      live value at 40 with a 2px accent caret.
-- [ ] Action row: `Clear` (96px secondary) and a primary **naming the next player**
-      (`Next — Dan →`).
-- [ ] Every keystroke recomputes value, running total and rank *label* at `--dur-value`.
-      **Rows never reorder.**
-- [ ] Every cell change persists immediately; there is no save action.
-- [ ] Footer primary reads `Next category →`, and `See results →` on the last category.
+- [x] Sheet header: active player's token, name, mono status line (`BIRDS · 45 SO FAR`),
+      live value with a 2px accent caret. **The keypad is not a modal sheet:** it takes the
+      sheet's treatment but no scrim and no inertness, because `1j` draws the rows behind it
+      at full strength on purpose — every number sits beside its peers, and that peer check is
+      how a typo is caught. A departure from `SPEC.md`'s blanket "bottom sheets … `--scrim`
+      behind", following the artboard and its stated rationale.
+- [x] Action row: `Clear` (96px secondary) and a primary **naming the next player**
+      (`Next — Dan →`), which names the next *category* once the column is walked, so the
+      button always says where the phone is going.
+- [x] Every keystroke recomputes value, running total and rank *label*. **Rows never
+      reorder** — asserted with a score that puts seat one into the lead.
+- [x] Every cell change persists immediately; there is no save action. **This is where the
+      phase's real bug was:** patching `rounds` wholesale from the last render meant two cells
+      entered in quick succession were both built from one snapshot, and the second erased the
+      first. `lib/sessions.setCell` re-reads the session inside the serialised write.
+- [x] Footer primary reads `Next category →`, and `See results →` on the last category.
 
 **Verification:** **Success criterion 6** — a full 4-player Wingspan sheet (24 cells)
 completes without losing focus, reordering rows or requiring a save.
@@ -663,12 +678,17 @@ completes without losing focus, reordering rows or requiring a save.
 adds hand history. Built once, here.
 
 **Acceptance criteria:**
-- [ ] Rename edits `name` in place; add-a-late-player appends with the next palette colour
+- [x] Rename edits `name` in place; add-a-late-player appends with the next palette colour
       and a new `sortOrder`, and existing rounds simply have no entry for them (reads as 0).
-- [ ] Finish sets `status: "finished"` and `finishedAt`, then routes to Results.
-- [ ] Lives in `features/scoresheet/components/`, imports no session-feature module.
+      The cap is the palette, not the template's range — a late player is by definition
+      outside it.
+- [x] Finish sets `status: "finished"` and `finishedAt`, then routes to Results.
+- [x] Lives in `features/scoresheet/components/`, imports no session-feature module. The
+      game-name lookup Home also needs moved to `utils/gameName.ts` rather than becoming a
+      cross-feature import.
 
-**Verification:** Adding a 5th player mid-sheet leaves all four existing columns untouched.
+**Verification:** Adding a 5th player mid-sheet leaves all four existing columns untouched —
+this is the test that caught the lost-cell bug above.
 
 **Dependencies:** 21. **Scope:** S.
 

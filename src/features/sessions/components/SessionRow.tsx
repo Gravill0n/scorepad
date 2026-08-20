@@ -1,19 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { templates } from "@/lib/templates/registry";
 import { m } from "@/paraglide/messages";
 import type { Session } from "@/types/session";
+import { gameName } from "@/utils/gameName";
 import {
 	sessionProgress,
 	sessionTotals,
 	sessionWinners,
 } from "../utils/summary";
 import { ModeBadge } from "./ModeBadge";
-
-/** The game's display name lives in the template, not in the snapshot. */
-const gameName = (session: Session) =>
-	templates.find((template) => template.id === session.templateId)?.name ??
-	session.templateId;
 
 const progressLabel = (session: Session) => {
 	const progress = sessionProgress(session);
@@ -50,7 +45,7 @@ export const InProgressRow = ({
 		<span className="min-w-0 flex-1">
 			<span className="flex items-center gap-2">
 				<span className="truncate text-strong font-[var(--weight-semi)] text-ink">
-					{gameName(session)}
+					{gameName(session.templateId)}
 				</span>
 				<ModeBadge mode={session.mode} />
 			</span>
@@ -107,7 +102,7 @@ export const FinishedRow = ({
 		>
 			<span className="min-w-0 flex-1">
 				<span className="block truncate text-row font-[var(--weight-medium)] text-ink">
-					{gameName(session)}
+					{gameName(session.templateId)}
 				</span>
 				<span className="mt-0.5 block truncate text-meta text-ink-soft">
 					{session.name} · {winnerLabel(session)}

@@ -147,12 +147,18 @@ describe("a touched setting", () => {
 	});
 
 	it("stops the OS from changing it underneath", async () => {
+		// The OS and the stored value must disagree, or waiting for "light"
+		// proves nothing: it is also what an unloaded provider shows on a light
+		// OS, and the assertion below would then race the database read.
+		stubOperatingSystem(true);
 		await putMeta("theme", "light");
 		renderApp();
+
 		await waitFor(() =>
 			expect(screen.getByTestId("theme").textContent).toBe("light"),
 		);
 
+		changeOperatingSystemTo(false);
 		changeOperatingSystemTo(true);
 		expect(documentTheme()).toBe("light");
 	});

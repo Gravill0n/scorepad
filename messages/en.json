@@ -87,5 +87,16 @@
   "setup_fix_count": "Fix the line-up to continue",
   "keypad_sign": "Positive or negative",
   "keypad_backspace": "Delete one digit",
-  "keypad_digit": "{digit}"
+  "keypad_digit": "{digit}",
+  "sheet_sub_players": "{game} · {count} players",
+  "sheet_sub_teams": "{game} · {count} teams",
+  "sheet_category_of": "Category {n} of {total}",
+  "sheet_so_far": "{total} so far",
+  "sheet_next_category": "Next category",
+  "sheet_see_results": "See results",
+  "sheet_cell": "{player}: {value}",
+  "sheet_cell_empty": "{player}: not entered",
+  "sheet_go_to_category": "Category {n}, {label}",
+  "sheet_entered_count": "{done} of {total} entered",
+  "menu_open": "More"
 }

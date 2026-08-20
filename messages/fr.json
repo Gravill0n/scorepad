@@ -101,5 +101,13 @@
   "menu_open": "Plus",
   "sheet_clear": "Effacer",
   "sheet_next_player": "Suivant — {name}",
-  "sheet_close_keypad": "Fermer le pavé"
+  "sheet_close_keypad": "Fermer le pavé",
+  "menu_rename": "Renommer la partie",
+  "menu_finish": "Terminer la partie",
+  "menu_name_label": "Nom de la partie",
+  "menu_new_player_label": "Nom du nouveau joueur",
+  "menu_new_team_label": "Nom de la nouvelle équipe",
+  "menu_save": "Enregistrer",
+  "menu_add": "Ajouter",
+  "menu_late_player_note": "Les catégories déjà jouées restent vides et comptent 0."
 }

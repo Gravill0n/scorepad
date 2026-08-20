@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { renderHook, waitFor } from "@testing-library/react";
-import { closeDatabase, getAllSessions } from "@/lib/db";
+import { closeDatabase, getAllSessions, getSession } from "@/lib/db";
 import { templates } from "@/lib/templates/registry";
 import type { Session } from "@/types/session";
 import type { Template } from "@/types/template";
@@ -13,6 +13,7 @@ import {
 	nextCopyName,
 	removeSession,
 	type SessionPatch,
+	setCell,
 	updateSession,
 	useSessions,
 } from "./sessions";
@@ -468,5 +469,99 @@ describe("a session survives a reload", () => {
 		);
 		expect(reloaded?.rounds).toHaveLength(2);
 		expect(reloaded?.rounds[1]?.[nous.id]?.hand).toBe(105);
+	});
+});
+
+describe("writing one cell", () => {
+	const seed = async () => {
+		const session = await createSession({
+			template: wingspan,
+			players: [
+				{ name: "Marie", colorIndex: 1 },
+				{ name: "Luc", colorIndex: 2 },
+			],
+		});
+		const [marie, luc] = session.players;
+		if (!marie || !luc) throw new Error("seeded players missing");
+		return { session, marie, luc };
+	};
+
+	it("keeps a cell written a moment earlier by somebody else", async () => {
+		// The regression: a screen that patches `rounds` wholesale builds both
+		// writes from one snapshot, and the second erases the first. Nothing in
+		// this app has a save action to notice, so the number is simply gone.
+		const { session, marie, luc } = await seed();
+
+		const first = setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 5,
+		});
+		const second = setCell(session.id, {
+			playerId: luc.id,
+			categoryKey: "birds",
+			value: 4,
+		});
+		await Promise.all([first, second]);
+
+		const stored = await getSession(session.id);
+		expect(stored?.rounds[0]?.[marie.id]?.birds).toBe(5);
+		expect(stored?.rounds[0]?.[luc.id]?.birds).toBe(4);
+	});
+
+	it("removes a cell rather than storing a zero for it", async () => {
+		const { session, marie } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 7,
+		});
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: undefined,
+		});
+
+		const stored = await getSession(session.id);
+		expect(stored?.rounds[0]?.[marie.id]?.birds).toBeUndefined();
+	});
+
+	it("keeps a typed zero, which is not an empty cell", async () => {
+		const { session, marie } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 0,
+		});
+
+		const stored = await getSession(session.id);
+		expect(stored?.rounds[0]?.[marie.id]?.birds).toBe(0);
+	});
+
+	it("grows the rounds array to reach the hand being written", async () => {
+		const { session, marie } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 3,
+			roundIndex: 2,
+		});
+
+		const stored = await getSession(session.id);
+		expect(stored?.rounds).toHaveLength(3);
+		expect(stored?.rounds[2]?.[marie.id]?.birds).toBe(3);
+	});
+
+	it("bumps updatedAt, so Home lifts the game being played", async () => {
+		const { session, marie } = await seed();
+		const before = session.updatedAt;
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 1,
+		});
+
+		const stored = await getSession(session.id);
+		expect((stored?.updatedAt ?? "") >= before).toBe(true);
 	});
 });

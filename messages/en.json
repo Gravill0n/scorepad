@@ -101,5 +101,13 @@
   "menu_open": "More",
   "sheet_clear": "Clear",
   "sheet_next_player": "Next — {name}",
-  "sheet_close_keypad": "Close the keypad"
+  "sheet_close_keypad": "Close the keypad",
+  "menu_rename": "Rename session",
+  "menu_finish": "Finish game",
+  "menu_name_label": "Session name",
+  "menu_new_player_label": "New player's name",
+  "menu_new_team_label": "New team's name",
+  "menu_save": "Save",
+  "menu_add": "Add",
+  "menu_late_player_note": "Earlier categories stay empty for them, and score 0."
 }

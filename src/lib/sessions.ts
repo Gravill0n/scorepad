@@ -256,6 +256,55 @@ export const duplicateSession = (id: string): Promise<Session> =>
 		return persist(copy);
 	});
 
+/**
+ * One cell, written inside the serialised operation.
+ *
+ * The alternative — patching `rounds` wholesale from what a screen last
+ * rendered — loses data: two cells entered in quick succession are both built
+ * from the same snapshot, and the second write erases the first. There is no
+ * save action anywhere to notice, and the number simply is not there when
+ * somebody looks up. Reading the current session here is what makes "every
+ * cell edit persists immediately" safe rather than merely prompt.
+ *
+ * `undefined` **removes** the cell: an empty cell and a scored zero are
+ * different facts, and Results warns about the first.
+ */
+export const setCell = (
+	id: string,
+	{
+		playerId,
+		categoryKey,
+		value,
+		roundIndex = 0,
+	}: {
+		playerId: string;
+		categoryKey: string;
+		value: number | undefined;
+		/** Sheet mode always writes round 0; tally writes the hand being entered. */
+		roundIndex?: number;
+	},
+): Promise<Session> =>
+	serialize(async () => {
+		const current = await mustFind(id);
+
+		const rounds = [...current.rounds];
+		while (rounds.length <= roundIndex) rounds.push({});
+
+		const round = { ...(rounds[roundIndex] ?? {}) };
+		const cells = { ...(round[playerId] ?? {}) };
+		if (value === undefined) delete cells[categoryKey];
+		else cells[categoryKey] = value;
+
+		round[playerId] = cells;
+		rounds[roundIndex] = round;
+
+		return persist({
+			...current,
+			rounds,
+			updatedAt: new Date().toISOString(),
+		});
+	});
+
 export const removeSession = (id: string): Promise<void> =>
 	serialize(async () => {
 		await deleteSession(id);

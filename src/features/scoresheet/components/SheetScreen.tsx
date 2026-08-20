@@ -1,40 +1,24 @@
+import { useNavigate } from "@tanstack/react-router";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { BackLink } from "@/components/BackLink";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useSettings } from "@/hooks/useSettings";
 import { ranking } from "@/lib/scoring";
-import { updateSession } from "@/lib/sessions";
+import { setCell } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";
-import type { Round, Session } from "@/types/session";
+import type { Session } from "@/types/session";
 import { gameName } from "@/utils/gameName";
 import { fromNumber, type KeypadValue, toNumber } from "@/utils/keypadValue";
 import { CategoryHead } from "./CategoryHead";
 import { CategoryStrip } from "./CategoryStrip";
 import { KeypadPanel } from "./KeypadPanel";
 import { PagerDots } from "./PagerDots";
+import { SessionMenu } from "./SessionMenu";
 import { SheetRow } from "./SheetRow";
 
 /** Sheet mode holds exactly one round, forever. */
 const entriesOf = (session: Session) => session.rounds[0] ?? {};
-
-/**
- * The round with one cell rewritten. An empty cell is **removed**, not stored
- * as zero: Results warns about a cell nobody filled in, and it can only do
- * that if "empty" and "scored nothing" stay different on disk.
- */
-const withCell = (
-	round: Round,
-	playerId: string,
-	key: string,
-	value: number | undefined,
-): Round => {
-	const cells = { ...(round[playerId] ?? {}) };
-	if (value === undefined) delete cells[key];
-	else cells[key] = value;
-
-	return { ...round, [playerId]: cells };
-};
 
 /**
  * The scoresheet for `mode: "sheet"` (`1c`, `1k`).
@@ -55,6 +39,8 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 	 * receives a number on every keystroke — there is no save action anywhere.
 	 */
 	const [typed, setTyped] = useState<KeypadValue>("");
+	const [menuOpen, setMenuOpen] = useState(false);
+	const navigate = useNavigate();
 
 	const category = session.categories[current];
 	const entries = entriesOf(session);
@@ -66,11 +52,13 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 
 	const valueFor = (playerId: string, key: string) => entries[playerId]?.[key];
 
-	/** Every keystroke lands on disk. There is no save action in this app. */
+	/**
+	 * Every keystroke lands on disk. There is no save action in this app, and
+	 * the store re-reads the session inside the write — patching `rounds`
+	 * wholesale from this render would lose a cell entered a moment earlier.
+	 */
 	const write = (playerId: string, value: number | undefined) => {
-		void updateSession(session.id, {
-			rounds: [withCell(entries, playerId, category.key, value)],
-		});
+		void setCell(session.id, { playerId, categoryKey: category.key, value });
 	};
 
 	const focusOn = (playerId: string) => {
@@ -132,6 +120,7 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 				trailing={
 					<button
 						type="button"
+						onClick={() => setMenuOpen(true)}
 						aria-label={m.menu_open()}
 						className="flex h-[var(--h-tap)] w-[var(--h-tap)] shrink-0 items-center justify-center"
 					>
@@ -176,6 +165,19 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 					);
 				})}
 			</ul>
+
+			{menuOpen && (
+				<SessionMenu
+					session={session}
+					onClose={() => setMenuOpen(false)}
+					onFinished={() =>
+						void navigate({
+							to: "/session/$id/results",
+							params: { id: session.id },
+						})
+					}
+				/>
+			)}
 
 			{focusedPlayer ? (
 				<KeypadPanel

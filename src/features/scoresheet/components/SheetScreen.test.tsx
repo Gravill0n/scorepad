@@ -49,11 +49,16 @@ const renderSheet = async (value = session()) => {
 		path: "/",
 		component: () => <p>home</p>,
 	});
+	const results = createRoute({
+		getParentRoute: () => root,
+		path: "/session/$id/results",
+		component: () => <p>results</p>,
+	});
 
 	render(
 		<RouterProvider
 			router={createRouter({
-				routeTree: root.addChildren([sheet, home]),
+				routeTree: root.addChildren([sheet, home, results]),
 				history: createMemoryHistory({ initialEntries: ["/session/s1"] }),
 			})}
 		/>,
@@ -127,6 +132,18 @@ describe("the scoresheet", () => {
 		fireEvent.click(screen.getByRole("button", { name: /Next category/ }));
 		fireEvent.click(screen.getByRole("button", { name: /Next category/ }));
 		expect(screen.getByRole("button", { name: /See results/ })).toBeDefined();
+	});
+
+	it("actually goes to Results from the last category", async () => {
+		await renderSheet();
+		fireEvent.click(screen.getByRole("button", { name: /Next category/ }));
+		fireEvent.click(screen.getByRole("button", { name: /Next category/ }));
+
+		const results = screen.getByRole("button", { name: /See results/ });
+		expect((results as HTMLButtonElement).disabled).toBe(false);
+
+		fireEvent.click(results);
+		await screen.findByText("results");
 	});
 
 	it("counts entered cells in the pager, not players", async () => {

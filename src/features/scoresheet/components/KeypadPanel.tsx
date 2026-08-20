@@ -81,7 +81,7 @@ export const KeypadPanel = ({
 						// holding the phone is not always the one who called the number.
 						aria-live="polite"
 					>
-						{value === "" ? "" : value}
+						{value}
 					</span>
 					<span className="h-8 w-0.5 bg-accent" aria-hidden="true" />
 				</div>

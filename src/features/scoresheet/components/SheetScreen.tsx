@@ -77,13 +77,27 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 	 * next category once the column is walked. The button always says where the
 	 * phone is going.
 	 */
+	// Only meaningful while a player is focused: with none, findIndex is -1 and
+	// "the next player" would read as the first, which is not what it means.
 	const seat = session.players.findIndex((player) => player.id === focused);
-	const nextPlayer = session.players[seat + 1];
+	const nextPlayer = focused === null ? undefined : session.players[seat + 1];
 	const primaryLabel = nextPlayer
 		? m.sheet_next_player({ name: nextPlayer.name })
 		: isLast
 			? m.sheet_see_results()
 			: m.sheet_next_category();
+
+	const toResults = () =>
+		void navigate({ to: "/session/$id/results", params: { id: session.id } });
+
+	/** Forward one category, or off the end of the sheet to Results. */
+	const advance = () => {
+		if (isLast) {
+			toResults();
+			return;
+		}
+		setCurrent(current + 1);
+	};
 
 	const onPrimary = () => {
 		if (nextPlayer) {
@@ -91,7 +105,7 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 			return;
 		}
 		setFocused(null);
-		if (!isLast) setCurrent(current + 1);
+		advance();
 	};
 	const isCategoryDone = (index: number) => {
 		const key = session.categories[index]?.key;
@@ -205,9 +219,8 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 
 					<button
 						type="button"
-						onClick={() => setCurrent(current + 1)}
-						disabled={isLast}
-						className="btn-primary mt-3 flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)] disabled:opacity-50"
+						onClick={advance}
+						className="btn-primary mt-3 flex h-[var(--h-primary)] w-full items-center justify-center rounded-ctrl text-row font-[var(--weight-medium)]"
 					>
 						{isLast ? m.sheet_see_results() : m.sheet_next_category()} →
 					</button>

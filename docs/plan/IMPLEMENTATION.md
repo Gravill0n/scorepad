@@ -108,28 +108,31 @@ Phase 8  French pass ── PWA ── deploy ── contract tests ── succe
 the build to a client-only output. This is the spec's task 0.
 
 **Acceptance criteria:**
-- [ ] Deleted: `prisma/`, `prisma.config.ts`, `src/db.ts`, `src/generated/`, `src/server/`,
+- [x] Deleted: `prisma/`, `prisma.config.ts`, `src/db.ts`, `src/generated/`, `src/server/`,
       `src/data/`, `src/routes/test.page.tsx`, `src/integrations/tanstack-query/`.
-- [ ] Removed from `package.json`: `prisma`, `@prisma/client`, `@prisma/adapter-pg`,
+- [x] Removed from `package.json`: `prisma`, `@prisma/client`, `@prisma/adapter-pg`,
       `@faker-js/faker`, `dotenv-cli`, `nitro`, `@heroui/react`, `@heroui/styles`,
       `@tanstack/react-table`, `@tanstack/react-form`, `@tanstack/match-sorter-utils`,
       `@tanstack/query-db-collection`, `@tanstack/react-db`, `@tanstack/react-query`,
       `@tanstack/react-query-devtools`, `@tanstack/react-router-ssr-query`, and all `db:*`
       plus `post-cta-init` scripts. `lucide-react` stays.
-- [ ] `vite.config.ts`: `nitro()` plugin gone, SPA mode enabled on `tanstackStart` (verify
+- [x] `vite.config.ts`: `nitro()` plugin gone, SPA mode enabled on `tanstackStart` (verify
       the option name against the installed version — do not copy it from memory).
-- [ ] `tsconfig.json`: only the `@/*` alias survives; `@Components/*`, `@Data/*`,
+- [x] `tsconfig.json`: only the `@/*` alias survives; `@Components/*`, `@Data/*`,
       `@Hooks/*`, `@Server/*` removed.
-- [ ] `src/router.tsx` builds the router with no query-client context.
-- [ ] The scaffold's names go with it: `package.json` `name` becomes `scorepad`, and the
+- [x] `src/router.tsx` builds the router with no query-client context.
+- [x] The scaffold's names go with it: `package.json` `name` becomes `scorepad`, and the
       document title in `root.layout.tsx` stops reading `Board Game Counter`. The product is
       Scorepad, and Home's header renders that wordmark.
 
 **Verification:**
-- [ ] `bun install && bun run build` succeeds and `dist/` contains `index.html` and no
+- [x] `bun install && bun run build` succeeds and `dist/` contains `index.html` and no
       server entry (`.output/server`, `server.js`, nitro artifacts absent).
-- [ ] `grep -ril "prisma\|heroui\|react-query" src/` returns nothing.
-- [ ] `bun run lint` clean.
+- [x] `grep -ril "prisma\|heroui\|react-query" src/` returns nothing **in code**. It now
+      matches one comment line in `src/tokens.css` ("HeroUI overrides"), which task 2 copies
+      byte-identically from the design bundle. Not fixable here without breaking that
+      byte-identity — it is owed to the designer instead.
+- [x] `bun run lint` clean.
 
 **Dependencies:** None. **Scope:** M (mostly deletion). **Risk:** the SPA-mode option name.
 
@@ -138,14 +141,17 @@ the build to a client-only output. This is the spec's task 0.
 **Description:** Copy the design bundle's tokens in verbatim and give the repo a test runner.
 
 **Acceptance criteria:**
-- [ ] `src/tokens.css` is byte-identical to `docs/design_handoff_scorepad/tokens.css`.
-- [ ] `src/styles.css` is `@import "tailwindcss";` + `@import "./tokens.css";` — the
+- [x] `src/tokens.css` is byte-identical to `docs/design_handoff_scorepad/tokens.css`.
+- [x] `src/styles.css` is `@import "tailwindcss";` + `@import "./tokens.css";` — the
       `@heroui/styles` and typography-plugin imports are gone.
-- [ ] `vite.config.ts` carries a `test` block (jsdom environment, globals on, setup file).
-- [ ] `src/tokens.test.ts` asserts the two token files are identical, so a drift is a test
+- [x] `vite.config.ts` carries a `test` block (jsdom environment, globals on). **No setup
+      file yet** — nothing needs one until task 8 imports `fake-indexeddb`, which creates it
+      and wires `setupFiles` in the same step. `globals: true` costs `vitest/globals` in
+      `tsconfig.json`'s `types`.
+- [x] `src/tokens.test.ts` asserts the two token files are identical, so a drift is a test
       failure rather than a silent design bug.
 
-**Verification:** `bun test` runs and passes; `bun dev` serves a page whose background is
+**Verification:** `bun run test` runs and passes; `bun dev` serves a page whose background is
 `--color-paper`.
 
 **Dependencies:** 1. **Scope:** S.
@@ -156,8 +162,8 @@ the build to a client-only output. This is the spec's task 0.
 `Template`, `Category` (from `template-grammar.md`). Transcribed, not invented.
 
 **Acceptance criteria:**
-- [ ] One file per concern, named exports, no barrel, no `any`.
-- [ ] Field-for-field match with the spec, optional fields included
+- [x] One file per concern, named exports, no barrel, no `any`.
+- [x] Field-for-field match with the spec, optional fields included
       (`targetScore`, `tiebreakNote`, `handTotal`, `entry`, `finishedAt`).
 
 **Verification:** `bunx tsc --noEmit` clean.
@@ -165,9 +171,9 @@ the build to a client-only output. This is the spec's task 0.
 **Dependencies:** 1. **Scope:** XS.
 
 ### ✅ Checkpoint A — Foundation
-- [ ] `bun run build` emits a static bundle, no server entry (**success criterion 1**).
-- [ ] `bun test` and `bun run lint` both pass on an empty-ish tree.
-- [ ] Nothing in `src/` references a database, a server or HeroUI.
+- [x] `bun run build` emits a static bundle, no server entry (**success criterion 1**).
+- [x] `bun run test` and `bun run lint` both pass on an empty-ish tree.
+- [x] Nothing in `src/` references a database, a server or HeroUI.
 
 ---
 
@@ -389,7 +395,7 @@ restored byte-identical, as an automated round-trip test over the store.
 
 ### ✅ Checkpoint C — Home
 - [ ] Home renders both states, resumes, deletes, duplicates and round-trips a backup.
-- [ ] `bun test` and `bun run lint` pass. Human compares against `1d` and `1e`.
+- [ ] `bun run test` and `bun run lint` pass. Human compares against `1d` and `1e`.
 
 ---
 
@@ -751,7 +757,7 @@ sub-path.
       and `scope` are `/scorepad/`, icon paths are relative, and the SW registers
       with the same scope. A root-scoped SW silently fails to control the page here.
 - [ ] A GitHub Actions workflow (`.github/workflows/deploy.yml`) on push to `main`:
-      `bun install --frozen-lockfile` → `bun run lint` → `bun test` → `bun run build` →
+      `bun install --frozen-lockfile` → `bun run lint` → `bun run test` → `bun run build` →
       `actions/upload-pages-artifact` → `actions/deploy-pages`, with `permissions: pages:
       write, id-token: write`. Official actions only — **no `gh-pages` npm package**.
 - [ ] **Lint and tests gate the deploy.** A red suite must not reach the URL people install
@@ -811,7 +817,7 @@ fourteen success criteria by hand, recording the result.
 
 ### ✅ Checkpoint G — Done
 - [ ] All fourteen success criteria pass, with 4 and 9 checked on the deployed URL.
-- [ ] `bun run lint` and `bun test` clean, and the deploy workflow is green on `main`.
+- [ ] `bun run lint` and `bun run test` clean, and the deploy workflow is green on `main`.
 
 ---
 
@@ -847,3 +853,6 @@ Not blockers — messages, not decisions:
 - `1f` should lose the literal "ten" from its filter placeholder.
 - `1g` should lose the `Add a custom game` button (cut from v1 by the spec).
 - `1n` / `1o` gain a fourth footer action; the paired row becomes three-up.
+- `tokens.css`'s header comment still cites "HeroUI overrides". HeroUI is cut, and the file
+  is copied byte-identically into `src/`, so the stale line is the one thing keeping task
+  1's `grep` from returning clean.

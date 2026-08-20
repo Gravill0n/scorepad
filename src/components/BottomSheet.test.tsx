@@ -5,7 +5,11 @@ const renderSheet = () => {
 	const onClose = vi.fn();
 	const { container } = render(
 		<BottomSheet title="Marie's colour" onClose={onClose}>
-			<p>swatches</p>
+			{(close) => (
+				<button type="button" onClick={close}>
+					swatches
+				</button>
+			)}
 		</BottomSheet>,
 	);
 	const dialog = screen.getByRole("dialog");
@@ -21,7 +25,7 @@ describe("the bottom sheet", () => {
 	it("opens as a modal, so everything behind it is inert", () => {
 		const { dialog } = renderSheet();
 		expect((dialog as HTMLDialogElement).open).toBe(true);
-		expect(screen.getByText("swatches")).toBeDefined();
+		expect(screen.getByRole("button", { name: "swatches" })).toBeDefined();
 	});
 
 	it("closes on the × once the exit animation has run", () => {
@@ -43,9 +47,27 @@ describe("the bottom sheet", () => {
 
 	it("keeps a tap inside the panel from dismissing it", () => {
 		const { onClose, settle } = renderSheet();
-		fireEvent.click(screen.getByText("swatches"));
-		settle();
+		fireEvent.click(screen.getByRole("button", { name: "Close" }));
 		expect(onClose).not.toHaveBeenCalled();
+		settle();
+		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("hands its own dismiss to what it renders", () => {
+		const { onClose, settle } = renderSheet();
+		// A control inside the sheet closes it the way the × does. Unmounting an
+		// open modal <dialog> instead would skip --dur-sheet and drop focus.
+		fireEvent.click(screen.getByRole("button", { name: "swatches" }));
+		expect(onClose).not.toHaveBeenCalled();
+		settle();
+		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("closes the dialog itself, so the browser restores focus", () => {
+		const { dialog, settle } = renderSheet();
+		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		settle();
+		expect((dialog as HTMLDialogElement).open).toBe(false);
 	});
 
 	it("closes on Esc, which the browser gives us for free", () => {

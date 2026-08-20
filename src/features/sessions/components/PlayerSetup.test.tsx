@@ -5,7 +5,7 @@ import {
 	createRouter,
 	RouterProvider,
 } from "@tanstack/react-router";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { AppProvider } from "@/app/provider";
 import { closeDatabase, getAllSessions, getMeta, putMeta } from "@/lib/db";
 import { templates } from "@/lib/templates/registry";
@@ -230,5 +230,47 @@ describe("blocking validation and the write that starts the game", () => {
 
 		expect(persist).toHaveBeenCalled();
 		vi.unstubAllGlobals();
+	});
+});
+
+describe("choosing a colour", () => {
+	const openColorSheet = async () => {
+		await renderSetup("wingspan");
+		fireEvent.click(firstButton(/^Colour for/));
+		return screen.getByRole("dialog");
+	};
+
+	it("opens the sheet from the row's token", async () => {
+		const sheet = await openColorSheet();
+		expect(sheet.textContent).toContain("Taken colours are dimmed");
+	});
+
+	it("refuses the colour another row already holds", async () => {
+		await openColorSheet();
+		const taken = screen.getByRole("button", {
+			name: "Colour 2, already taken",
+		});
+		fireEvent.click(taken);
+
+		// Still open, still twelve swatches: nothing reflowed under the thumb.
+		expect(screen.getByRole("dialog")).toBeDefined();
+		expect(taken.hasAttribute("disabled")).toBe(false);
+	});
+
+	it("applies the picked colour and closes through the sheet's own exit", async () => {
+		const sheet = await openColorSheet();
+		fireEvent.click(screen.getByRole("button", { name: "Colour 7" }));
+
+		// The panel animates out first — unmounting an open modal <dialog> would
+		// skip --dur-sheet and drop focus on the floor.
+		expect(screen.queryByRole("dialog")).not.toBeNull();
+		const panel = sheet.querySelector("[class*='rounded-t-card']");
+		if (!panel) throw new Error("no sheet panel");
+		fireEvent.animationEnd(panel);
+
+		await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+
+		const token = firstButton(/^Colour for/).firstElementChild;
+		expect((token as HTMLElement).style.background).toContain("--player-07");
 	});
 });

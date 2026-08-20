@@ -9,9 +9,16 @@
  *
  * Self-contained on purpose: real box art later changes what fills this box
  * and nothing about the tile around it.
+ *
+ * Hidden from assistive tech: it is the cover, and the tile already carries the
+ * name in prose underneath. Announcing "Wingspan Wingspan" is what a decorative
+ * image with the title baked into it sounds like.
  */
 export const TileArt = ({ name }: { name: string }) => (
-	<div className="flex h-[var(--h-cell)] items-center justify-center border-line border-b bg-paper-dim px-2">
+	<div
+		aria-hidden="true"
+		className="flex h-[var(--h-cell)] items-center justify-center border-line border-b bg-paper-dim px-2"
+	>
 		<span className="truncate text-screen tracking-wordmark text-ink-soft uppercase">
 			{name}
 		</span>

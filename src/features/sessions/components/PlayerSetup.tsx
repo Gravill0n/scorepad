@@ -70,6 +70,11 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 	const max = template.players[1];
 	const isTeam = template.entry === "team";
 	const problem = validateSetup(rows, template);
+	const recoloringRow = rows.find((row) => row.id === recoloring);
+
+	// A pill has somewhere to go until the table is both full and fully named.
+	const isFull = (current: SetupRow[]) =>
+		current.length >= max && current.every((row) => row.name.trim() !== "");
 
 	useEffect(() => {
 		void getMeta("recentNames").then((names) => setRecent(names ?? []));
@@ -181,31 +186,28 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 
 				<RecentNames
 					names={recent}
+					full={isFull(rows)}
 					onPick={(name) =>
 						setRows((current) =>
-							current.length >= max ? current : fillFirstEmpty(current, name),
+							isFull(current) ? current : fillFirstEmpty(current, name),
 						)
 					}
 				/>
 			</div>
 
-			{recoloring !== null &&
-				(() => {
-					const row = rows.find((candidate) => candidate.id === recoloring);
-					if (!row) return null;
-					return (
-						<ColorSheet
-							name={row.name}
-							colorIndex={row.colorIndex}
-							taken={rows.map((other) => other.colorIndex)}
-							onPick={(colorIndex) => {
-								setRows((current) => recolorRow(current, row.id, colorIndex));
-								setRecoloring(null);
-							}}
-							onClose={() => setRecoloring(null)}
-						/>
-					);
-				})()}
+			{recoloringRow && (
+				<ColorSheet
+					name={recoloringRow.name}
+					colorIndex={recoloringRow.colorIndex}
+					taken={rows.map((other) => other.colorIndex)}
+					onPick={(colorIndex) =>
+						setRows((current) =>
+							recolorRow(current, recoloringRow.id, colorIndex),
+						)
+					}
+					onClose={() => setRecoloring(null)}
+				/>
+			)}
 
 			<div className="shrink-0 border-line border-t px-4 pt-3.5 pb-5">
 				<button

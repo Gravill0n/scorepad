@@ -40,46 +40,58 @@ export const ColorSheet = ({
 			leading={<PlayerToken name={name} colorIndex={colorIndex} size={32} />}
 			onClose={onClose}
 		>
-			<ul className="grid grid-cols-4 gap-2.5">
-				{PALETTE.map((index) => {
-					const isTaken = unavailable.has(index);
-					const isSelected = index === colorIndex;
+			{(close) => (
+				<>
+					<ul className="grid grid-cols-4 gap-2.5">
+						{PALETTE.map((index) => {
+							const isTaken = unavailable.has(index);
+							const isSelected = index === colorIndex;
 
-					return (
-						<li key={index}>
-							<button
-								type="button"
-								disabled={isTaken}
-								aria-disabled={isTaken}
-								aria-pressed={isSelected}
-								aria-label={
-									isTaken
-										? m.colour_swatch_taken({ n: index })
-										: m.colour_swatch({ n: index })
-								}
-								onClick={() => onPick(index)}
-								className={`flex h-14 w-full items-center justify-center gap-1 rounded-ctrl text-[var(--player-ink)] ${
-									isSelected ? "ring-2 ring-ink" : ""
-								} ${isTaken ? "opacity-32" : ""}`}
-								style={{ background: playerColor(index) }}
-							>
-								{/* The index is what the database stores; the initial is what
-								    makes the token readable when the colour is not. */}
-								<span className="num font-mono text-eyebrow opacity-80">
-									{index}
-								</span>
-								<span className="text-row font-[var(--weight-semi)]">
-									{initial}
-								</span>
-							</button>
-						</li>
-					);
-				})}
-			</ul>
+							return (
+								<li key={index}>
+									<button
+										type="button"
+										// aria-disabled rather than disabled: a taken colour dims
+										// rather than disappearing so the grid never reflows, and
+										// a disabled button would drop out of the tab order —
+										// hiding from the keyboard exactly what stays on screen
+										// for everyone else.
+										aria-disabled={isTaken}
+										aria-pressed={isSelected}
+										aria-label={
+											isTaken
+												? m.colour_swatch_taken({ n: index })
+												: m.colour_swatch({ n: index })
+										}
+										onClick={() => {
+											if (isTaken) return;
+											onPick(index);
+											close();
+										}}
+										className={`flex h-14 w-full items-center justify-center gap-1 rounded-ctrl text-[var(--player-ink)] ${
+											isSelected ? "ring-2 ring-ink" : ""
+										} ${isTaken ? "opacity-32" : ""}`}
+										style={{ background: playerColor(index) }}
+									>
+										{/* The index is what the database stores; the initial is
+										    what makes the token readable when the colour is not.
+										    Both at full strength: the palette clears 4.5:1
+										    against --player-ink, and only at full strength. */}
+										<span className="num font-mono text-eyebrow">{index}</span>
+										<span className="text-row font-[var(--weight-semi)]">
+											{initial}
+										</span>
+									</button>
+								</li>
+							);
+						})}
+					</ul>
 
-			<p className="mt-3.5 text-meta leading-normal text-ink-soft text-pretty">
-				{m.colour_note()}
-			</p>
+					<p className="mt-3.5 text-meta leading-normal text-ink-soft text-pretty">
+						{m.colour_note()}
+					</p>
+				</>
+			)}
 		</BottomSheet>
 	);
 };

@@ -11,9 +11,12 @@ import { SectionHeading } from "./SectionHeading";
  */
 export const RecentNames = ({
 	names,
+	full,
 	onPick,
 }: {
 	names: string[];
+	/** The table is at the template's maximum, so a pill has nowhere to go. */
+	full: boolean;
 	onPick: (name: string) => void;
 }) => {
 	if (names.length === 0) return null;
@@ -26,9 +29,10 @@ export const RecentNames = ({
 					<li key={name}>
 						<button
 							type="button"
+							disabled={full}
 							onClick={() => onPick(name)}
 							aria-label={m.setup_recent_add({ name })}
-							className="flex h-[var(--h-tap)] items-center rounded-token border border-line bg-card px-3.5 text-body text-ink"
+							className="flex h-[var(--h-tap)] items-center rounded-token border border-line bg-card px-3.5 text-body text-ink disabled:opacity-50"
 						>
 							{name}
 						</button>

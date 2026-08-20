@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { m } from "@/paraglide/messages";
 
 /** Past this much of a downward drag, letting go dismisses the sheet. */
@@ -9,7 +9,11 @@ type BottomSheetProps = {
 	title: string;
 	/** Sits left of the title: the player's token on the colour sheet. */
 	leading?: ReactNode;
-	children: ReactNode;
+	/**
+	 * Receives the sheet's own dismiss, so a control inside it closes the way
+	 * the × does — animated, with focus handed back to whatever opened it.
+	 */
+	children: (close: () => void) => ReactNode;
 	onClose: () => void;
 };
 
@@ -21,9 +25,14 @@ type BottomSheetProps = {
  * and does not make it a *dialog* in the spec's sense — the one confirmation
  * dialog in this app is deleting a session.
  *
- * Dismissed three ways: the ×, a tap on the scrim, and a downward drag on the
- * grab handle. The drag is three pointer handlers rather than a gesture
+ * Dismissed four ways: the ×, a tap on the scrim, Esc, and a downward drag on
+ * the grab handle. The drag is three pointer handlers rather than a gesture
  * library — the whole interaction is one axis and one threshold.
+ *
+ * All four run the same exit: the panel animates out, and only then does the
+ * dialog close and the sheet leave the tree. Unmounting a modal <dialog> while
+ * it is open skips --dur-sheet and drops focus on the floor, so a control
+ * inside the sheet is handed `close` rather than being allowed to unmount it.
  */
 export const BottomSheet = ({
 	title,
@@ -31,6 +40,7 @@ export const BottomSheet = ({
 	children,
 	onClose,
 }: BottomSheetProps) => {
+	const titleId = useId();
 	const dialog = useRef<HTMLDialogElement>(null);
 	const panel = useRef<HTMLDivElement>(null);
 	const dragFrom = useRef<number | null>(null);
@@ -50,11 +60,16 @@ export const BottomSheet = ({
 		const node = panel.current;
 		if (!node) return;
 		const onEnd = () => {
-			if (isClosing.current) onClose();
+			if (!isClosing.current) return;
+			// close() rather than a bare unmount: the browser returns focus to
+			// whatever opened the sheet, which a removal cannot do.
+			dialog.current?.close();
 		};
 		node.addEventListener("animationend", onEnd);
 		return () => node.removeEventListener("animationend", onEnd);
-	}, [onClose]);
+		// Mount-only: onClose is reached through the dialog's own close event,
+		// which is the one path that also restores focus.
+	}, []);
 
 	useEffect(() => {
 		const element = dialog.current;
@@ -81,7 +96,7 @@ export const BottomSheet = ({
 				event.preventDefault();
 				dismiss();
 			}}
-			aria-label={title}
+			aria-labelledby={titleId}
 			className="m-0 mt-auto w-full max-w-none bg-transparent p-0 backdrop:bg-[var(--scrim)]"
 		>
 			<div style={{ transform: `translateY(${dragged}px)` }}>
@@ -114,7 +129,10 @@ export const BottomSheet = ({
 
 					<div className="mb-4 flex items-center gap-2.5">
 						{leading}
-						<h2 className="min-w-0 flex-1 truncate text-strong font-[var(--weight-semi)] text-ink">
+						<h2
+							id={titleId}
+							className="min-w-0 flex-1 truncate text-strong font-[var(--weight-semi)] text-ink"
+						>
 							{title}
 						</h2>
 						<button
@@ -127,7 +145,7 @@ export const BottomSheet = ({
 						</button>
 					</div>
 
-					{children}
+					{children(dismiss)}
 				</div>
 			</div>
 		</dialog>

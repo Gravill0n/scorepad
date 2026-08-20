@@ -39,6 +39,11 @@ describe("the colour sheet", () => {
 		fireEvent.click(taken);
 
 		expect(onPick).not.toHaveBeenCalled();
+		// Reachable, just not selectable: `disabled` would drop it out of the tab
+		// order, hiding from the keyboard exactly what stays on screen for
+		// everyone else.
+		expect(taken.getAttribute("aria-disabled")).toBe("true");
+		expect(taken.hasAttribute("disabled")).toBe(false);
 		// Still in the grid, in its own position: nothing reflows under a thumb.
 		expect(swatches()).toHaveLength(PALETTE_SIZE);
 		expect(swatches().indexOf(taken)).toBe(0);

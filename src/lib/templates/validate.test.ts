@@ -164,6 +164,20 @@ describe("validateTemplate", () => {
 		).toHaveLength(1);
 	});
 
+	it("rejects a field the grammar does not define", () => {
+		// A `multipler` typo would otherwise be ignored and the category would
+		// silently score at x1. Each grammar field is a permanent compatibility
+		// surface, so an unrecognised one is a fault, not a spare part.
+		const categories = [{ key: "cities", label: "Cities", multipler: 2 }];
+		const template = { ...valid(), categories };
+		expect(validateTemplate(template, "catan")).toHaveLength(1);
+	});
+
+	it("rejects input that is not an object at all", () => {
+		expect(validateTemplate(null, "catan").length).toBeGreaterThan(0);
+		expect(validateTemplate("catan", "catan").length).toBeGreaterThan(0);
+	});
+
 	it("reports every problem at once rather than stopping at the first", () => {
 		const broken = valid({
 			id: "wrong",
@@ -181,11 +195,21 @@ describe("validateTemplate", () => {
 	});
 });
 
-// CLAUDE.md: "lib/templates/validate.ts imports no React, no DB, no features/."
+// CLAUDE.md: "lib/templates/validate.ts imports no React, no DB, no features/.
+// Pure functions over plain data." zod is pure data handling and is inside that
+// rule; React, the database and feature modules are not.
 describe("module boundaries", () => {
-	it("imports nothing but types", () => {
-		const source = readFileSync("src/lib/templates/validate.ts", "utf8");
-		const imports = source.match(/^import .*$/gm) ?? [];
-		expect(imports.every((line) => line.startsWith("import type "))).toBe(true);
+	const source = readFileSync("src/lib/templates/validate.ts", "utf8");
+
+	it("imports no React", () => {
+		expect(source).not.toMatch(/from "react/);
+	});
+
+	it("imports no database module", () => {
+		expect(source).not.toMatch(/from "@\/lib\/db/);
+	});
+
+	it("imports no feature module", () => {
+		expect(source).not.toMatch(/from "@\/features/);
 	});
 });

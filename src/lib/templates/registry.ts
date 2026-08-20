@@ -1,4 +1,4 @@
-import type { Template } from "@/types/template";
+import { type Template, templateSchema } from "@/types/template";
 import sevenWonders from "./7-wonders.json";
 import azul from "./azul.json";
 import belote from "./belote.json";
@@ -15,6 +15,11 @@ import wingspan from "./wingspan.json";
  * The ordered list the shelf renders: board games, then card games, then the
  * counter. Imported directly rather than through a barrel or a glob, so the
  * bundler sees every template statically and nothing is fetched at runtime.
+ *
+ * Parsed rather than cast. A cast would assert a shape TypeScript cannot see
+ * inside a JSON file; parsing proves it. A malformed template throws here at
+ * startup, which is the right outcome — silently dropping a game, or shipping
+ * one whose `win` is misspelled, are both worse.
  */
 export const templates: Template[] = [
 	catan,
@@ -28,4 +33,4 @@ export const templates: Template[] = [
 	whist,
 	blackLady,
 	counter,
-] as Template[];
+].map((template) => templateSchema.parse(template));

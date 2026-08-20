@@ -1,97 +1,54 @@
-import type { Template } from "@/types/template";
-
-const KEY_PATTERN = /^[a-z][a-z0-9_]*$/;
-
-const isNonZeroInteger = (n: number) => Number.isInteger(n) && n !== 0;
+import { templateSchema } from "@/types/template";
 
 /**
- * Every rule in template-grammar.md, checked at build time by the template
- * suite. Returns the full list of problems rather than throwing on the first,
- * because a broken template usually breaks in more than one way.
+ * Turns a zod path into something a person can act on. Category issues arrive
+ * as `categories.0.divideBy`; the index alone means opening the file and
+ * counting, so substitute the key when the input has one.
+ */
+const describePath = (path: PropertyKey[], template: unknown): string => {
+	const categories = (template as { categories?: { key?: unknown }[] })
+		?.categories;
+	const key =
+		path[0] === "categories" && typeof path[1] === "number"
+			? categories?.[path[1]]?.key
+			: undefined;
+
+	const readable =
+		typeof key === "string"
+			? [`categories["${key}"]`, ...path.slice(2)]
+			: [...path];
+
+	return readable.join(".");
+};
+
+/**
+ * Every rule in template-grammar.md. Returns the full list of problems rather
+ * than throwing on the first, because a broken template usually breaks in more
+ * than one way and the template suite wants all of them.
+ *
+ * Takes `unknown` on purpose: the input is hand-written JSON, and catching what
+ * TypeScript cannot is the entire reason this exists.
  */
 export const validateTemplate = (
-	template: Template,
+	template: unknown,
 	filenameStem: string,
 ): string[] => {
-	const problems: string[] = [];
+	const result = templateSchema.safeParse(template);
 
-	if (template.id !== filenameStem) {
+	const problems = result.success
+		? []
+		: result.error.issues.map((issue) => {
+				const where = describePath(issue.path, template);
+				return where ? `${where}: ${issue.message}` : issue.message;
+			});
+
+	// Checked independently of the parse, so a file that fails both reports
+	// both rather than hiding the filename mismatch behind a shape error.
+	const id = (template as { id?: unknown })?.id;
+	if (id !== filenameStem) {
 		problems.push(
-			`id "${template.id}" does not match filename "${filenameStem}"`,
+			`id "${String(id)}" does not match filename "${filenameStem}"`,
 		);
-	}
-
-	if (template.categories.length === 0) {
-		problems.push("categories is empty");
-	}
-
-	const seen = new Set<string>();
-	for (const category of template.categories) {
-		if (seen.has(category.key)) {
-			problems.push(`duplicate category key "${category.key}"`);
-		}
-		seen.add(category.key);
-
-		if (!KEY_PATTERN.test(category.key)) {
-			problems.push(`category key "${category.key}" must match ${KEY_PATTERN}`);
-		}
-		if (
-			category.multiplier !== undefined &&
-			!isNonZeroInteger(category.multiplier)
-		) {
-			problems.push(
-				`category "${category.key}" multiplier must be a non-zero integer`,
-			);
-		}
-		if (
-			category.divideBy !== undefined &&
-			!(Number.isInteger(category.divideBy) && category.divideBy > 0)
-		) {
-			problems.push(
-				`category "${category.key}" divideBy must be a positive integer`,
-			);
-		}
-	}
-
-	if (
-		!Array.isArray(template.players) ||
-		template.players.length !== 2 ||
-		!template.players.every((n) => Number.isInteger(n))
-	) {
-		problems.push("players must be exactly two integers, [min, max]");
-	} else {
-		const [min, max] = template.players;
-		if (min < 1) problems.push(`players minimum ${min} is below 1`);
-		if (max < min)
-			problems.push(`players maximum ${max} is below minimum ${min}`);
-	}
-
-	if (template.handTotal !== undefined) {
-		if (!isNonZeroInteger(template.handTotal)) {
-			problems.push("handTotal must be a non-zero integer");
-		}
-		if (template.mode === "sheet") {
-			problems.push("handTotal is not allowed on a sheet template");
-		}
-	}
-
-	// The next three are widened deliberately. Template already narrows them, but
-	// registry.ts casts the imported JSON with `as Template[]`, so TypeScript is
-	// not actually checking these values — and `win` silently reverses the
-	// ranking direction if it is wrong.
-	const mode: string = template.mode;
-	if (mode !== "sheet" && mode !== "tally") {
-		problems.push(`mode "${mode}" must be "sheet" or "tally"`);
-	}
-
-	const win: string = template.win;
-	if (win !== "highest" && win !== "lowest") {
-		problems.push(`win "${win}" must be "highest" or "lowest"`);
-	}
-
-	const entry: string | undefined = template.entry;
-	if (entry !== undefined && entry !== "player" && entry !== "team") {
-		problems.push(`entry "${entry}" must be "player" or "team"`);
 	}
 
 	return problems;

@@ -1,0 +1,25 @@
+{
+	"id": "catan",
+	"name": "Catan",
+	"players": [3, 6],
+	"mode": "sheet",
+	"win": "highest",
+	"targetScore": 10,
+	"categories": [
+		{ "key": "settlements", "label": "Settlements", "multiplier": 1 },
+		{ "key": "cities", "label": "Cities", "multiplier": 2 },
+		{
+			"key": "longest_road",
+			"label": "Longest road",
+			"multiplier": 2,
+			"hint": "1 if held, else 0"
+		},
+		{
+			"key": "largest_army",
+			"label": "Largest army",
+			"multiplier": 2,
+			"hint": "1 if held, else 0"
+		},
+		{ "key": "vp_cards", "label": "Victory point cards", "multiplier": 1 }
+	]
+}

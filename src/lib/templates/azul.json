@@ -1,0 +1,19 @@
+{
+	"id": "azul",
+	"name": "Azul",
+	"players": [2, 4],
+	"mode": "sheet",
+	"win": "highest",
+	"tiebreakNote": "Most complete horizontal rows wins.",
+	"categories": [
+		{ "key": "board", "label": "Score from board track" },
+		{ "key": "rows", "label": "Complete rows", "multiplier": 2 },
+		{ "key": "columns", "label": "Complete columns", "multiplier": 7 },
+		{
+			"key": "colors",
+			"label": "Complete colours",
+			"multiplier": 10,
+			"hint": "All 5 tiles of one colour"
+		}
+	]
+}

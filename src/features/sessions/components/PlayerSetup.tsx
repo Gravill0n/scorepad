@@ -24,10 +24,12 @@ import {
 	fillFirstEmpty,
 	initialRows,
 	moveRow,
+	recolorRow,
 	removeRow,
 	renameRow,
 	type SetupRow,
 } from "../utils/setupRows";
+import { ColorSheet } from "./ColorSheet";
 import { PlayerSetupRow } from "./PlayerSetupRow";
 import { RecentNames } from "./RecentNames";
 
@@ -55,6 +57,8 @@ const subtitle = (template: Template) => {
 export const PlayerSetup = ({ template }: { template: Template }) => {
 	const [rows, setRows] = useState<SetupRow[]>(() => initialRows(template));
 	const [recent, setRecent] = useState<string[]>([]);
+	/** The row whose colour sheet is open, if any. */
+	const [recoloring, setRecoloring] = useState<string | null>(null);
 	const max = template.players[1];
 	const isTeam = template.entry === "team";
 
@@ -122,6 +126,7 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 									onRename={(name) =>
 										setRows((current) => renameRow(current, row.id, name))
 									}
+									onRecolor={() => setRecoloring(row.id)}
 									onRemove={() =>
 										setRows((current) => removeRow(current, row.id))
 									}
@@ -156,6 +161,24 @@ export const PlayerSetup = ({ template }: { template: Template }) => {
 					}
 				/>
 			</div>
+
+			{recoloring !== null &&
+				(() => {
+					const row = rows.find((candidate) => candidate.id === recoloring);
+					if (!row) return null;
+					return (
+						<ColorSheet
+							name={row.name}
+							colorIndex={row.colorIndex}
+							taken={rows.map((other) => other.colorIndex)}
+							onPick={(colorIndex) => {
+								setRows((current) => recolorRow(current, row.id, colorIndex));
+								setRecoloring(null);
+							}}
+							onClose={() => setRecoloring(null)}
+						/>
+					);
+				})()}
 
 			<div className="shrink-0 border-line border-t px-4 pt-3.5 pb-5">
 				<button

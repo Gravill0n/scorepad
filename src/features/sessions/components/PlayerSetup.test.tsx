@@ -48,8 +48,13 @@ const renderSetup = async (id: string) => {
 	await screen.findByRole("heading");
 };
 
-const nameFields = () =>
-	screen.getAllByRole("textbox") as HTMLInputElement[];
+const nameFields = () => screen.getAllByRole("textbox") as HTMLInputElement[];
+
+const firstButton = (name: RegExp) => {
+	const [button] = screen.getAllByRole("button", { name });
+	if (!button) throw new Error(`no button matching ${name}`);
+	return button;
+};
 
 beforeEach(async () => {
 	closeDatabase();
@@ -105,9 +110,8 @@ describe("player setup", () => {
 
 	it("names each row's controls after the player, for a screen reader", async () => {
 		await renderSetup("wingspan");
-		fireEvent.change(nameFields()[0] as HTMLInputElement, {
-			target: { value: "Marie" },
-		});
+		const [first] = nameFields();
+		fireEvent.change(first as HTMLInputElement, { target: { value: "Marie" } });
 		expect(screen.getByRole("button", { name: "Remove Marie" })).toBeDefined();
 		expect(screen.getByRole("button", { name: "Reorder Marie" })).toBeDefined();
 	});
@@ -123,9 +127,9 @@ describe("player setup", () => {
 
 	it("removes a row, and keeps the last one", async () => {
 		await renderSetup("wingspan");
-		fireEvent.click(screen.getAllByRole("button", { name: /Remove/ })[0]!);
+		fireEvent.click(firstButton(/Remove/));
 		expect(nameFields()).toHaveLength(1);
-		fireEvent.click(screen.getAllByRole("button", { name: /Remove/ })[0]!);
+		fireEvent.click(firstButton(/Remove/));
 		expect(nameFields()).toHaveLength(1);
 	});
 });

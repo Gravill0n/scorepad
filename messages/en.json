@@ -66,5 +66,13 @@
   "setup_unnamed": "row {n}",
   "setup_recent": "Played recently",
   "setup_recent_add": "Add {name}",
-  "setup_start": "Start scoring"
+  "setup_start": "Start scoring",
+  "sheet_close": "Close",
+  "sheet_grab": "Drag down to dismiss",
+  "colour_title": "{name}'s colour",
+  "colour_title_unnamed": "Choose a colour",
+  "colour_swatch": "Colour {n}",
+  "colour_swatch_taken": "Colour {n}, already taken",
+  "colour_note": "Taken colours are dimmed. The initial stays on the token everywhere, so colour is never the only difference between two players.",
+  "setup_recolor": "Colour for {name}"
 }

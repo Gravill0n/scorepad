@@ -66,5 +66,13 @@
   "setup_unnamed": "ligne {n}",
   "setup_recent": "Noms récents",
   "setup_recent_add": "Ajouter {name}",
-  "setup_start": "Commencer la partie"
+  "setup_start": "Commencer la partie",
+  "sheet_close": "Fermer",
+  "sheet_grab": "Glissez vers le bas pour fermer",
+  "colour_title": "Couleur de {name}",
+  "colour_title_unnamed": "Choisir une couleur",
+  "colour_swatch": "Couleur {n}",
+  "colour_swatch_taken": "Couleur {n}, déjà prise",
+  "colour_note": "Les couleurs déjà prises sont estompées. L'initiale reste sur la pastille partout, pour que la couleur ne soit jamais la seule différence entre deux joueurs.",
+  "setup_recolor": "Couleur de {name}"
 }

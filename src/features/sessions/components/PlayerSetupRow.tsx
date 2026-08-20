@@ -10,6 +10,7 @@ type PlayerSetupRowProps = {
 	position: number;
 	isTeam: boolean;
 	onRename: (name: string) => void;
+	onRecolor: () => void;
 	onRemove: () => void;
 };
 
@@ -24,6 +25,7 @@ export const PlayerSetupRow = ({
 	position,
 	isTeam,
 	onRename,
+	onRecolor,
 	onRemove,
 }: PlayerSetupRowProps) => {
 	const {
@@ -64,7 +66,14 @@ export const PlayerSetupRow = ({
 				<GripVertical size={18} aria-hidden="true" />
 			</button>
 
-			<PlayerToken name={row.name} colorIndex={row.colorIndex} />
+			<button
+				type="button"
+				onClick={onRecolor}
+				aria-label={m.setup_recolor({ name: named })}
+				className="flex h-[var(--h-tap)] w-9 shrink-0 items-center justify-center"
+			>
+				<PlayerToken name={row.name} colorIndex={row.colorIndex} />
+			</button>
 
 			<input
 				type="text"

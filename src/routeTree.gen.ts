@@ -9,38 +9,114 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/root.layout'
+import { Route as newDotpageRouteImport } from './routes/new.page'
 import { Route as homeDotpageRouteImport } from './routes/home.page'
+import { Route as sessionDotpageRouteImport } from './routes/session.page'
+import { Route as newPlayersDotpageRouteImport } from './routes/new-players.page'
+import { Route as sessionResultsDotpageRouteImport } from './routes/session-results.page'
+import { Route as sessionHistoryDotpageRouteImport } from './routes/session-history.page'
 
+const newDotpageRoute = newDotpageRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const homeDotpageRoute = homeDotpageRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const sessionDotpageRoute = sessionDotpageRouteImport.update({
+  id: '/session/$id',
+  path: '/session/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const newPlayersDotpageRoute = newPlayersDotpageRouteImport.update({
+  id: '/new/players',
+  path: '/new/players',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const sessionResultsDotpageRoute = sessionResultsDotpageRouteImport.update({
+  id: '/session/$id/results',
+  path: '/session/$id/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const sessionHistoryDotpageRoute = sessionHistoryDotpageRouteImport.update({
+  id: '/session/$id/history',
+  path: '/session/$id/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof homeDotpageRoute
+  '/new': typeof newDotpageRoute
+  '/new/players': typeof newPlayersDotpageRoute
+  '/session/$id': typeof sessionDotpageRoute
+  '/session/$id/history': typeof sessionHistoryDotpageRoute
+  '/session/$id/results': typeof sessionResultsDotpageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof homeDotpageRoute
+  '/new': typeof newDotpageRoute
+  '/new/players': typeof newPlayersDotpageRoute
+  '/session/$id': typeof sessionDotpageRoute
+  '/session/$id/history': typeof sessionHistoryDotpageRoute
+  '/session/$id/results': typeof sessionResultsDotpageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof homeDotpageRoute
+  '/new': typeof newDotpageRoute
+  '/new/players': typeof newPlayersDotpageRoute
+  '/session/$id': typeof sessionDotpageRoute
+  '/session/$id/history': typeof sessionHistoryDotpageRoute
+  '/session/$id/results': typeof sessionResultsDotpageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/new'
+    | '/new/players'
+    | '/session/$id'
+    | '/session/$id/history'
+    | '/session/$id/results'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/new'
+    | '/new/players'
+    | '/session/$id'
+    | '/session/$id/history'
+    | '/session/$id/results'
+  id:
+    | '__root__'
+    | '/'
+    | '/new'
+    | '/new/players'
+    | '/session/$id'
+    | '/session/$id/history'
+    | '/session/$id/results'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   homeDotpageRoute: typeof homeDotpageRoute
+  newDotpageRoute: typeof newDotpageRoute
+  newPlayersDotpageRoute: typeof newPlayersDotpageRoute
+  sessionDotpageRoute: typeof sessionDotpageRoute
+  sessionHistoryDotpageRoute: typeof sessionHistoryDotpageRoute
+  sessionResultsDotpageRoute: typeof sessionResultsDotpageRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/new': {
+      id: '/new'
+      path: '/new'
+      fullPath: '/new'
+      preLoaderRoute: typeof newDotpageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,17 +124,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof homeDotpageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/session/$id': {
+      id: '/session/$id'
+      path: '/session/$id'
+      fullPath: '/session/$id'
+      preLoaderRoute: typeof sessionDotpageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new/players': {
+      id: '/new/players'
+      path: '/new/players'
+      fullPath: '/new/players'
+      preLoaderRoute: typeof newPlayersDotpageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/$id/results': {
+      id: '/session/$id/results'
+      path: '/session/$id/results'
+      fullPath: '/session/$id/results'
+      preLoaderRoute: typeof sessionResultsDotpageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/$id/history': {
+      id: '/session/$id/history'
+      path: '/session/$id/history'
+      fullPath: '/session/$id/history'
+      preLoaderRoute: typeof sessionHistoryDotpageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   homeDotpageRoute: homeDotpageRoute,
+  newDotpageRoute: newDotpageRoute,
+  newPlayersDotpageRoute: newPlayersDotpageRoute,
+  sessionDotpageRoute: sessionDotpageRoute,
+  sessionHistoryDotpageRoute: sessionHistoryDotpageRoute,
+  sessionResultsDotpageRoute: sessionResultsDotpageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from './router.tsx'
+import type { getRouter } from './app/router.tsx'
 import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {

@@ -36,6 +36,8 @@ const config = defineConfig({
 						},
 						router: {
 							virtualRouteConfig: "./src/routes.ts",
+							// The app layer, per CLAUDE.md's import graph.
+							entry: "./app/router.tsx",
 						},
 					}),
 				]),

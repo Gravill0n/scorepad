@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getAllSessions, putMeta, putSession } from "@/lib/db";
 import { loadSessions } from "@/lib/sessions";
-import { type Session, sessionSchema } from "@/types/session";
+import { importedSessionSchema, type Session } from "@/types/session";
 
 /** Bumped only if the envelope changes. Sessions carry meta.schemaVersion. */
 export const BACKUP_VERSION = 1;
@@ -55,8 +55,13 @@ export const exportBackup = async (now: Date = new Date()): Promise<Backup> => {
 	const anchor = document.createElement("a");
 	anchor.href = url;
 	anchor.download = backupFilename(now);
+	// In the document and revoked on a later tick: a detached anchor and a URL
+	// revoked in the same task as the click both abort the download in Firefox,
+	// and the failure is silent — the one export somebody made never lands.
+	document.body.append(anchor);
 	anchor.click();
-	URL.revokeObjectURL(url);
+	anchor.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 0);
 
 	await putMeta("lastExportedAt", backup.exportedAt);
 	return backup;
@@ -95,7 +100,9 @@ export const importBackup = async (raw: unknown): Promise<ImportResult> => {
 	const result: ImportResult = { imported: 0, skipped: 0, rejected: 0 };
 
 	for (const candidate of envelope.data.sessions) {
-		const parsed = sessionSchema.safeParse(candidate);
+		// The strict schema, not the one storage reads with: a non-numeric cell
+		// is refused rather than silently zeroed (task 14).
+		const parsed = importedSessionSchema.safeParse(candidate);
 		if (!parsed.success) {
 			result.rejected += 1;
 			continue;

@@ -7,11 +7,12 @@ export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
 	const sessions = useSessions();
+	const status = useSessionsStatus();
 
 	return (
 		<div className="flex h-dvh flex-col">
 			<HomeHeader />
-			<HomeBody sessions={sessions} status={useSessionsStatus()} />
+			<HomeBody sessions={sessions} status={status} />
 		</div>
 	);
 }

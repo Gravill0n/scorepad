@@ -144,7 +144,7 @@ describe("importBackup", () => {
 		expect(await getAllSessions()).toHaveLength(1);
 	});
 
-	it("resolves a corrupted cell to zero rather than rejecting the game", async () => {
+	it("refuses a corrupted cell rather than storing a zero", async () => {
 		const session = await seed("Belote 12 Apr");
 		const backup = await buildBackup();
 		closeDatabase();
@@ -157,8 +157,10 @@ describe("importBackup", () => {
 		};
 		const result = await importBackup(tampered);
 
-		expect(result.imported).toBe(1);
-		expect((await getAllSessions())[0]?.rounds[0]?.p1?.hand).toBe(0);
+		// A zeroed score looks correct forever; a rejected game says so while
+		// the file that still holds the real number is there to be fixed.
+		expect(result).toEqual({ imported: 0, skipped: 0, rejected: 1 });
+		expect(await getAllSessions()).toHaveLength(0);
 	});
 
 	it("leaves the loaded store agreeing with storage", async () => {

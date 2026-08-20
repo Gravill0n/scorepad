@@ -1,19 +1,11 @@
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
+import { type Locale, SettingsContext, type Theme } from "@/hooks/useSettings";
 import { getMeta, putMeta } from "@/lib/db";
 import { loadSessions } from "@/lib/sessions";
 import {
 	getLocale,
 	setLocale as setParaglideLocale,
 } from "@/paraglide/runtime";
-
-export type Theme = "light" | "dark";
-export type Locale = "en" | "fr";
 
 /** Absent means untouched, which is not the same as a stored default. */
 type Stored = { theme?: Theme; locale?: Locale };
@@ -26,14 +18,16 @@ const systemTheme = (): Theme =>
 /** Paraglide's own resolution: globalVariable, then navigator, then "en". */
 const systemLocale = (): Locale => (getLocale() === "fr" ? "fr" : "en");
 
-type Settings = {
-	theme: Theme;
-	locale: Locale;
-	setTheme: (theme: Theme) => void;
-	setLocale: (locale: Locale) => void;
+/**
+ * Paraglide reads its locale when a message is called, not when React state
+ * lands, so it is set at the moment the choice is made rather than in an
+ * effect. An effect runs after the render it should have changed: the tap would
+ * re-render the whole tree in the old language and nothing would schedule the
+ * second render that corrects it.
+ */
+const applyToParaglide = (next: Locale | undefined) => {
+	if (next && getLocale() !== next) setParaglideLocale(next, { reload: false });
 };
-
-const SettingsContext = createContext<Settings | null>(null);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
 	const [stored, setStored] = useState<Stored>({});
@@ -56,10 +50,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 			// the stored object wholesale would revert it, and the only symptom
 			// would be a toggle that sometimes does nothing.
 			if (!cancelled) {
-				setStored((current) => ({
-					theme: current.theme ?? savedTheme,
-					locale: current.locale ?? savedLocale,
-				}));
+				setStored((current) => {
+					const next = {
+						theme: current.theme ?? savedTheme,
+						locale: current.locale ?? savedLocale,
+					};
+					applyToParaglide(next.locale);
+					return next;
+				});
 			}
 		})();
 		return () => {
@@ -90,7 +88,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 	}, [theme]);
 
 	useEffect(() => {
-		if (getLocale() !== locale) setParaglideLocale(locale, { reload: false });
 		document.documentElement.lang = locale;
 	}, [locale]);
 
@@ -100,19 +97,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 	};
 
 	const setLocale = (next: Locale) => {
+		applyToParaglide(next);
 		setStored((current) => ({ ...current, locale: next }));
 		void putMeta("locale", next);
 	};
 
 	return (
 		<SettingsContext.Provider value={{ theme, locale, setTheme, setLocale }}>
-			{children}
+			{/* Keyed on the locale, so a language switch remounts the tree.
+			    babel-plugin-react-compiler caches every `m.*()` call for the life
+			    of a component instance — the call takes no reactive input, so a
+			    re-render reuses the string it computed the first time and the
+			    screen stays in the old language forever. The alternative is
+			    hand-passing `locale` into every message call in the app; this is
+			    one line, and it costs a remount on a tap somebody makes once. */}
+			<Fragment key={locale}>{children}</Fragment>
 		</SettingsContext.Provider>
 	);
-};
-
-export const useSettings = (): Settings => {
-	const settings = useContext(SettingsContext);
-	if (!settings) throw new Error("useSettings needs an AppProvider above it");
-	return settings;
 };

@@ -1,5 +1,5 @@
 import { Moon, Sun } from "lucide-react";
-import { useSettings } from "@/app/provider";
+import { useSettings } from "@/hooks/useSettings";
 import { m } from "@/paraglide/messages";
 
 const CONTROL =

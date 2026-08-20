@@ -424,8 +424,38 @@ restored byte-identical, as an automated round-trip test over the store.
 **Dependencies:** 13. **Scope:** M.
 
 ### ✅ Checkpoint C — Home
-- [ ] Home renders both states, resumes, deletes, duplicates and round-trips a backup.
-- [ ] `bun run test` and `bun run lint` pass. Human compares against `1d` and `1e`.
+- [x] Home renders both states, resumes, deletes, duplicates and round-trips a backup —
+      each one asserted, `SessionList.test.tsx`, `SwipeRow.test.tsx` and `backup.test.ts`
+      ("restores every session byte-identically" is **success criterion 5**).
+- [x] `bun run test` (319), `bun run lint`, `bunx tsc --noEmit` and `bun run build` all clean;
+      `dist/` still holds only `client/`, no server entry. **The comparison against `1d` and
+      `1e` is still owed to a human** — jsdom has no layout engine and nothing here asserts a
+      pixel.
+
+**The five-axis review found four real holes, all fixed here:**
+
+1. **The language chip changed nothing on screen.** `babel-plugin-react-compiler` caches
+   every `m.*()` call for the life of a component instance — the call takes no reactive
+   input — so a re-render reuses the string it computed first. Compounding it, the provider
+   set Paraglide's locale in an effect, a render *after* the one it should have changed.
+   Fixed on both counts: the locale is applied at the moment of the tap, and the tree is
+   keyed on it so the cache is dropped. Regression test in `provider.test.tsx`. **Task 29
+   inherits this**: any later message call is safe, but re-passing `locale` per call is not
+   the fix and would be a whole-tree diff.
+2. **Import silently zeroed a corrupted cell**, which is exactly what task 14 says not to do
+   — the shared `sessionSchema` carries `.catch(0)` for the storage path. `importedSessionSchema`
+   is the strict one; the test that asserted the zero now asserts the rejection.
+3. **Three feature components imported `@/app/provider`**, which is the import graph
+   backwards. The context moved to `src/hooks/useSettings.ts`; the app layer keeps the
+   provider that owns the state.
+4. **Export could fail silently in Firefox** — a detached anchor, and the blob URL revoked in
+   the same task as the click. Now appended, clicked, removed, revoked a tick later. The file
+   input is also cleared after each pick, so retrying a corrected file actually re-fires.
+
+Two left as notes, not changes: `HomeHeader`'s wordmark carries a literal `tracking-[-0.01em]`
+that is not on the token scale (owed to the designer with the rest of the `1d` type sizes),
+and `InProgressRow`'s standing line joins every total without truncating — fine at `1d`'s
+player counts, a task 32 question at twelve.
 
 ---
 

@@ -52,6 +52,20 @@ export const sessionSchema = z.object({
 	finishedAt: z.string().optional(),
 });
 
+/**
+ * What storage forgives, import refuses.
+ *
+ * `sessionSchema` resolves a corrupted cell to zero so one bad byte on disk
+ * cannot cost somebody a whole evening's game. A backup file has not been read
+ * yet: a score silently zeroed on the way in looks correct forever, and the
+ * file that still holds the real number gets overwritten by the next export.
+ * Rejecting the game names the problem while it can still be fixed, and import
+ * validates each session on its own, so one bad game costs only itself.
+ */
+export const importedSessionSchema = sessionSchema.extend({
+	rounds: z.array(z.record(z.string(), z.record(z.string(), z.number()))),
+});
+
 export type Session = z.infer<typeof sessionSchema>;
 export type Player = z.infer<typeof playerSchema>;
 export type Round = z.infer<typeof roundSchema>;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSettings } from "@/app/provider";
 import { Eyebrow } from "@/components/Eyebrow";
+import { useSettings } from "@/hooks/useSettings";
 import { getMeta } from "@/lib/db";
 import { duplicateSession, removeSession } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";

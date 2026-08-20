@@ -63,7 +63,13 @@ export const ImportControl = ({
 				accept="application/json,.json"
 				className="hidden"
 				aria-label={label}
-				onChange={(event) => void onFile(event.target.files?.[0])}
+				onChange={(event) => {
+					void onFile(event.target.files?.[0]);
+					// Cleared so picking the same file again still fires: after a
+					// rejected file is corrected on disk, the retry is the same
+					// path, and a file input reports no change for that.
+					event.target.value = "";
+				}}
 			/>
 
 			{result && (

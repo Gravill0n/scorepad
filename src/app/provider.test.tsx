@@ -1,7 +1,9 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
+import { type Locale, useSettings } from "@/hooks/useSettings";
 import { closeDatabase, getMeta, putMeta } from "@/lib/db";
+import { m } from "@/paraglide/messages";
 import { overwriteGetLocale, overwriteSetLocale } from "@/paraglide/runtime";
-import { AppProvider, useSettings } from "./provider";
+import { AppProvider } from "./provider";
 
 const wipeDatabase = () =>
 	new Promise<void>((resolve) => {
@@ -40,6 +42,19 @@ const Probe = () => {
 			<button type="button" onClick={() => setTheme("dark")}>
 				dark
 			</button>
+			<button type="button" onClick={() => setLocale("fr")}>
+				fr
+			</button>
+		</>
+	);
+};
+
+/** Renders through paraglide, so a stale locale shows up as stale copy. */
+const MessageProbe = () => {
+	const { setLocale } = useSettings();
+	return (
+		<>
+			<span data-testid="copy">{m.home_new_game()}</span>
 			<button type="button" onClick={() => setLocale("fr")}>
 				fr
 			</button>
@@ -182,6 +197,31 @@ describe("a touched setting", () => {
 		expect(await getMeta("locale")).toBe("fr");
 		expect(applied).toContain("fr");
 		expect(document.documentElement.lang).toBe("fr");
+	});
+
+	it("renders the new language on the tap, not on the next re-render", async () => {
+		// Paraglide reads its locale when a message is called. Setting it in an
+		// effect is a render too late: the tap re-renders the tree in the old
+		// language, and nothing schedules a second render to correct it, so the
+		// screen stays English until something unrelated changes.
+		let current: Locale = "en";
+		overwriteGetLocale(() => current);
+		overwriteSetLocale((next: string) => {
+			current = next === "fr" ? "fr" : "en";
+		});
+
+		render(
+			<AppProvider>
+				<MessageProbe />
+			</AppProvider>,
+		);
+		const english = screen.getByTestId("copy").textContent;
+
+		await act(async () => {
+			screen.getByRole("button", { name: "fr" }).click();
+		});
+
+		expect(screen.getByTestId("copy").textContent).not.toBe(english);
 	});
 
 	it("keeps a choice made before the stored settings have arrived", async () => {

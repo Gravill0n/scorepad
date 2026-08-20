@@ -1,0 +1,17 @@
+{
+	"id": "whist",
+	"name": "Whist",
+	"players": [2, 2],
+	"mode": "tally",
+	"win": "highest",
+	"targetScore": 5,
+	"entry": "team",
+	"setupNote": "Partnership whist, two teams: enter one row per team, not per player. Knock-out and Oh Hell variants score differently.",
+	"categories": [
+		{
+			"key": "tricks",
+			"label": "Points",
+			"hint": "One point per trick taken above six"
+		}
+	]
+}

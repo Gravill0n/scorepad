@@ -1,0 +1,17 @@
+{
+	"id": "belote",
+	"name": "Belote",
+	"players": [2, 2],
+	"mode": "tally",
+	"win": "highest",
+	"targetScore": 501,
+	"entry": "team",
+	"setupNote": "Belote classique, two teams: enter one row per team, not per player. Played to 501 here; adjust if your table plays to 1000.",
+	"categories": [
+		{
+			"key": "hand",
+			"label": "Hand points",
+			"hint": "Card points, declarations and 10 de der combined"
+		}
+	]
+}

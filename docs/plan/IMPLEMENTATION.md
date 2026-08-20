@@ -330,11 +330,16 @@ only once touched, theme applied as `data-theme` on the document element), `app/
 and `src/routes.ts` registering all six routes with placeholder pages.
 
 **Acceptance criteria:**
-- [ ] Routes: `/`, `/new`, `/new/players`, `/session/$id`, `/session/$id/history`,
+- [x] Routes: `/`, `/new`, `/new/players`, `/session/$id`, `/session/$id/history`,
       `/session/$id/results`.
-- [ ] Untouched install follows `navigator.language` and `prefers-color-scheme`; a touched
+- [x] Untouched install follows `navigator.language` and `prefers-color-scheme`; a touched
       setting survives reload (**success criterion 14**).
-- [ ] Shared `ScreenHeader` and `Eyebrow` components, token-driven, 52px and 44px bands.
+- [x] Shared `ScreenHeader` and `Eyebrow` components, token-driven, 52px and 44px bands.
+      52 comes from `--h-primary` — the bundle has no separate header token, and the band
+      and the primary button are the same height by design.
+- [x] Paraglide's strategy becomes `["globalVariable", "preferredLanguage", "baseLocale"]`.
+      The scaffold's `url` strategy contradicted the spec: locale lives in `meta`, not in a
+      path, and one of the six routes is a session id.
 
 **Verification:** Toggle both settings, reload, values hold; clear `meta`, reload, OS wins.
 

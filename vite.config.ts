@@ -22,7 +22,11 @@ const config = defineConfig({
 		paraglideVitePlugin({
 			project: "./project.inlang",
 			outdir: "./src/paraglide",
-			strategy: ["url", "baseLocale"],
+			// No locale in the URL: this app has six routes and one of them is
+			// a session id. `globalVariable` is what app/provider.tsx sets from
+			// meta.locale once it loads; until then `preferredLanguage` follows
+			// navigator.language, which is the spec's untouched default.
+			strategy: ["globalVariable", "preferredLanguage", "baseLocale"],
 		}),
 		tsconfigPaths({ projects: ["./tsconfig.json"] }),
 		tailwindcss(),

@@ -270,11 +270,16 @@ hold `schemaVersion`, run ordered migrations on open (v1 ships version 1 and zer
 migrations), and expose typed get/put/delete/getAll plus `meta` accessors.
 
 **Acceptance criteria:**
-- [ ] Exactly two object stores, keyPaths `id` and `key`.
-- [ ] `meta` keys supported: `schemaVersion`, `recentNames` (capped 20), `lastExportedAt`,
+- [x] Exactly two object stores, keyPaths `id` and `key`.
+- [x] `meta` keys supported: `schemaVersion`, `recentNames` (capped 20), `lastExportedAt`,
       `locale`, `theme`. **Absent means untouched** — never write a default on open.
-- [ ] A migration runner exists and is a no-op at version 1.
-- [ ] No `any`; a failed open surfaces an error rather than resolving to an empty store.
+      *Scope corrected against `data-model.md`:* that rule covers `locale` and `theme`, "the
+      last two are the only settings the app has". `schemaVersion` is bookkeeping and **is**
+      stamped at database creation — without it, a database created by a future v3 app would
+      hold no version, and the next open would assume v1 and re-run migrations over current
+      data.
+- [x] A migration runner exists and is a no-op at version 1.
+- [x] No `any`; a failed open surfaces an error rather than resolving to an empty store.
 
 **Verification:** `db.test.ts` — session write → reload → identical read; a 15-round tally
 session round-trips; the migration runner fires when the stored version is lower.

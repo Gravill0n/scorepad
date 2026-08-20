@@ -169,7 +169,14 @@ export const SheetScreen = ({ session }: { session: Session }) => {
 							total={entry?.total ?? 0}
 							rank={entry?.rank ?? session.players.length}
 							tied={entry?.tied ?? false}
-							value={valueFor(player.id, category.key)}
+							// The focused cell shows what is being typed, not what has
+							// come back from the database: the write is a round trip, and
+							// the number has to appear under the thumb that typed it.
+							value={
+								focused === player.id
+									? toNumber(typed)
+									: valueFor(player.id, category.key)
+							}
 							focused={focused === player.id}
 							locale={locale}
 							onFocus={() =>

@@ -693,8 +693,35 @@ this is the test that caught the lost-cell bug above.
 **Dependencies:** 21. **Scope:** S.
 
 ### ✅ Checkpoint E — Sheet mode end to end
-- [ ] **Success criterion 4**: devtools offline from first paint — create, score, finish,
-      reload; the session is present and correct with **zero network requests** recorded.
+- [x] **Criterion 6, and criterion 4 as far as jsdom can carry it.**
+      `src/routes/sheetGame.flow.test.tsx` walks the real route tree: Home → picker → four
+      players → **all 24 cells of a 4-player Wingspan sheet** without the keypad closing
+      between players → finish from ⋯ → a reload (store dropped, database reopened) → every
+      one of the 24 values read back, in seat order, `status: "finished"`. `fetch`,
+      `XMLHttpRequest`, `WebSocket`, `EventSource` and `sendBeacon` are all stubbed for the
+      whole walk and **none is ever called**.
+- [x] The shipped bundle carries **no network API at all** — `fetch(`, `XMLHttpRequest`,
+      `WebSocket`, `EventSource` and `sendBeacon` appear zero times across the 13 JS chunks
+      in `dist/client`. The only URLs in the bundle are JSON-schema identifiers, XML
+      namespaces and error-doc links, all of them strings.
+- [ ] **The devtools half is still owed**: offline from first paint, on a real origin, with
+      the network panel recording. That is task 31's re-verification against the deployed
+      URL, and it needs a browser this environment does not have.
+
+**The review found two defects, both fixed in `358ba52`:**
+
+1. **The last category's primary was `disabled`.** It read `See results →` and did nothing,
+   so the only way off the end of the sheet was ⋯ → Finish, which also *ends the game* —
+   something `See results` is explicitly not supposed to do. The screen's own test asserted
+   the button existed and never that it worked.
+2. **The row being typed into could sit behind the keypad.** The panel takes the bottom half
+   of the screen, and at seven players the focused row is usually under it. Rows now scroll
+   into view on focus: typing into a cell you cannot see is how the wrong row gets scored.
+
+Writing the 24-cell walk also surfaced a third: the cell rendered the **stored** value, so it
+lagged the keystroke by a database round trip. Imperceptible on a phone, but the cell is where
+the person typing is looking — the focused cell now renders what is being typed and the rest
+render what is stored.
 
 ---
 

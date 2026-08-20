@@ -188,16 +188,16 @@ wrong, so it is written first and tested exhaustively.
 with tie detection, exactly as specified.
 
 **Acceptance criteria:**
-- [ ] `cellScore(v, cat) = Math.floor(v * (cat.multiplier ?? 1) / (cat.divideBy ?? 1))`.
-- [ ] Missing entries read as `0`; a player with no entries totals `0` and ranks last, never
+- [x] `cellScore(v, cat) = Math.floor(v * (cat.multiplier ?? 1) / (cat.divideBy ?? 1))`.
+- [x] Missing entries read as `0`; a player with no entries totals `0` and ranks last, never
       "unranked"; an appended empty round contributes `0`.
-- [ ] `ranking` sorts by `win`, and ties share a rank number carrying a `=` marker.
-- [ ] Imports nothing but types.
+- [x] `ranking` sorts by `win`, and ties share a rank number carrying a `=` marker.
+- [x] Imports nothing but types.
 
 **Verification:**
-- [ ] `src/lib/scoring.test.ts` covers: integer and negative multipliers, empty entries,
+- [x] `src/lib/scoring.test.ts` covers: integer and negative multipliers, empty entries,
       all-zero ties, `win: "lowest"` ordering, multi-round accumulation, empty appended round.
-- [ ] **The dedicated regression test: `divideBy: 3` equals `Math.floor(n/3)` for every `n`
+- [x] **The dedicated regression test: `divideBy: 3` equals `Math.floor(n/3)` for every `n`
       in 0–10000** (**success criterion 3**). This one is non-negotiable and never deleted.
 
 **Dependencies:** 3. **Scope:** S.
@@ -207,12 +207,12 @@ with tie detection, exactly as specified.
 **Description:** `src/lib/templates/validate.ts` — every rule in `template-grammar.md`.
 
 **Acceptance criteria:**
-- [ ] Rules covered: `id` matches filename stem; non-empty categories; unique `key`s;
+- [x] Rules covered: `id` matches filename stem; non-empty categories; unique `key`s;
       `players[0] >= 1` and `players[1] >= players[0]`; `multiplier` a non-zero integer;
       `divideBy` a positive integer; `key` matches `^[a-z][a-z0-9_]*$`; `handTotal` a
       non-zero integer and never on a `sheet` template; `entry` is `"player"` or `"team"`.
-- [ ] Returns a list of problems, not a thrown error — the template test wants all of them.
-- [ ] Pure: no React, no DB, no `features/`.
+- [x] Returns a list of problems, not a thrown error — the template test wants all of them.
+- [x] Pure: no React, no DB, no `features/`.
 
 **Verification:** `validate.test.ts` has **one failing-case test per rule above**.
 
@@ -225,9 +225,9 @@ Wingspan, Azul, Ticket to Ride, 7 Wonders), plus `registry.ts` importing each JS
 (no barrel, no glob).
 
 **Acceptance criteria:**
-- [ ] JSON transcribed from `template-grammar.md`; no invented category, no float anywhere.
-- [ ] 7 Wonders coins use `divideBy: 3`, never a fractional multiplier.
-- [ ] `registry.ts` exports the ordered list the shelf renders.
+- [x] JSON transcribed from `template-grammar.md`; no invented category, no float anywhere.
+- [x] 7 Wonders coins use `divideBy: 3`, never a fractional multiplier.
+- [x] `registry.ts` exports the ordered list the shelf renders.
 
 **Verification:** `templates.test.ts` iterates **every** registered template, asserts it
 validates, and asserts a hand-checked fixture scores to a known total. A template without a
@@ -240,21 +240,24 @@ fixture fails the suite.
 **Description:** The four tally games (Uno, Belote, Whist, Black Lady) plus `counter.json`.
 
 **Acceptance criteria:**
-- [ ] `belote.json` and `whist.json` carry `entry: "team"` and their `setupNote`.
-- [ ] `black-lady.json` carries `handTotal: 26`, `win: "lowest"`, `targetScore: 100`.
-- [ ] `counter.json`: `tally`, one category, no `targetScore`, `players: [1, 12]`.
-- [ ] Each template states its encoded variant in `setupNote` or `hint`.
+- [x] `belote.json` and `whist.json` carry `entry: "team"` and their `setupNote`.
+- [x] `black-lady.json` carries `handTotal: 26`, `win: "lowest"`, `targetScore: 100`.
+- [x] `counter.json`: `tally`, one category, no `targetScore`, `players: [1, 12]`.
+- [x] Each template states its encoded variant in `setupNote` or `hint`.
 
 **Verification:** The same iterating test now covers eleven templates, including a
 **multi-round Belote fixture** and a **`win: "lowest"` Black Lady fixture**
-(**success criterion 2**).
+(**success criterion 2**). Note that `SPEC.md`'s criterion 2 still says "all ten seed
+templates (6 board, 4 card)" — `counter.json` makes eleven, and the suite covers all of
+them. The criterion's count is stale, not the suite's.
 
 **Dependencies:** 6. **Scope:** M.
 
 ### ✅ Checkpoint B — Core
-- [ ] Success criteria 2 and 3 are green in CI.
-- [ ] `scoring.ts` and `validate.ts` import nothing but types — verified by reading their
-      import lines, since no linter enforces it.
+- [x] Success criteria 2 and 3 are green in CI.
+- [x] `scoring.ts` and `validate.ts` import nothing but types — now asserted by a test in
+      each module's suite rather than read by hand, since no linter enforces it. Verified by
+      adding a React import to `scoring.ts` and watching it fail.
 
 ---
 

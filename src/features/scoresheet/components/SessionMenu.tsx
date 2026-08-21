@@ -4,6 +4,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { updateSession } from "@/lib/sessions";
 import { m } from "@/paraglide/messages";
 import type { Session } from "@/types/session";
+import { newId } from "@/utils/newId";
 import { nextColorIndex, PALETTE_SIZE } from "@/utils/playerColor";
 
 type View = "actions" | "rename" | "add-player";
@@ -66,7 +67,7 @@ export const SessionMenu = ({
 			players: [
 				...session.players,
 				{
-					id: crypto.randomUUID(),
+					id: newId(),
 					name: draft.trim(),
 					colorIndex: nextColorIndex(
 						session.players.map((player) => player.colorIndex),

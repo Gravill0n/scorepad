@@ -95,3 +95,35 @@ describe("reordering", () => {
 		expect(moveRow(three, 1, 9)).toBe(three);
 	});
 });
+
+/**
+ * Reported from a real phone: `/new/players` threw
+ * `crypto.randomUUID is not a function`. It exists only in a **secure
+ * context**, so it is absent over `http://<lan-ip>:3000` — the way a
+ * phone-first app is actually tested — and absent from Safari before 15.4 on
+ * any origin. Every id in the app now goes through `utils/newId`.
+ */
+describe("without crypto.randomUUID, as on a phone over the LAN", () => {
+	const withoutRandomUUID = <T>(run: () => T): T => {
+		const real = crypto.randomUUID;
+		// @ts-expect-error — reproducing a non-secure context.
+		crypto.randomUUID = undefined;
+		try {
+			return run();
+		} finally {
+			crypto.randomUUID = real;
+		}
+	};
+
+	it("still opens the setup screen with its rows", () => {
+		const rows = withoutRandomUUID(() => initialRows(find("wingspan")));
+		expect(rows).toHaveLength(2);
+		expect(rows.every((row) => row.id !== "")).toBe(true);
+	});
+
+	it("still adds a row, with an id of its own", () => {
+		const rows = withoutRandomUUID(() => addRow(initialRows(find("counter"))));
+		expect(rows).toHaveLength(3);
+		expect(new Set(rows.map((row) => row.id)).size).toBe(3);
+	});
+});

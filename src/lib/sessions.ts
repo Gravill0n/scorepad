@@ -7,6 +7,7 @@ import {
 } from "@/lib/db";
 import type { Session } from "@/types/session";
 import type { Template } from "@/types/template";
+import { newId } from "@/utils/newId";
 
 export type NewPlayer = { name: string; colorIndex: number };
 
@@ -174,7 +175,7 @@ export const createSession = ({
 		const timestamp = now.toISOString();
 
 		return persist({
-			id: crypto.randomUUID(),
+			id: newId(),
 			name: name ?? defaultSessionName(template, now, locale),
 			templateId: template.id,
 			// The snapshot. Optional fields are spread conditionally so an absent one
@@ -193,7 +194,7 @@ export const createSession = ({
 			}),
 			...(template.entry !== undefined && { entry: template.entry }),
 			players: players.map((player, index) => ({
-				id: crypto.randomUUID(),
+				id: newId(),
 				name: player.name,
 				colorIndex: player.colorIndex,
 				sortOrder: index,
@@ -240,11 +241,11 @@ export const duplicateSession = (id: string): Promise<Session> =>
 
 		const copy: Session = {
 			...source,
-			id: crypto.randomUUID(),
+			id: newId(),
 			name: nextCopyName(source.name, names),
 			players: source.players.map((player) => ({
 				...player,
-				id: crypto.randomUUID(),
+				id: newId(),
 			})),
 			rounds: source.mode === "sheet" ? [{}] : [],
 			status: "active",

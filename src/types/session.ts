@@ -25,7 +25,7 @@ export const roundSchema = z.record(
 );
 
 export const sessionSchema = z.object({
-	/** crypto.randomUUID() */
+	/** utils/newId — a v4 UUID. */
 	id: z.string(),
 	/** Defaults to template name + date. */
 	name: z.string(),

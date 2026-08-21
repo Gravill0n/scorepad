@@ -1,11 +1,12 @@
 import type { Template } from "@/types/template";
+import { newId } from "@/utils/newId";
 import { nextColorIndex } from "@/utils/playerColor";
 
 /** A row on the setup screen. `id` is local — the session's ids are minted on create. */
 export type SetupRow = { id: string; name: string; colorIndex: number };
 
 const newRow = (rows: SetupRow[], name: string): SetupRow => ({
-	id: crypto.randomUUID(),
+	id: newId(),
 	name,
 	// Palette order, so a four-player table lands on the four hues that stay
 	// distinct under every kind of colourblindness.

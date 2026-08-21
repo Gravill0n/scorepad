@@ -31,11 +31,58 @@
   "delete_cancel": "Conserver",
   "delete_confirm": "Supprimer",
   "backup_eyebrow": "Sauvegarde",
-  "backup_summary": "{count} parties n'existent que sur ce téléphone. Le fichier JSON est la seule sauvegarde.",
+  "backup_summary": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} partie n'existe que sur ce téléphone. Le fichier JSON est la seule sauvegarde.",
+        "countPlural=*": "{count} parties n'existent que sur ce téléphone. Le fichier JSON est la seule sauvegarde."
+      }
+    }
+  ],
   "backup_export": "Exporter",
   "backup_import": "Importer",
-  "backup_imported": "{imported} restaurées, {skipped} déjà présentes",
-  "backup_unreadable": "{count} illisibles",
+  "backup_imported": [
+    {
+      "declarations": [
+        "input imported",
+        "local importedPlural = imported: plural",
+        "input skipped",
+        "local skippedPlural = skipped: plural"
+      ],
+      "selectors": [
+        "importedPlural",
+        "skippedPlural"
+      ],
+      "match": {
+        "importedPlural=one,skippedPlural=one": "{imported} restaurée, {skipped} déjà présente",
+        "importedPlural=one,skippedPlural=*": "{imported} restaurée, {skipped} déjà présentes",
+        "importedPlural=*,skippedPlural=one": "{imported} restaurées, {skipped} déjà présente",
+        "importedPlural=*,skippedPlural=*": "{imported} restaurées, {skipped} déjà présentes"
+      }
+    }
+  ],
+  "backup_unreadable": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} illisible",
+        "countPlural=*": "{count} illisibles"
+      }
+    }
+  ],
   "backup_error_not_json": "Ce fichier n'est pas du JSON valide.",
   "backup_error_not_a_backup": "Ce fichier n'est pas une sauvegarde Scorepad.",
   "backup_error_too_new": "Cette sauvegarde vient d'une version plus récente de Scorepad.",
@@ -75,7 +122,21 @@
   "colour_swatch_taken": "Couleur {n}, déjà prise",
   "colour_note": "Les couleurs déjà prises sont estompées. L'initiale reste sur la pastille partout, pour que la couleur ne soit jamais la seule différence entre deux joueurs.",
   "setup_recolor": "Couleur de {name}",
-  "setup_error_too_few": "{game} demande au moins {min} joueurs.",
+  "setup_error_too_few": [
+    {
+      "declarations": [
+        "input min",
+        "local minPlural = min: plural"
+      ],
+      "selectors": [
+        "minPlural"
+      ],
+      "match": {
+        "minPlural=one": "{game} demande au moins {min} joueur.",
+        "minPlural=*": "{game} demande au moins {min} joueurs."
+      }
+    }
+  ],
   "setup_error_too_few_teams": "{game} demande {min} équipes.",
   "setup_error_too_many": "{game} accepte au plus {max} joueurs.",
   "setup_error_too_many_teams": "{game} accepte au plus {max} équipes.",
@@ -88,7 +149,21 @@
   "keypad_sign": "Positif ou négatif",
   "keypad_backspace": "Effacer un chiffre",
   "keypad_digit": "{digit}",
-  "sheet_sub_players": "{game} · {count} joueurs",
+  "sheet_sub_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{game} · {count} joueur",
+        "countPlural=*": "{game} · {count} joueurs"
+      }
+    }
+  ],
   "sheet_sub_teams": "{game} · {count} équipes",
   "sheet_category_of": "Catégorie {n} sur {total}",
   "sheet_so_far": "{total} jusqu'ici",
@@ -112,7 +187,21 @@
   "menu_late_player_note": "Les catégories déjà jouées restent vides et comptent 0.",
   "tally_to_target": "à {target}",
   "tally_to_go": "{n} restants",
-  "tally_won": "{n} gagnées",
+  "tally_won": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} gagnée",
+        "nPlural=*": "{n} gagnées"
+      }
+    }
+  ],
   "tally_last": "{delta} dernière",
   "tally_no_score": "Aucun point",
   "tally_leads": "Mène",
@@ -129,24 +218,113 @@
   "entry_tile": "{name}, {value}",
   "entry_tile_empty": "{name}, non saisi",
   "history_title": "Historique des manches",
-  "history_sub": "{session} · {hands} manches · {players} joueurs",
+  "history_sub": [
+    {
+      "declarations": [
+        "input hands",
+        "local handsPlural = hands: plural",
+        "input players",
+        "local playersPlural = players: plural"
+      ],
+      "selectors": [
+        "handsPlural",
+        "playersPlural"
+      ],
+      "match": {
+        "handsPlural=one,playersPlural=one": "{session} · {hands} manche · {players} joueur",
+        "handsPlural=one,playersPlural=*": "{session} · {hands} manche · {players} joueurs",
+        "handsPlural=*,playersPlural=one": "{session} · {hands} manches · {players} joueur",
+        "handsPlural=*,playersPlural=*": "{session} · {hands} manches · {players} joueurs"
+      }
+    }
+  ],
   "history_per_hand": "Par manche",
   "history_running": "Cumul",
   "history_total": "Total",
-  "history_count": "{n} manches",
+  "history_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} manche",
+        "nPlural=*": "{n} manches"
+      }
+    }
+  ],
   "history_tap_to_fix": "Touchez une case pour corriger",
   "history_empty": "Aucune manche",
   "menu_history": "Historique des manches",
   "results_sub": "{game} · terminé à {time}",
   "results_winner": "Gagnant",
   "results_joint_winners": "Ex æquo",
-  "results_final_players": "Final · {count} joueurs",
+  "results_final_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Final · {count} joueur",
+        "countPlural=*": "Final · {count} joueurs"
+      }
+    }
+  ],
   "results_final_teams": "Final · {count} équipes",
   "results_tiebreak": "Départage · {game}",
   "results_tiebreak_note": "Scorepad ne tranchera pas — la règle est ici, les pièces sont sur la table.",
-  "results_takeaway_sheet": "{count} catégories sur {total} · {name}",
-  "results_takeaway_tally": "{count} manches sur {total} · {name}",
-  "results_empty_cells": "{count} cases laissées vides",
+  "results_takeaway_sheet": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} catégorie sur {total} · {name}",
+        "countPlural=*": "{count} catégories sur {total} · {name}"
+      }
+    }
+  ],
+  "results_takeaway_tally": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} manche sur {total} · {name}",
+        "countPlural=*": "{count} manches sur {total} · {name}"
+      }
+    }
+  ],
+  "results_empty_cells": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} case laissée vide",
+        "countPlural=*": "{count} cases laissées vides"
+      }
+    }
+  ],
   "results_play_again": "Rejouer",
   "results_reopen": "Rouvrir",
   "results_export": "Exporter",

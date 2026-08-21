@@ -1076,12 +1076,57 @@ screen.
 constraint rather than a translation.
 
 **Acceptance criteria:**
-- [ ] No literal user-facing string left in a component.
-- [ ] `EN`/`FR` chip in the Home header switches without reload and persists to `meta`.
-- [ ] **Every container is sized for the French string.** Validation banners and buttons are
-      auto-height at 14px/1.45 — never fixed-height pills.
+- [x] No literal user-facing string left in a component. **Audited rather than assumed:** a
+      scan of every JSX text node and every user-facing prop across `src/` returns only
+      comments. The two criteria below were already true when this task started — the chip
+      landed in task 10 and was fixed at checkpoint C — so the work here was the audit and
+      the layout pass, not the plumbing.
+- [x] `EN`/`FR` chip in the Home header switches without reload and persists to `meta`,
+      asserted in `provider.test.tsx` since task 10.
+- [x] **Every container is sized for the French string.** Validation banners and buttons are
+      auto-height — never fixed-height pills — asserted on the setup banner and on Results'
+      three-up footer, the two tightest containers in the app.
 
-**Verification:** Every screen rendered in French at its worst-case player count.
+**Verification:** `src/routes/french.test.tsx` renders **every screen in French at its
+worst-case player count** — the eleven-tile shelf, twelve-player setup, a seven-player
+7 Wonders sheet, twelve-player standings, the twelve-player entry sheet, twelve-column hand
+history and a twelve-player tied Results — with French names that actually stress a row
+(`Marie-Christine`, `Jean-Sébastien`). A component that hardcoded English, or a key missing
+from `fr.json`, fails here. The 390 × 844 measurement stays task 32's.
+
+**The audit found one real bug, and it was not French-specific.**
+
+**A count of one read `1 manches` and `1 hands`** everywhere a figure met a noun — hand
+history's title and footer, the table size on three screens, Results' section head, the
+takeaway line, the empty-cell advisory and three backup strings. Reachable immediately:
+open hand history after the first hand, or score anything with `counter.json`, whose range
+starts at one player.
+
+Fixed with **paraglide's plural variants**, so `Intl.PluralRules` decides per locale and
+neither language carries a hand-written rule. Seven messages gained variants in English,
+twelve in French — French needs more because it agrees nouns English leaves alone
+(`1 gagnée`, `1 catégorie sur 3`), and a message may carry variants in one locale and stay a
+plain string in the other. Two messages select on **two** counts at once
+(`{hands} manches · {players} joueurs`), which is four variants each.
+
+*The JSON shape is undocumented offline:* a complex message is an **array** whose first
+element holds `declarations`, `selectors` and `match`. Read out of the cached plugin in
+`project.inlang/cache/`, since guessing it cost two failed compiles.
+
+French counting zero as singular (`0 manche`) and English not (`0 hands`) comes free from
+`Intl` and is asserted, because it is exactly the kind of rule a hand-written table gets
+wrong.
+
+**Left alone deliberately:** `sheet_sub_teams`, `results_final_teams` and `picker_meta_sheet`
+also meet a number, but no template can produce one team or one category — belote and whist
+are `[2, 2]`, and every sheet template has at least three categories. Variants there would be
+unreachable code.
+
+*One layout change:* `Eyebrow` gained `text-balance`. First run's offline promise is 38
+characters in English and 50 in French, and 50 at mono 11 with `--tracking-eyebrow` lands
+within a few pixels of 390's usable width — a balanced wrap is right whichever side of that
+it falls on, and it is a no-op for every single-line eyebrow. Which side it actually falls on
+is task 32's to measure.
 
 **Dependencies:** 28. **Scope:** M.
 

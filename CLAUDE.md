@@ -16,16 +16,26 @@ neighbouring code.
 If the spec is wrong, say so and change the spec first. It is a living document, not
 documentation written after the fact.
 
+The decisions the spec left to implementation are recorded as ADRs in
+[`docs/decisions/`](docs/decisions/README.md) — read one before re-deciding what it settled.
+[`docs/success-criteria.md`](docs/success-criteria.md) says which of the fourteen criteria
+are verified, by which test, and which three still need a browser.
+
 ## Commands
 
 ```bash
 bun install
 bun dev              # vite dev --port 3000
-bun run build        # static bundle, no server entry
+bun run build        # static bundle + 404.html, no server entry
 bun run test         # vitest run (`bun test` runs Bun's own runner, not vitest)
 bun run lint         # biome check .
 bun run lint:fix     # biome check --write .
+bun run icons        # regenerate the app icon from tokens.css
 ```
+
+Deploying is a push to `main`: the workflow gates on lint, types, tests and build, then
+publishes to GitHub Pages under `/scorepad/`. The sub-path is written once, as `BASE_PATH`
+in the workflow — everything else derives from `import.meta.env.BASE_URL`.
 
 Run `bun run lint` and `bun run test` before committing.
 
@@ -41,7 +51,10 @@ features and shared; features may import shared; **shared imports neither**.
   Pure functions over plain data.
 
 Nothing enforces this but review. It is deliberate: Biome can't express a directory-scoped
-directional rule and a second linter isn't worth four bullet points. Don't route around it.
+directional rule and a second linter isn't worth four bullet points. Don't route around it —
+injecting a function from the app layer to dodge a move is routing around it. When a second
+feature needs something, move it to `lib/`; that has happened twice already
+([ADR-006](docs/decisions/006-session-store-in-lib.md)).
 
 ## Code style
 
@@ -76,7 +89,10 @@ build. Verified against the compiled CSS:
 | `--space-*` | Already Tailwind's default 4px scale — `p-4` **is** `--space-4`. Don't "fix" these. |
 
 `font-semi` and `h-primary` look right, lint clean and do nothing. If a style has no
-effect, check this table first.
+effect, check this table first — and verify a new class against the compiled CSS
+(`dist/client/assets/*.css`) rather than trusting it. `contracts.test.tsx` holds the other
+half: no literal colour, font size or duration in a component, and every font size from the
+nine-step scale.
 - Bottom sheets are the only overlay. The one dialog in the app confirms deleting a session.
 - Every screen fits 390 × 844 in French at its worst-case player count. Only Home's list
   and Hand history scroll.
@@ -92,7 +108,14 @@ effect, check this table first.
 - **`handTotal` is advisory.** The balance counter on the entry sheet does the arithmetic;
   it never blocks the save. Shooting the moon is a legal unbalanced hand.
 - **Passing `targetScore` never ends a game.** Mark the crossing and stay out of the way.
-- **Every cell edit persists immediately.** There is no save action anywhere.
+- **Every cell edit persists immediately.** There is no save action anywhere — which is
+  *why* an unbalanced hand can't be refused: there is nothing to refuse.
+- **An empty cell is absent from the round, not stored as zero**, and a trailing hand nobody
+  entered is dropped. Otherwise a hand opened and cleared leaves a phantom row in the ledger
+  and the hand counter one ahead of the table.
+- **Ids come from `utils/newId`, never `crypto.randomUUID` directly.** That API exists only
+  in a secure context, so it is undefined over `http://<lan-ip>:3000` — which is how this
+  app gets tested on an actual phone — and missing from Safari before 15.4 on any origin.
 - **The entry surface always names whose number is being typed, and the primary button
   always names who's next.** That's the whole pass-the-phone affordance.
 

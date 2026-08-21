@@ -1281,20 +1281,57 @@ design contract.
 fourteen success criteria by hand, recording the result.
 
 **Acceptance criteria:**
-- [ ] The architectural rules are stated in `README.md` and `CLAUDE.md` — they are the only
-      enforcement the import graph has.
-- [ ] Each of the fourteen criteria is marked pass, with the automated ones naming their test.
-- [ ] The spec's open questions are updated: the TanStack DB question closed by decision 1,
-      the shelf-count question by task 15, and the `Play again` note carried back to the
-      designer.
-- [ ] `README.md` carries the live URL and the one-time "set Pages source to GitHub Actions"
-      step.
+- [x] The architectural rules are stated in `README.md` and `CLAUDE.md`, now with *why they
+      are written twice*: they have no linter behind them, so review is the only enforcement
+      and the rule has to sit where a reviewer and an agent will both read it. Both point at
+      [ADR-006](../decisions/006-session-store-in-lib.md), which has already been applied
+      twice — the session store, then the backup module — each time a second caller appeared.
+- [x] Each of the fourteen criteria is walked in [`../success-criteria.md`](../success-criteria.md),
+      naming the test. **Ten pass automatically, one passes by inspection, and three are
+      unverified because they need a browser.** The table says so rather than rounding up.
+- [x] The spec's open questions are updated. **None remain open**: the TanStack DB question
+      is closed by ADRs 001 and 002, the shelf count by task 15, the service-worker question
+      by task 30, and the `Play again` note is carried to the designer along with the rest of
+      the list at the foot of the walkthrough.
+- [x] `README.md` carries the live URL and the one-time "set Pages source to GitHub Actions"
+      step, with what its absence looks like — the workflow goes green and publishes nothing.
+
+**The eight decisions are now ADRs**, in [`../decisions/`](../decisions/README.md), because
+this plan is an order-of-operations document that goes stale the moment the work is done, and
+a decision has to outlive it. Each record adds what the plan omitted: **the alternatives that
+were rejected, and why.** They are the reason somebody does not re-decide `<dialog>` versus a
+hand-rolled focus trap in six months.
+
+**Two things the docs pass found:**
+
+1. **`README.md` told you to run the wrong test command.** It listed `bun test`, which runs
+   Bun's own runner rather than vitest — the exact mistake `CLAUDE.md` carries a warning
+   about. The two files disagreed, and the one a newcomer opens first was wrong.
+2. **Criterion 13's second half had no assertion at all.** Task 32 did the 44px floor and not
+   "no body type under 16px". Half of it is not automatable as stated — the scale sanctions
+   13px for notes and captions in `--text-meta`'s own comment, so *which* slot counts as
+   "body" is a judgment. What is enforceable now is that the nine-step scale is **closed**:
+   every font size in the app is a token, nothing arbitrary, asserted in `contracts.test.tsx`.
+3. **A third intermittent failure, fixed at the class rather than the instance.** Two tests
+   had already been given their own budgets in phases 6 and 8; a third — the provider's
+   "a touched setting beats the OS preference" — failed once in a full run and passed alone.
+   The pattern is always the same: Testing Library's default one second for `waitFor` is
+   comfortable idle and marginal when forty-seven files contend for the machine, and almost
+   every screen here waits on a real IndexedDB read before it renders. `vitest.setup.ts` now
+   configures `asyncUtilTimeout` once. It costs nothing on a passing assertion — it resolves
+   the moment the condition holds — and only lengthens one that was going to fail anyway.
 
 **Dependencies:** 31, 32. **Scope:** S.
 
 ### ✅ Checkpoint G — Done
-- [ ] All fourteen success criteria pass, with 4 and 9 checked on the deployed URL.
-- [ ] `bun run lint` and `bun run test` clean, and the deploy workflow is green on `main`.
+- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (673 across 47 files) are clean,
+      and `bun run build` emits `dist/client` and nothing else.
+- [ ] **Eleven of fourteen criteria pass; three are unverified.** Walked in
+      [`../success-criteria.md`](../success-criteria.md), which names the test for each. The
+      three are 4, 9 and 10 — and they are one errand, not three.
+- [ ] The deploy workflow is green on `main`. **Not yet triggered**: the eight-PR stack has
+      to land first, and Pages has to be set to "GitHub Actions" as its source, which is a
+      repository setting and not a file in this repo.
 
 **What is owed to a browser, collected in one place.** Everything below has been deferred
 here by a task that could not do it in jsdom, and each one needs a real viewport on the

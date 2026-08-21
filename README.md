@@ -39,9 +39,10 @@ bun dev                  # vite dev --port 3000
 ```
 
 ```bash
-bun run build            # must emit a static bundle, no server entry
+bun run build            # static bundle + 404.html; no server entry
 bun run preview
-bun test                 # vitest run
+bun run icons            # regenerate the app icon from tokens.css
+bun run test             # vitest run — NOT `bun test`, which runs Bun's own runner
 bunx vitest              # watch
 bun run lint             # biome check .
 bun run lint:fix         # biome check --write .
@@ -49,6 +50,9 @@ bun run format           # biome format --write .
 ```
 
 ## Deploying
+
+**Live at [`https://gravill0n.github.io/scorepad/`](https://gravill0n.github.io/scorepad/)**
+once the workflow has run on `main` and the one manual step below is done.
 
 Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
 lint → types → tests → build → publish to GitHub Pages. **Lint and tests gate the deploy** —
@@ -125,6 +129,13 @@ directional rule, and a second linter to police four bullet points costs more th
 
 Tests are colocated: `scoring.ts` → `scoring.test.ts`.
 
+**Why these are written down twice.** They have no linter behind them — Biome's
+`noRestrictedImports` restricts import *sources* and cannot express a directory-scoped
+directional rule. Review is the only enforcement, so the rule has to be somewhere a reviewer
+and an agent will both read. The reasoning behind each is in
+[`docs/decisions/`](docs/decisions/README.md); ADR-006 is the one that has already been
+applied twice, when the session store and then the backup module needed a second caller.
+
 ## Design
 
 The design pass is complete and lives in
@@ -152,4 +163,7 @@ Contracts that are correctness, not taste — this is read across a table, not a
 | [`docs/spec/data-model.md`](docs/spec/data-model.md) | IndexedDB shape, types, what is derived and never stored |
 | [`docs/design_handoff_scorepad/`](docs/design_handoff_scorepad/README.md) | The design: artboards, tokens, and the rationale under each decision |
 | [`docs/ideas/scoresheet-first.md`](docs/ideas/scoresheet-first.md) | Where the direction came from |
+| [`docs/plan/IMPLEMENTATION.md`](docs/plan/IMPLEMENTATION.md) | The order of work, thirty-three tasks in eight phases, with what each one found |
+| [`docs/decisions/`](docs/decisions/README.md) | Eight ADRs — the decisions the spec left to implementation, and what was rejected |
+| [`docs/success-criteria.md`](docs/success-criteria.md) | All fourteen criteria, each naming the test that verifies it — and the three a browser still has to |
 | [`CLAUDE.md`](CLAUDE.md) | Rules for agents working in this repo |

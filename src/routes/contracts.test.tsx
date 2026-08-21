@@ -372,6 +372,36 @@ describe("the token rules", () => {
 		expect(offenders).toEqual([]);
 	});
 
+	/**
+	 * The type scale is closed: nine steps, and every size in the app is one of
+	 * them. This is the automatable half of criterion 13 — *which* slot counts
+	 * as "body" is a judgment (the scale sanctions 13px for notes and captions
+	 * in `--text-meta`'s own comment), but a size from outside the scale is
+	 * unambiguously a bug, and 16 is the floor for everything above a label.
+	 */
+	it("takes every font size from the nine-step scale", () => {
+		const scale = new Set(
+			[...tokens.matchAll(/--text-([a-z]+):/g)].map(
+				([, step]) => `text-${step}`,
+			),
+		);
+		expect(scale.size).toBe(9);
+
+		const offenders = sources.flatMap((file) => {
+			const source = withoutComments(readFileSync(file, "utf8"));
+			return [
+				...source.matchAll(
+					/\btext-(?!ink|paper|card|accent|alarm|advisory|balance|pretty|center|right|left)([a-z][a-z0-9]*)\b/g,
+				),
+			]
+				.map(([match]) => match)
+				.filter((used) => !scale.has(used))
+				.map((used) => `${file}: ${used}`);
+		});
+
+		expect(offenders).toEqual([]);
+	});
+
 	/** Nor a literal duration: --dur-value and --dur-sheet are the only two. */
 	it("puts no literal duration in a component", () => {
 		const offenders = sources

@@ -7,6 +7,7 @@ import type { Session } from "@/types/session";
 import { relativeTime } from "@/utils/relativeTime";
 import { BackupCard } from "./BackupCard";
 import { DeleteSessionDialog } from "./DeleteSessionDialog";
+import { InstallCard } from "./InstallCard";
 import { SectionHeading } from "./SectionHeading";
 import { FinishedRow, InProgressRow } from "./SessionRow";
 import { SwipeRow } from "./SwipeRow";
@@ -90,6 +91,10 @@ export const SessionList = ({ sessions }: { sessions: Session[] }) => {
 				lastExportedAt={lastExportedAt}
 				onExported={setLastExportedAt}
 			/>
+
+			{/* Below backup, and only until the app is installed: keeping the
+			    games is the more urgent of the two durability mitigations. */}
+			<InstallCard />
 
 			{pendingDelete && (
 				<DeleteSessionDialog

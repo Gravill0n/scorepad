@@ -254,5 +254,9 @@
   "results_reopen": "Reopen",
   "results_export": "Export",
   "results_back": "Back to games",
-  "results_rank": "Rank {rank}"
+  "results_rank": "Rank {rank}",
+  "install_eyebrow": "Install",
+  "install_copy": "Add Scorepad to your home screen. An installed app keeps its games — a browser can clear a site it has not seen for a week.",
+  "install_action": "Add to home screen",
+  "install_ios": "Tap the Share button, then Add to Home Screen."
 }

@@ -1135,13 +1135,58 @@ is task 32's to measure.
 **Description:** Manifest, icon, service worker, installability.
 
 **Acceptance criteria:**
-- [ ] The app icon from `1p` — a tally of five, diagonal, in accent, `--radius-tile` —
+- [x] The app icon from `1p` — a tally of five, diagonal, in accent, `--radius-tile` —
       exported at the manifest's sizes. The only asset that ships.
-- [ ] Manifest colours come from `tokens.css`; a service worker caches the static bundle.
-- [ ] Add-to-Home-Screen is prompted, per the durability mitigation.
+- [x] Manifest colours come from `tokens.css` (asserted against the file, not copied by
+      eye); a service worker caches the static bundle.
+- [x] Add-to-Home-Screen is prompted, per the durability mitigation.
 
-**Verification:** **Success criterion 9** — installable, valid manifest, offline cold start
-after install.
+**Verification:** `src/lib/pwa.test.ts` — the manifest parses and carries a scope, a start
+URL and `display: standalone`; each icon is a real PNG at the size it claims, read out of its
+own IHDR; the worker versions its cache, drops every other one on activate and answers only
+same-origin GETs. **Criterion 9's third clause — the offline cold start — is not asserted
+here:** it needs a real install on a real origin, and it is task 31's re-verification against
+the deployed URL.
+
+**Four things settled here:**
+
+1. **The icons are generated, not drawn.** `1p` specifies the mark exactly — four ink
+   uprights and one accent diagonal on a 24 × 24 viewBox — so `scripts/icons.ts` rasterises
+   that geometry straight from `tokens.css`'s colours. Five round-capped segments and a
+   rounded rectangle are a distance field, and a distance field is exact at any size and
+   antialiases for free, which is why this needs no renderer and no dependency. `bun run
+   icons` regenerates them; a change to the accent colour is a re-run, not a redraw.
+   Four PNGs ship: 192 and 512 as the tile `1p` draws, a full-bleed maskable 512 with the
+   glyph inside the safe circle, and a 180 `apple-touch-icon` — square, because iOS applies
+   its own squircle and ignores transparency.
+2. **Task 1 missed the scaffold's artwork.** `logo192.png`, `logo512.png`, `favicon.ico` and
+   a `manifest.json` still calling the app *"Create TanStack App Sample"* were all still in
+   `public/`, and would have shipped as the installed app's name and icon. Deleted, with a
+   test that fails if any of them comes back.
+3. **Every URL in the manifest and the worker is relative.** A manifest's relative URLs
+   resolve against its own address, and the worker's against its scope — so both are already
+   correct under task 31's `/scorepad/` sub-path without knowing they are on one. That turns
+   task 31's manifest and scope re-check into a confirmation rather than a rewrite. The
+   document head derives its own hrefs from `import.meta.env.BASE_URL` for the same reason.
+4. **The install prompt is two mechanisms, because there is no one API.** Chromium fires
+   `beforeinstallprompt`, which the card takes over (and `preventDefault`s, or the browser
+   shows its own bar as well). **iOS fires nothing and offers nothing** — so there the card
+   says where the Share button is. That is not a nicety: the mitigation exists to survive
+   *Safari's* ~7-day eviction, so leaving iOS out would drop it exactly where it is needed.
+   The card is **not drawn on `1d`** — the spec requires the prompt and the artboards predate
+   it, so it borrows the backup card's shape rather than inventing a second one, and removes
+   itself the moment the app is installed.
+
+**One defect found and fixed while building:** the status-bar colour was a
+`prefers-color-scheme` pair of `<meta name="theme-color">`, which is the usual way to do it —
+but **the router dedupes meta by `name`**, so only the last one reached the document and
+light mode had no `theme-color` at all. It is one tag now, owned by the provider, which is
+more correct anyway: the provider knows the *effective* theme, including a choice the OS does
+not know about. A test pins the single tag.
+
+*Note:* `public/sw.js` is the one file in the project that uses the Fetch API. Checkpoint E's
+"no network API in the bundle" still holds — the worker is not part of the bundle, and it
+touches `fetch` to answer from a cache rather than to reach the network on the app's behalf.
 
 **Dependencies:** 29. **Scope:** M.
 

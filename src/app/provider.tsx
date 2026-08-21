@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { type Locale, SettingsContext, type Theme } from "@/hooks/useSettings";
 import { getMeta, putMeta } from "@/lib/db";
+import { registerServiceWorker } from "@/lib/installPrompt";
 import { loadSessions } from "@/lib/sessions";
 import {
 	getLocale,
@@ -70,6 +71,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		void loadSessions();
 	}, []);
 
+	// Installability and the offline cold start. It resolves false on a
+	// non-secure origin rather than throwing — nothing in the app needs it to
+	// have worked, and `bun dev` over a LAN address is exactly that origin.
+	useEffect(() => {
+		void registerServiceWorker();
+	}, []);
+
 	// An untouched install keeps following the OS, including while it is open.
 	useEffect(() => {
 		const query = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
@@ -85,6 +93,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 	// through this attribute.
 	useEffect(() => {
 		document.documentElement.dataset.theme = theme;
+
+		// The status bar takes its colour from this, and in a standalone install
+		// the status bar is the app's own top edge — a light bar over the dark
+		// theme is a seam you can see. The <meta> pair in the document head
+		// follows the OS; a chosen theme has to move it here.
+		const meta = document.querySelector(
+			'meta[name="theme-color"]:not([media])',
+		);
+		meta?.setAttribute("content", theme === "dark" ? "#201c16" : "#f6f1e7");
 	}, [theme]);
 
 	useEffect(() => {

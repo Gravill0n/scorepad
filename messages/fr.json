@@ -329,5 +329,9 @@
   "results_reopen": "Rouvrir",
   "results_export": "Exporter",
   "results_back": "Retour aux jeux",
-  "results_rank": "Rang {rank}"
+  "results_rank": "Rang {rank}",
+  "install_eyebrow": "Installer",
+  "install_copy": "Ajoutez Scorepad à votre écran d'accueil. Une app installée garde ses parties — un navigateur peut effacer un site qu'il n'a pas vu depuis une semaine.",
+  "install_action": "Ajouter à l'écran d'accueil",
+  "install_ios": "Touchez Partager, puis « Sur l'écran d'accueil »."
 }

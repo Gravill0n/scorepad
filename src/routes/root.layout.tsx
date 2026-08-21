@@ -1,5 +1,6 @@
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AppProvider } from "@/app/provider";
+import { THEME_COLOR } from "@/utils/themeColor";
 import appCss from "../styles.css?url";
 
 /** Task 31 puts the app under a project sub-path; every asset URL follows it. */
@@ -36,7 +37,7 @@ export const Route = createRootRoute({
 			// `name` and only the last one survives — so the provider owns this
 			// tag instead, which is more correct anyway: it knows the *effective*
 			// theme, including a choice the OS does not know about.
-			{ name: "theme-color", content: "#f6f1e7" },
+			{ name: "theme-color", content: THEME_COLOR.light },
 		],
 		links: [
 			{

@@ -91,7 +91,11 @@ describe("walking the table", () => {
 				),
 			);
 		});
-	});
+		// Ten players is twenty-odd real IndexedDB round trips, which is ~2s
+		// alone and past the 5s default when the whole suite is contending for
+		// the machine. The budget is the test's actual cost, not a retry: broken
+		// logic still fails on an assertion in well under a second.
+	}, 20_000);
 
 	it("reads Done rather than a next player on the last hand-over", async () => {
 		await startUno(2);

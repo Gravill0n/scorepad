@@ -7,6 +7,7 @@ import {
 	getLocale,
 	setLocale as setParaglideLocale,
 } from "@/paraglide/runtime";
+import { THEME_COLOR } from "@/utils/themeColor";
 
 /** Absent means untouched, which is not the same as a stored default. */
 type Stored = { theme?: Theme; locale?: Locale };
@@ -101,7 +102,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		const meta = document.querySelector(
 			'meta[name="theme-color"]:not([media])',
 		);
-		meta?.setAttribute("content", theme === "dark" ? "#201c16" : "#f6f1e7");
+		meta?.setAttribute("content", THEME_COLOR[theme]);
 	}, [theme]);
 
 	useEffect(() => {

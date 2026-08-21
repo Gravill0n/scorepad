@@ -1296,6 +1296,18 @@ fourteen success criteria by hand, recording the result.
 - [ ] All fourteen success criteria pass, with 4 and 9 checked on the deployed URL.
 - [ ] `bun run lint` and `bun run test` clean, and the deploy workflow is green on `main`.
 
+**What is owed to a browser, collected in one place.** Everything below has been deferred
+here by a task that could not do it in jsdom, and each one needs a real viewport on the
+deployed origin:
+
+| Owed | Criterion | Deferred from |
+|---|---|---|
+| Every screen fits 390 × 844 in French at its worst-case count, frame unscrolled | 10 | Checkpoints D, E, F; tasks 24, 28, 32 |
+| Offline from first paint, on a real origin, network panel recording | 4 | Checkpoint E |
+| Installable, and a cold start offline after install | 9 | Task 30 |
+| A hard reload on `/scorepad/session/<id>` renders the session, not a 404 | — | Task 31 |
+| The artboards compared by a human, screen by screen | — | Task 32 |
+
 ---
 
 ## Risks

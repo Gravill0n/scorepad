@@ -51,7 +51,7 @@ export const CategoryStrip = ({
 						<span className="font-mono text-eyebrow tracking-eyebrow">
 							{chip}
 						</span>
-						<span className="flex h-2.5 items-center text-[0.625rem] leading-none">
+						<span className="flex h-2.5 items-center text-eyebrow leading-none">
 							{isCurrent ? (
 								"●"
 							) : done ? (

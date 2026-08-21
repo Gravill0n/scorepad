@@ -18,14 +18,23 @@ import { WinnerCard } from "./WinnerCard";
 const ACTION =
 	"flex h-[var(--h-tap)] min-w-0 flex-1 items-center justify-center rounded-ctrl border border-line bg-card text-body font-[var(--weight-medium)] text-ink";
 
-/** `finished 21:24` — the clock, not a date: Results is read the same evening. */
-const clockTime = (iso: string | undefined, locale: "en" | "fr") =>
-	iso === undefined
-		? ""
-		: new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-GB", {
-				hour: "2-digit",
-				minute: "2-digit",
-			}).format(new Date(iso));
+/**
+ * `finished 21:24` — the clock, not a date: Results is read the same evening.
+ *
+ * Returns null on anything unparseable. `finishedAt` is validated as a string
+ * and nothing more, and a backup file is untrusted input — `Intl` throws a
+ * RangeError on an Invalid Date, which would take the whole screen down over
+ * one bad field. `relativeTime` guards the same way.
+ */
+const clockTime = (iso: string | undefined, locale: "en" | "fr") => {
+	const at = iso === undefined ? Number.NaN : Date.parse(iso);
+	if (Number.isNaN(at)) return null;
+
+	return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-GB", {
+		hour: "2-digit",
+		minute: "2-digit",
+	}).format(at);
+};
 
 /**
  * Results (`1n`, `1o`) — **the one moment sorting is allowed.**
@@ -48,6 +57,8 @@ export const ResultsScreen = ({ session }: { session: Session }) => {
 	const game = gameName(session.templateId);
 	const note = takeaway(session);
 	const missing = emptyCells(session);
+	const isFinished = session.status === "finished";
+	const finishedAt = clockTime(session.finishedAt, locale);
 
 	const playAgain = () =>
 		void duplicateSession(session.id).then((copy) =>
@@ -66,18 +77,29 @@ export const ResultsScreen = ({ session }: { session: Session }) => {
 			<ScreenHeader
 				title={session.name}
 				subtitle={
-					session.finishedAt === undefined
+					finishedAt === null
 						? // `See results →` reaches this screen mid-game, and passing a
 							// target never ends one: there is no finish time to name.
 							session.entry === "team"
 							? m.sheet_sub_teams({ game, count: session.players.length })
 							: m.sheet_sub_players({ game, count: session.players.length })
-						: m.results_sub({
-								game,
-								time: clockTime(session.finishedAt, locale),
-							})
+						: m.results_sub({ game, time: finishedAt })
 				}
-				leading={<BackLink to="/" icon={X} label={m.sheet_close()} />}
+				leading={
+					// Closing a finished game goes to the shelf; closing a peek at a
+					// running one goes back to the game, which is where the phone came
+					// from and where it has to return.
+					isFinished ? (
+						<BackLink to="/" icon={X} label={m.sheet_close()} />
+					) : (
+						<BackLink
+							to="/session/$id"
+							params={{ id: session.id }}
+							icon={X}
+							label={m.sheet_close()}
+						/>
+					)
+				}
 			/>
 
 			<div className="shrink-0 px-4 pt-1.5">
@@ -160,7 +182,7 @@ export const ResultsScreen = ({ session }: { session: Session }) => {
 					{/* Advisory, never a block: finishing with holes is a legal thing
 					    to have done, and the number is here so nobody finds the gap
 					    a week later. */}
-					{missing > 0 ? (
+					{isFinished && missing > 0 ? (
 						<p className="num mt-1 font-mono text-eyebrow tracking-eyebrow text-advisory-ink uppercase">
 							{m.results_empty_cells({ count: missing })}
 						</p>
@@ -177,12 +199,18 @@ export const ResultsScreen = ({ session }: { session: Session }) => {
 					<button type="button" onClick={playAgain} className={ACTION}>
 						{m.results_play_again()}
 					</button>
-					<button type="button" onClick={reopen} className={ACTION}>
-						{m.results_reopen()}
-					</button>
+					{/* Only for a game that was actually closed: offering to reopen a
+					    running one is a button that lies about the state. */}
+					{isFinished ? (
+						<button type="button" onClick={reopen} className={ACTION}>
+							{m.results_reopen()}
+						</button>
+					) : null}
 					<button
 						type="button"
-						onClick={() => void exportSession(session)}
+						onClick={() => {
+							exportSession(session);
+						}}
 						className={ACTION}
 					>
 						{m.results_export()}

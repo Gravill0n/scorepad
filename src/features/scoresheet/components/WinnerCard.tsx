@@ -2,6 +2,14 @@ import { PlayerToken } from "@/components/PlayerToken";
 import { m } from "@/paraglide/messages";
 import type { Player } from "@/types/session";
 
+/**
+ * Tokens shown in the stack. Finishing a game nobody scored ties everyone at
+ * zero, and twelve overlapping 40px tokens are wider than the card — so the
+ * stack caps and the names line carries the full list, which is what actually
+ * identifies people.
+ */
+const MAX_TOKENS = 4;
+
 /** Intl writes "Chloé and Émile" / "Chloé et Émile" so we don't keep a table. */
 const joinNames = (names: string[], locale: "en" | "fr") =>
 	new Intl.ListFormat(locale === "fr" ? "fr-FR" : "en-GB", {
@@ -35,7 +43,7 @@ export const WinnerCard = ({
 			<div className="mt-2.5 flex items-center gap-3">
 				{/* Overlapping tokens: one block, not one row per winner. */}
 				<span className="flex shrink-0">
-					{winners.map((winner, index) => (
+					{winners.slice(0, MAX_TOKENS).map((winner, index) => (
 						<span
 							key={winner.id}
 							className="rounded-token ring-2 ring-card"
@@ -50,7 +58,9 @@ export const WinnerCard = ({
 					))}
 				</span>
 
-				<p className="min-w-0 flex-1 text-strong font-[var(--weight-semi)] leading-snug text-ink text-pretty">
+				{/* Clamped: a twelve-way tie would otherwise wrap to ten lines and
+				    take the ranked list off the screen. Every name is still below. */}
+				<p className="line-clamp-2 min-w-0 flex-1 text-strong font-[var(--weight-semi)] leading-snug text-ink text-pretty">
 					{joinNames(
 						winners.map((winner) => winner.name),
 						locale,

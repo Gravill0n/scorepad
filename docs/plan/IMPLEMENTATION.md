@@ -1035,6 +1035,35 @@ setup rows carry. Seven players fit inside 844 with the tiebreak card showing; t
 two rows past the band, and clipping a row out of reach is worse than a scroll. Task 32 owns
 the real measurement.
 
+**The five-axis review found five defects, all fixed here.** Four of them are the mid-game
+visit and the degenerate tie — the two states `1n` does not draw, and therefore the two the
+first build did not think about:
+
+1. **The × stranded you away from a running game.** `See results →` opens this screen without
+   finishing, and closing it went to the shelf — so a peek at the standings cost you your
+   place. It now closes back to the session while the game is active, and to the shelf once it
+   is finished.
+2. **`Reopen` showed on a game that was never closed.** A button that lies about the state.
+   Hidden while the session is active; `Play again` and `Export` still mean something there
+   and stay.
+3. **A twelve-way tie spilled out of the winner card.** Finishing a game nobody scored ties
+   the whole table at zero, and twelve overlapping 40px tokens are wider than the card. The
+   stack caps at four and the names line clamps to two lines — every winner is still named,
+   and every one of them is still ranked first in the list below.
+4. **The empty-cell advisory fired mid-game**, where every unplayed cell is empty by
+   definition. Noise is how a warning stops being read for the finished game it exists for, so
+   it only shows once the game is over.
+5. **An unparseable `finishedAt` crashed the screen.** It is validated as a string and nothing
+   more, and a backup file is untrusted input — `Intl` throws a `RangeError` on an Invalid
+   Date, taking Results down over one hand-edited field. Guarded the way `relativeTime`
+   already guards, which is the lesson this codebase had learned once and not applied here.
+
+**Left as a note:** `takeaway`'s `{total}` counts the contests that were actually *played*,
+not the ones the game has — so a 7-category sheet with two blank categories reads
+`3 of 5 categories`. Defensible, and it keeps one shape for both modes, but the empty-cell
+advisory beneath is what carries the gap. Worth a second look at task 32 with the real copy on
+screen.
+
 **Dependencies:** 22, 27. **Scope:** M.
 
 ---

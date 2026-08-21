@@ -233,6 +233,7 @@ describe("takeaways and warnings", () => {
 		await renderResults(
 			session({ rounds: [{ p1: { birds: 20 }, p2: { birds: 40 } }] }),
 		);
+
 		// 3 players × 2 categories = 6, two entered.
 		expect(screen.getByText("4 cells were left empty")).toBeDefined();
 		// Advisory, not a dialog and not a disabled control.
@@ -244,6 +245,22 @@ describe("takeaways and warnings", () => {
 
 	it("says nothing about empty cells when the sheet is complete", async () => {
 		await renderResults(session());
+		expect(screen.queryByText(/left empty/)).toBeNull();
+	});
+
+	/**
+	 * Mid-game every unplayed cell is empty by definition, so warning there is
+	 * noise — and noise is how a warning stops being read for the finished game
+	 * it exists for.
+	 */
+	it("says nothing about empty cells on a game still being played", async () => {
+		await renderResults(
+			session({
+				status: "active",
+				finishedAt: undefined,
+				rounds: [{ p1: { birds: 20 } }],
+			}),
+		);
 		expect(screen.queryByText(/left empty/)).toBeNull();
 	});
 });
@@ -344,6 +361,13 @@ describe("the footer", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Back to games" }));
 		expect(await screen.findByText("home")).toBeDefined();
 	});
+
+	it("closes a finished game to the shelf", async () => {
+		await renderResults(session());
+		expect(
+			screen.getByRole("link", { name: "Close" }).getAttribute("href"),
+		).toBe("/");
+	});
 });
 
 describe("reached mid-game from the sheet", () => {
@@ -362,5 +386,70 @@ describe("reached mid-game from the sheet", () => {
 	it("still ranks, because that is what the screen is for", async () => {
 		await renderResults(midGame);
 		expect(rows()[0]).toContain("Chloé");
+	});
+
+	it("closes back to the game, not to the shelf — the phone came from there", async () => {
+		await renderResults(midGame);
+		expect(
+			screen.getByRole("link", { name: "Close" }).getAttribute("href"),
+		).toBe("/session/s1");
+	});
+
+	it("offers no Reopen for a game that was never closed", async () => {
+		await renderResults(midGame);
+		expect(screen.queryByRole("button", { name: "Reopen" })).toBeNull();
+		// The two that still mean something are both there.
+		expect(screen.getByRole("button", { name: "Play again" })).toBeDefined();
+		expect(screen.getByRole("button", { name: "Export" })).toBeDefined();
+	});
+});
+
+describe("a degenerate tie", () => {
+	/** Finishing a game nobody scored ties the whole table at zero. */
+	const twelveWay = session({
+		templateId: "counter",
+		mode: "tally",
+		categories: [{ key: "points", label: "Points" }],
+		players: Array.from({ length: 12 }, (_, index) => ({
+			id: `q${index}`,
+			name: `Player ${index + 1}`,
+			colorIndex: index + 1,
+			sortOrder: index,
+		})),
+		rounds: [],
+	});
+
+	it("caps the token stack rather than spilling out of the card", async () => {
+		await renderResults(twelveWay);
+		const card = screen.getByText("Joint winners").closest("div");
+		if (!card) throw new Error("no winner card");
+		// Twelve overlapping 40px tokens are wider than the card itself.
+		expect(card.querySelectorAll('[aria-hidden="true"]')).toHaveLength(4);
+	});
+
+	it("still names every winner, and ranks every one of them first", async () => {
+		await renderResults(twelveWay);
+		expect(screen.getByText(/Player 1, Player 2/)).toBeDefined();
+		expect(rows().filter((row) => row.includes("1="))).toHaveLength(12);
+	});
+
+	it("says nothing about a tiebreak, because the counter has no rule", async () => {
+		await renderResults(twelveWay);
+		expect(screen.queryByText(/Tiebreak/)).toBeNull();
+	});
+});
+
+describe("a session that came back from a backup file", () => {
+	/**
+	 * `finishedAt` is validated as a string and nothing more, and a backup file
+	 * is untrusted input. `Intl` throws on an Invalid Date, so one hand-edited
+	 * field would otherwise take the whole screen down.
+	 */
+	it("renders rather than throwing on an unparseable finish time", async () => {
+		await renderResults(session({ finishedAt: "yesterday evening" }));
+
+		expect(screen.getByRole("heading", { name: "Sunday table" })).toBeDefined();
+		expect(rows()[0]).toContain("Chloé");
+		expect(screen.queryByText(/finished/)).toBeNull();
 	});
 });

@@ -552,6 +552,71 @@ describe("writing one cell", () => {
 		expect(stored?.rounds[2]?.[marie.id]?.birds).toBe(3);
 	});
 
+	it("leaves no empty cell record behind when the last cell is cleared", async () => {
+		const { session, marie, luc } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 7,
+		});
+		await setCell(session.id, {
+			playerId: luc.id,
+			categoryKey: "birds",
+			value: 4,
+		});
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: undefined,
+		});
+
+		// Marie is absent from the round, not present with an empty record —
+		// otherwise "nobody scored this" and "somebody scored 0" read the same.
+		const stored = await getSession(session.id);
+		expect(stored?.rounds[0]).toEqual({ [luc.id]: { birds: 4 } });
+	});
+
+	/**
+	 * The tally case: opening the entry sheet, typing a number and clearing it
+	 * again used to leave a hand behind — a row of zeros in the ledger, a recap
+	 * line naming somebody who never scored, and the hand counter one ahead.
+	 */
+	it("drops a trailing hand nobody entered", async () => {
+		const { session, marie } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 5,
+			roundIndex: 1,
+		});
+		expect((await getSession(session.id))?.rounds).toHaveLength(2);
+
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: undefined,
+			roundIndex: 1,
+		});
+
+		const stored = await getSession(session.id);
+		expect(stored?.rounds).toHaveLength(0);
+	});
+
+	it("keeps an empty hand that has a played hand after it", async () => {
+		const { session, marie } = await seed();
+		await setCell(session.id, {
+			playerId: marie.id,
+			categoryKey: "birds",
+			value: 5,
+			roundIndex: 2,
+		});
+
+		// Hands 1 and 2 were skipped, not abandoned: hand 3 is still hand 3.
+		const stored = await getSession(session.id);
+		expect(stored?.rounds).toHaveLength(3);
+		expect(stored?.rounds[0]).toEqual({});
+	});
+
 	it("bumps updatedAt, so Home lifts the game being played", async () => {
 		const { session, marie } = await seed();
 		const before = session.updatedAt;

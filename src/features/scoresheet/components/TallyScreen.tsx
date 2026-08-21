@@ -169,6 +169,10 @@ export const TallyScreen = ({ session }: { session: Session }) => {
 
 			{entering !== null && (
 				<EntrySheet
+					// A different hand is a different sheet: without this the active
+					// player and the typed value survive a hand change, and a number
+					// lands in the wrong hand.
+					key={entering}
 					session={session}
 					roundIndex={entering}
 					onClose={() => setEntering(null)}

@@ -295,8 +295,24 @@ export const setCell = (
 		if (value === undefined) delete cells[categoryKey];
 		else cells[categoryKey] = value;
 
-		round[playerId] = cells;
+		// An empty cell is *absent* from the round rather than stored as zero, so
+		// Results can still tell "nobody scored this" from "somebody scored 0".
+		// A player left with no cells at all is absent by the same rule.
+		if (Object.keys(cells).length === 0) delete round[playerId];
+		else round[playerId] = cells;
+
 		rounds[roundIndex] = round;
+
+		// A trailing hand nobody entered is not a hand. Without this, opening the
+		// entry sheet, typing a number and clearing it again leaves a row of zeros
+		// in the ledger, a recap line naming somebody who never scored, and the
+		// hand counter one ahead of the table.
+		while (
+			rounds.length > 0 &&
+			Object.keys(rounds[rounds.length - 1] ?? {}).length === 0
+		) {
+			rounds.pop();
+		}
 
 		return persist({
 			...current,

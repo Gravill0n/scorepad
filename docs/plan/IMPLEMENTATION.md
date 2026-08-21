@@ -918,11 +918,59 @@ twelve hands and the same total back.
       is deleting a session) but reads as a screenshot claim. Both are task 32's, at 390 × 844
       in French.
 
-**One defect fixed while writing the tests, and one taken from the artboards:** the standings
-list was `shrink-0`, so a twelve-player table pushed the entry bar off the bottom of the
-screen rather than scrolling the rows — the one control that must sit under the same thumb at
-hand 1 and hand 40. And `2c`'s prose refuses a save that does not balance, which `SPEC.md`
-deliberately reversed; the sheet has no save to refuse, so the two now agree.
+- [x] **A tally evening through the real route tree**, `src/routes/tallyGame.flow.test.tsx`:
+      Home → picker → a ten-player Uno table → four hands entered through the sheet without
+      it closing between players → a wrong cell corrected from hand history → finish → a
+      reload (store dropped, database reopened) → every hand read back, in seat order,
+      `status: "finished"`. `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and
+      `sendBeacon` are stubbed for the whole walk and **none is ever called**.
+
+**The five-axis review found four defects, all fixed here:**
+
+1. **An abandoned hand survived as a phantom.** `setCell` wrote `round[playerId] = {}` even
+   when the last cell was cleared, so opening the entry sheet, typing a number and clearing
+   it again left a hand behind — a row of zeros in the ledger, a recap line naming somebody
+   who never scored, and the hand counter one ahead of the table. Fixed at the root, in the
+   shared write path: an empty cell record is deleted, and a *trailing* hand nobody entered
+   is dropped. An empty hand with a played hand after it stays, because that is a skipped
+   hand and hand 3 is still hand 3. This also makes good on task 20's rule that an empty
+   cell is **absent** from the round — it was only half true before. Three regression tests
+   in `sessions.test.ts`.
+2. **The pinned `TOTAL` row almost certainly did not pin.** Hand history was
+   `border-collapse: collapse` with `position: sticky` on the `<tr>`, which Chrome ignores
+   outright, and a sticky `<th>` loses its border under collapse as well. The table is now
+   `border-separate` with both axes pinned from the *cells* — and the hand column pins to
+   the left too, which `2d` asks for ("hands down the pinned left column") and the first
+   build missed entirely.
+3. **The entry sheet kept its state across a hand change.** `entering` going 0 → 1 re-rendered
+   the sheet rather than remounting it, so the active player and the typed value carried into
+   the next hand. It cannot happen through the UI today — the sheet covers the controls that
+   would change it — but the failure mode is a number landing in the wrong hand, so both call
+   sites now key the sheet on the hand. The flow test found this, by being the one place the
+   close animation does not complete.
+4. **The standings list was `shrink-0`**, so a twelve-player table pushed the entry bar off
+   the bottom of the screen rather than scrolling the rows — the one control that must sit
+   under the same thumb at hand 1 and hand 40.
+
+Two more, both in phase 5's code and fixed here: `SheetEntry.test.tsx` read storage without
+awaiting the write in two places, which flaked under load; and `2c`'s prose refuses a save
+that does not balance, which `SPEC.md` deliberately reversed — the sheet has no save to
+refuse, so the two now agree.
+
+**Left as notes, not changes:**
+
+- **`handBalance` has no production caller.** Splitting `handPlaced` out of it (task 25) left
+  the signed difference unused — the entry-sheet header wants what is *placed*, not the gap.
+  It is one line, fully tested, and names the concept `template-grammar.md` uses, so it is
+  kept rather than deleted. Delete it with its tests if nothing wants it by task 28.
+- **Correcting a cell from hand history opens the sheet mid-table**, so its primary reads
+  `Next — {the next player}` rather than offering a way out. The correction is on disk the
+  moment it is typed and the sheet closes four ways, so nothing is lost — but the accent
+  button invites walking a hand nobody meant to enter. Worth a look at task 32 alongside the
+  rest of the tally screens.
+- **`passer` re-derives every total `standings` has just computed.** 480 `roundScore` calls
+  at twelve players and forty hands, on a screen that re-renders per keystroke. Immaterial
+  now; it is the first thing to fold into `standings` if the standings ever feel slow.
 
 ---
 

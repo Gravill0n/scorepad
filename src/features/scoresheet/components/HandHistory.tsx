@@ -91,15 +91,18 @@ export const HandHistory = ({ session }: { session: Session }) => {
 				</p>
 			) : (
 				<div ref={scroller} className="min-h-0 flex-1 overflow-auto">
+					{/* `border-separate` on purpose: with `border-collapse: collapse`
+					    a sticky <th> loses its border, and sticky on a <tr> is ignored
+					    outright — so both axes pin from the cells, not the rows. */}
 					<table
 						aria-label={m.history_title()}
-						className="w-max border-collapse text-left"
+						className="w-max border-separate border-spacing-0 text-left"
 					>
 						<thead>
-							<tr className="sticky top-0 z-1 bg-paper-dim">
+							<tr>
 								<th
 									scope="col"
-									className="w-11 border-line-strong border-b-2 pt-2.5 pb-2 pl-3 font-mono text-eyebrow tracking-eyebrow font-[var(--weight-normal)] text-ink-soft uppercase"
+									className="sticky top-0 left-0 z-30 w-11 border-line-strong border-b-2 bg-paper-dim pt-2.5 pb-2 pl-3 font-mono text-eyebrow tracking-eyebrow font-[var(--weight-normal)] text-ink-soft uppercase"
 								>
 									{m.ledger_hand()}
 								</th>
@@ -107,7 +110,7 @@ export const HandHistory = ({ session }: { session: Session }) => {
 									<th
 										key={player.id}
 										scope="col"
-										className="w-15 border-line-strong border-b-2 pt-2.5 pb-2"
+										className="sticky top-0 z-20 w-15 border-line-strong border-b-2 bg-paper-dim pt-2.5 pb-2"
 									>
 										<span className="flex justify-center">
 											<PlayerToken
@@ -128,11 +131,13 @@ export const HandHistory = ({ session }: { session: Session }) => {
 									// Hands are identified by position and never reordered.
 									// biome-ignore lint/suspicious/noArrayIndexKey: the index is the hand number
 									key={hand}
-									className="h-14 border-line border-b"
+									className="h-14"
 								>
+									{/* Hands pin down the left column, so the axis stays
+									    labelled once the sixth player scrolls into view. */}
 									<th
 										scope="row"
-										className="num pl-3 text-left font-mono text-meta font-[var(--weight-normal)] text-ink-soft"
+										className="num sticky left-0 z-10 border-line border-b bg-paper pl-3 text-left font-mono text-meta font-[var(--weight-normal)] text-ink-soft"
 									>
 										{hand + 1}
 									</th>
@@ -148,7 +153,10 @@ export const HandHistory = ({ session }: { session: Session }) => {
 												: "font-[var(--weight-semi)] text-ink";
 
 										return (
-											<td key={player.id} className="p-0 text-center">
+											<td
+												key={player.id}
+												className="border-line border-b p-0 text-center"
+											>
 												{/* Correcting a running total is not something
 												    anyone means, so only per-hand is editable. */}
 												{mode === "hand" ? (
@@ -174,17 +182,17 @@ export const HandHistory = ({ session }: { session: Session }) => {
 						</tbody>
 
 						<tfoot>
-							<tr className="sticky bottom-0 z-1 h-16 bg-card">
+							<tr className="h-16">
 								<th
 									scope="row"
-									className="border-line-strong border-t-2 pl-3 text-left font-mono text-eyebrow tracking-eyebrow font-[var(--weight-normal)] text-ink-soft uppercase"
+									className="sticky bottom-0 left-0 z-30 border-line-strong border-t-2 bg-card pl-3 text-left font-mono text-eyebrow tracking-eyebrow font-[var(--weight-normal)] text-ink-soft uppercase"
 								>
 									{m.history_total()}
 								</th>
 								{players.map((player) => (
 									<td
 										key={player.id}
-										className="num border-line-strong border-t-2 text-center text-strong font-[var(--weight-bold)] text-ink"
+										className="num sticky bottom-0 z-20 border-line-strong border-t-2 bg-card text-center text-strong font-[var(--weight-bold)] text-ink"
 									>
 										{playerTotal(rounds, player.id, categories)}
 									</td>
@@ -202,6 +210,7 @@ export const HandHistory = ({ session }: { session: Session }) => {
 
 			{fixing && (
 				<EntrySheet
+					key={`${fixing.hand}-${fixing.playerId}`}
 					session={session}
 					roundIndex={fixing.hand}
 					startPlayerId={fixing.playerId}

@@ -1,5 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { SheetScreen } from "@/features/scoresheet/components/SheetScreen";
+import { TallyScreen } from "@/features/scoresheet/components/TallyScreen";
 import { useSessions, useSessionsStatus } from "@/lib/sessions";
 
 export const Route = createFileRoute("/session/$id")({ component: Scoresheet });
@@ -13,8 +14,7 @@ function Scoresheet() {
 	if (status === "loading") return <div className="h-dvh bg-paper" />;
 	if (!session) return <Navigate to="/" replace />;
 
-	// Tally mode is phase 6; the route resolves the session either way.
-	if (session.mode === "tally") return <main className="p-4">Tally</main>;
+	if (session.mode === "tally") return <TallyScreen session={session} />;
 
 	return <SheetScreen session={session} />;
 }

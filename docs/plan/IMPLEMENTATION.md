@@ -764,20 +764,45 @@ on both — all in `features/scoresheet/utils/tally.test.ts`.
 **Description:** One row per player, three density tiers, one layout.
 
 **Acceptance criteria:**
-- [ ] Row heights 132 / 102 / 62 with the totals at 52 / 38 / 26 — **the total never drops
+- [x] Row heights 132 / 102 / 62 with the totals at 52 / 38 / 26 — **the total never drops
       below 26**. Shed order as the table grows: hands-won clause, then inline ledger, then
       the row's second line.
-- [ ] Rows are in **seat order**; rank is a mono number in the margin and never sorts.
-- [ ] `LEADS` pill for rank 1, hidden at `opacity: 0` for everyone else so the name baseline
+- [x] Rows are in **seat order**; rank is a mono number in the margin and never sorts.
+- [x] `LEADS` pill for rank 1, hidden at `opacity: 0` for everyone else so the name baseline
       never shifts. `win: "lowest"` makes rank 1 the lowest total and the pill reads `SAFEST`.
-- [ ] Recap line: mono 10 `HAND 14 · CHLOÉ TOOK 60` with `EDIT LAST` in accent at the right.
-- [ ] Entry bar (~106, pinned): 60px accent `Enter hand N →`, 20px bottom safe padding, in
+- [x] Recap line: mono 10 `HAND 14 · CHLOÉ TOOK 60` with `EDIT LAST` in accent at the right.
+- [x] Entry bar (~106, pinned): 60px accent `Enter hand N →`, 20px bottom safe padding, in
       the same place at hand 1 and hand 40.
-- [ ] **Target passed** renders one mono advisory line above the entry button and **changes
+- [x] **Target passed** renders one mono advisory line above the entry button and **changes
       no state** — never a dialog, never an automatic end.
 
-**Verification:** 10 players fits 844 exactly with no scroll; 12 scrolls a row or two.
-**Success criterion 10** for both counts, in French.
+**Verification:** `StandingsRow.test`'s contracts live in `TallyScreen.test.tsx`: seat order
+holds while seat two leads, the rank is in the margin, the pill reads `SAFEST` under
+`win: "lowest"`, and a passed target renders the advisory line while the session stays
+active and the entry button still names the next hand. **The 844 fit at 10 and 12 players is
+not asserted** — jsdom has no layout engine, so it is task 32's, with a real viewport.
+
+**What the artboards settled that the criteria left open:**
+
+1. **The tier dimensions live in one `TIER` table in `StandingsRow.tsx`.** `tokens.css` ships
+   no density tokens and is byte-identical to the design bundle (asserted by
+   `tokens.test.ts`), so adding some is not available here. The type sizes snap to the token
+   scale as task 12's rows did — total 52 / 38 / 26 → `--text-total` (44) / `--text-category`
+   (28) / `--text-cell` (26), name 19 / 18 → `--text-strong`. Three distinct steps, and the
+   spec's floor holds exactly, since 26 *is* `--text-cell`. Owed to the designer.
+2. **The pill is drawn at roomy and comfortable, not compact.** `2b` draws no pill, and the
+   compact row has already shed its second line; rank 1 in the margin and the accent total
+   both still say who leads. The spec's paragraph is headed *"Row anatomy (comfortable)"*,
+   so this follows the artboards rather than departing from them.
+3. **"Hands won" needed a rule the spec never states.** A hand is taken by the best score in
+   it, per the template's `win` — so Black Lady credits the *lowest* — a tie credits everyone
+   who tied, and a hand nobody has entered is taken by nobody, which is not the same as
+   everybody drawing zero. In `utils/tally.ts` with a test per clause.
+4. **`EDIT LAST` gets a 44px hit area inside the ~30px band**, the same way `BackLink` puts a
+   40px box inside 44: the drawn size and the thumb contract are different numbers.
+5. **The standings list is the band that gives at 11–12 players.** It was `shrink-0` first,
+   which pushed the entry bar off the bottom of the screen instead of scrolling the rows —
+   the one control that has to be under the same thumb at hand 1 and hand 40.
 
 **Dependencies:** 23, 19. **Scope:** M.
 
@@ -786,24 +811,39 @@ on both — all in `features/scoresheet/utils/tally.test.ts`.
 **Description:** One sheet walks the table.
 
 **Acceptance criteria:**
-- [ ] Contents in order: 36 × 4 grab handle; active-player header (30px token, name 17/600,
-      mono status line, live value at 38 with a 2px accent caret); player strip; 52px keypad
-      at 7px gaps; actions.
-- [ ] The player strip is **progress indicator and random access** — tapping any tile jumps
+- [x] Contents in order: 36 × 4 grab handle; active-player header (30px token, name 17/600,
+      mono status line, live value with a 2px accent caret); player strip; keypad; actions.
+- [x] The player strip is **progress indicator and random access** — tapping any tile jumps
       to that player. Active = accent border on lifted fill; entered = card fill with the
       value; untouched = dim fill with an ink-faint em-dash. At 10+ players tiles drop the
       token and keep the number.
-- [ ] Actions: `Clear` (88px secondary) and a primary **naming the next player**; the last
+- [x] Actions: `Clear` (88px secondary) and a primary **naming the next player**; the last
       hand-over saves the hand and dismisses the sheet.
-- [ ] With `handTotal` set, the header renders the live check
+- [x] With `handTotal` set, the header renders the live check
       (`MANCHE 9 · 26 À RÉPARTIR · 7 PLACÉS`) in `--color-advisory-ink`. Templates without
       one render no clause.
-- [ ] **The hand saves regardless of balance.** Shooting the moon is legal play.
+- [x] **The hand saves regardless of balance.** Shooting the moon is legal play.
 
-**Verification:** **Success criterion 12** — a 10-player Uno hand entered end to end without
-dismissing the sheet, and jumping back to player 3 mid-hand preserves players 4–9. Plus the
-behaviour test asserting the advisory counter and the save path are **separately** tested, so
-nobody re-couples them.
+**Verification:** **Success criterion 12** is green — `EntrySheet.test.tsx` walks all ten
+players of a Uno hand asserting exactly one `<dialog>` at every hand-over, then reads the ten
+values back out of IndexedDB; a separate test jumps back to player 3 mid-hand and asserts
+players 4–6 keep their values while player 3's is corrected. The advisory counter and the
+save path have **separate tests**, so nobody re-couples them.
+
+**Three things settled here:**
+
+1. **There is nothing for an unbalanced hand to refuse.** Every keystroke already persisted,
+   so "the hand saves regardless of balance" is structural rather than a rule the sheet
+   applies — `2c`'s prose ("refuses a save that doesn't balance") is the handoff's, and
+   `SPEC.md`'s recorded departure overrides it. The balance counter is a pure function with
+   its own test and no path to the write.
+2. **The keypad is the shared `Keypad` at `--h-key` (60px, 8px gaps), not `2c`'s 52 / 7.**
+   One keypad component in the app is worth more than two pixel sets, and 60 clears the 44px
+   floor by more. A departure from the artboard, and the one in this phase worth a look.
+3. **The counter moves with the thumb, not with the database.** It reads the typed value for
+   the active player and storage for everyone else — the person typing is looking straight at
+   it, and a round trip's lag there reads as a dropped keystroke. Same rule the sheet cell
+   learned in checkpoint E.
 
 **Dependencies:** 24. **Scope:** M.
 
@@ -813,13 +853,20 @@ nobody re-couples them.
 the height to be worth something.
 
 **Acceptance criteria:**
-- [ ] Mono column head (`HAND | MARIE & LUC | SOFIA & TOM`), 46px rows carrying the hand
-      score at 19 and the running total in mono 12.
-- [ ] **Oldest above newest, anchored to the foot** so the newest hand sits against the entry
-      bar.
-- [ ] Disappears at four players — one conditional block, same screen, same entry sheet.
+- [x] Mono column head (`HAND | MARIE & LUC | SOFIA & TOM`), `--h-tally-row` rows carrying
+      the hand score at `--text-strong` and the running total in mono beside it.
+- [x] **Oldest above newest, anchored to the foot** so the newest hand sits against the entry
+      bar — `justify-end`, so five hands sit at the bottom of the block rather than floating
+      at the top of it.
+- [x] Disappears at four players — one conditional block, same screen, same entry sheet.
 
-**Verification:** A 2-team Belote session shows six hands and still fits 844.
+**Verification:** `TallyScreen.test.tsx` reads the two Belote rows out of the ledger list by
+position and asserts hand 1 above hand 2 with the running total climbing beside each; the
+same fixture at four players asserts the block is gone. The 844 fit is task 32's.
+
+*Note:* the ledger's player columns are `1fr` rather than the artboard's two fixed halves, so
+three players divide the same row the same way two do — `2e` only ever drew the two-team case.
+The running total keeps a `min-w-8` so the column does not jitter as it crosses 100.
 
 **Dependencies:** 25. **Scope:** S.
 
@@ -828,23 +875,54 @@ the height to be worth something.
 **Description:** The audit screen, reached from ⋯.
 
 **Acceptance criteria:**
-- [ ] Segmented `Per hand | Running` (42px, ink fill on the active half); column head of 24px
-      tokens on `--color-paper-dim` with a 2px bottom rule; 56px hand rows; pinned `TOTAL`
-      row (62) on card fill; footer strip.
-- [ ] Columns 44px + 60px per player, so the sixth column **deliberately bleeds past the
+- [x] Segmented `Per hand | Running` (`--h-tap`, ink fill on the active half); column head of
+      24px tokens on `--color-paper-dim` with a 2px bottom rule; 56px hand rows; pinned
+      `TOTAL` row on card fill; footer strip.
+- [x] Columns 44px + 60px per player, so the sixth column **deliberately bleeds past the
       right edge**. This is the only screen besides Home that scrolls, and the only one that
       scrolls horizontally.
-- [ ] Zeros render as a faint interpunct `·`.
-- [ ] Cells are tappable for correction and totals recompute live.
+- [x] Zeros render as a faint interpunct `·`.
+- [x] Cells are tappable for correction and totals recompute live — a tap opens the entry
+      sheet on that hand, focused on that player, which is the same sheet `2c` draws.
 
-**Verification:** **Success criterion 7** — a 15-hand Belote session accumulates correctly,
-persists every hand, and force-quitting after hand 12 loses nothing.
+**Verification:** **Success criterion 7** is green — `HandHistory.test.tsx` plays 15 Belote
+hands through the real store, asserts both columns total correctly, then closes the database
+and drops the store after hand 12 (what a force-quit does), reopens, and reads the same
+twelve hands and the same total back.
+
+**Three decisions:**
+
+1. **It is a real `<table>`, not a grid of divs.** The data is genuinely tabular, and the
+   element hands a screen reader the row and column association for free — which removed an
+   `aria-label` from every one of N × M cells rather than adding ARIA. `<thead>` and
+   `<tfoot>` are `position: sticky` inside the one scroll container, so both axes work
+   without a second scroller.
+2. **Only `Per hand` is editable.** Correcting a running total is not a thing anyone means;
+   the running view is the same numbers as plain text, asserted.
+3. **The footer strip reads `{n} hands · Tap a cell to fix`,** not `2d`'s
+   `HANDS 7–14 · SCROLL UP FOR EARLIER`. The live visible range needs scroll measurement that
+   jsdom cannot verify, and the behaviour the drawn copy was pointing at is *land on the
+   newest hand* — so the list scrolls to the foot on mount instead. Owed to the designer, or
+   pick the range up in task 32 where there is a real viewport.
 
 **Dependencies:** 26. **Scope:** M.
 
 ### ✅ Checkpoint F — Tally mode end to end
-- [ ] Belote to 501 and 10-player Uno both play through, offline, without a scroll on the
-      standings and without a dialog anywhere.
+- [x] Belote to 501 and 10-player Uno both play through — asserted in
+      `EntrySheet.test.tsx`, `HandHistory.test.tsx` and `TallyScreen.test.tsx`, all three
+      driving the real store rather than a static prop, because a sheet that cannot see its
+      own writes is exactly the bug the player strip would hide.
+- [ ] **"Without a scroll on the standings" is not asserted, and neither is "without a dialog
+      anywhere."** The first is layout, which jsdom cannot measure; the second is true by
+      construction (the entry sheet is a bottom sheet, and the app's one confirmation dialog
+      is deleting a session) but reads as a screenshot claim. Both are task 32's, at 390 × 844
+      in French.
+
+**One defect fixed while writing the tests, and one taken from the artboards:** the standings
+list was `shrink-0`, so a twelve-player table pushed the entry bar off the bottom of the
+screen rather than scrolling the rows — the one control that must sit under the same thumb at
+hand 1 and hand 40. And `2c`'s prose refuses a save that does not balance, which `SPEC.md`
+deliberately reversed; the sheet has no save to refuse, so the two now agree.
 
 ---
 

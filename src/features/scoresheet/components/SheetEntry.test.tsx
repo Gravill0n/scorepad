@@ -157,10 +157,12 @@ describe("entering a score", () => {
 		tap("Clear");
 
 		await screen.findByRole("button", { name: "Marie: not entered" });
-		const stored = await getSession(session.id);
-		expect(
-			stored?.rounds[0]?.[session.players[0]?.id ?? ""]?.birds,
-		).toBeUndefined();
+		await waitFor(async () => {
+			const stored = await getSession(session.id);
+			expect(
+				stored?.rounds[0]?.[session.players[0]?.id ?? ""]?.birds,
+			).toBeUndefined();
+		});
 	});
 
 	it("keeps a typed zero, which is not an empty cell", async () => {
@@ -171,8 +173,10 @@ describe("entering a score", () => {
 		tap("0");
 
 		await screen.findByRole("button", { name: "Marie: 0" });
-		const stored = await getSession(session.id);
-		expect(stored?.rounds[0]?.[session.players[0]?.id ?? ""]?.birds).toBe(0);
+		await waitFor(async () => {
+			const stored = await getSession(session.id);
+			expect(stored?.rounds[0]?.[session.players[0]?.id ?? ""]?.birds).toBe(0);
+		});
 	});
 
 	it("closes the keypad when the focused cell is tapped again", async () => {

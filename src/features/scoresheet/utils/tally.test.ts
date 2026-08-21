@@ -3,6 +3,9 @@ import type { Category } from "@/types/template";
 import {
 	density,
 	handBalance,
+	handPlaced,
+	lastHandRecap,
+	passer,
 	racebarFraction,
 	standings,
 	toGo,
@@ -85,6 +88,11 @@ describe("handBalance", () => {
 		expect(handBalance({}, points, 26)).toBe(-26);
 	});
 
+	it("reports what the table has placed, separately from the verdict", () => {
+		expect(handPlaced(round, points)).toBe(26);
+		expect(handPlaced({}, points)).toBe(0);
+	});
+
 	it("scores each cell before summing, so a multiplier is respected", () => {
 		const tricks: Category[] = [
 			{ key: "tricks", label: "Tricks", multiplier: 10 },
@@ -165,5 +173,124 @@ describe("standings", () => {
 		expect(rows).toHaveLength(3);
 		expect(rows.map((row) => row.total)).toEqual([10, 0, 0]);
 		expect(rows.map((row) => row.rank)).toEqual([1, 2, 2]);
+	});
+});
+
+describe("hands won", () => {
+	const uno = (rounds: Session["rounds"]) => ({ ...belote(rounds), rounds });
+
+	it("credits the highest scorer of each hand", () => {
+		const rows = standings(
+			uno([
+				{ marie: { points: 60 }, luc: { points: 0 } },
+				{ marie: { points: 0 }, luc: { points: 44 } },
+				{ marie: { points: 12 }, luc: { points: 0 } },
+			]),
+		);
+
+		expect(rows.map((row) => row.handsWon)).toEqual([2, 1, 0]);
+	});
+
+	it("credits the lowest scorer when the template says lowest wins", () => {
+		const rows = standings({
+			...belote([
+				{ marie: { points: 26 }, luc: { points: 0 }, sofia: { points: 13 } },
+			]),
+			win: "lowest",
+		});
+
+		expect(rows.map((row) => row.handsWon)).toEqual([0, 1, 0]);
+	});
+
+	it("credits both players when a hand ties — a tie stays a tie", () => {
+		const rows = standings(
+			uno([
+				{ marie: { points: 30 }, luc: { points: 30 }, sofia: { points: 5 } },
+			]),
+		);
+
+		expect(rows.map((row) => row.handsWon)).toEqual([1, 1, 0]);
+	});
+
+	it("credits nobody for a hand with no entries at all", () => {
+		const rows = standings(uno([{}]));
+
+		expect(rows.map((row) => row.handsWon)).toEqual([0, 0, 0]);
+	});
+});
+
+describe("the last hand", () => {
+	it("carries each player's score in the hand just played", () => {
+		const rows = standings(
+			belote([
+				{ marie: { points: 80 } },
+				{ marie: { points: 20 }, luc: { points: 60 } },
+			]),
+		);
+
+		expect(rows.map((row) => row.lastHand)).toEqual([20, 60, 0]);
+	});
+
+	it("is undefined before the first hand, which is not a zero", () => {
+		const rows = standings(belote([]));
+
+		expect(rows.map((row) => row.lastHand)).toEqual([
+			undefined,
+			undefined,
+			undefined,
+		]);
+	});
+});
+
+describe("lastHandRecap", () => {
+	it("names who took the hand and what it was worth", () => {
+		expect(
+			lastHandRecap(
+				belote([
+					{ marie: { points: 10 } },
+					{ marie: { points: 5 }, luc: { points: 60 } },
+				]),
+			),
+		).toEqual({ hand: 2, name: "luc", score: 60 });
+	});
+
+	it("names the lowest scorer when lowest wins", () => {
+		expect(
+			lastHandRecap({
+				...belote([
+					{ marie: { points: 26 }, luc: { points: 0 }, sofia: { points: 13 } },
+				]),
+				win: "lowest",
+			}),
+		).toEqual({ hand: 1, name: "luc", score: 0 });
+	});
+
+	it("is undefined before the first hand", () => {
+		expect(lastHandRecap(belote([]))).toBeUndefined();
+	});
+
+	it("is undefined for a hand nobody has entered yet", () => {
+		expect(lastHandRecap(belote([{}]))).toBeUndefined();
+	});
+});
+
+describe("passer", () => {
+	it("names the first player in seat order to reach the target", () => {
+		expect(
+			passer(belote([{ marie: { points: 40 }, luc: { points: 520 } }]))?.name,
+		).toBe("luc");
+	});
+
+	it("is undefined while everyone is short of it", () => {
+		expect(passer(belote([{ luc: { points: 500 } }]))).toBeUndefined();
+	});
+
+	it("is undefined for a template with no target at all", () => {
+		expect(
+			passer({
+				...belote([{ luc: { points: 9000 } }]),
+				targetScore: undefined,
+			}),
+		).toBeUndefined();
 	});
 });

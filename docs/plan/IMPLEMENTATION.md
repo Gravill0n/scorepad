@@ -1199,33 +1199,57 @@ and tested from a real HTTPS origin rather than `localhost`. The repo is
 sub-path.
 
 **Acceptance criteria:**
-- [ ] `vite.config.ts` sets `base: "/scorepad/"` (via `BASE_PATH` env with `/` as
-      the local default, so `bun dev` is unaffected).
-- [ ] The router takes its `basepath` from `import.meta.env.BASE_URL` — never a hardcoded
-      string in two places.
-- [ ] **SPA deep links work.** GitHub Pages has no rewrite rule, so `/session/abc` 404s on a
-      hard reload. Fix: copy `index.html` to `404.html` as a build step. That is the whole
-      mechanism — no hash router, no redirect shim, no dependency.
-- [ ] Task 30's manifest and service worker are re-checked against the sub-path: `start_url`
-      and `scope` are `/scorepad/`, icon paths are relative, and the SW registers
-      with the same scope. A root-scoped SW silently fails to control the page here.
-- [ ] A GitHub Actions workflow (`.github/workflows/deploy.yml`) on push to `main`:
-      `bun install --frozen-lockfile` → `bun run lint` → `bun run test` → `bun run build` →
-      `actions/upload-pages-artifact` → `actions/deploy-pages`, with `permissions: pages:
-      write, id-token: write`. Official actions only — **no `gh-pages` npm package**.
-- [ ] **Lint and tests gate the deploy.** A red suite must not reach the URL people install
-      from.
-- [ ] Pages is set to "GitHub Actions" as its source in the repo settings (one manual step,
-      done once — note it in the README).
+- [x] `vite.config.ts` takes `base` from a `BASE_PATH` env with `/` as the local default, so
+      `bun dev` and the whole test suite are unaffected. **The literal `/scorepad/` is not in
+      the repository at all** — the workflow supplies it as
+      `/${{ github.event.repository.name }}/`, so renaming the repo needs no code change.
+- [x] The router takes its `basepath` from `import.meta.env.BASE_URL` — never a hardcoded
+      string in two places. Trailing slash trimmed, and an empty result means "no basepath",
+      which is what the domain root wants.
+- [x] **SPA deep links work.** `scripts/spa-fallback.ts` copies the built `index.html` to
+      `404.html`. Pages serves `404.html` for any unmatched path, so a copy of the shell
+      there *is* the rewrite rule. No hash router — it would put a `#` in every link somebody
+      shares — no redirect shim, no dependency.
+- [x] Task 30's manifest and service worker re-checked against the sub-path. They needed no
+      change: every URL in both is **relative**, so `start_url` and `scope` resolve to
+      `/scorepad/` on their own. Verified against the compiled bundle rather than assumed —
+      it registers `/scorepad/sw.js` with `{ scope: "/scorepad/" }`, and a worker may claim
+      its own directory, so the scope is legal.
+- [x] A GitHub Actions workflow on `main` with the full chain and
+      `permissions: pages: write, id-token: write`. Official actions only, no `gh-pages`.
+- [x] **Lint and tests gate the deploy** — `deploy` carries `needs: quality`, so nothing
+      reaches Pages unless lint, `tsc --noEmit`, the suite and the build all passed.
+- [x] The one manual step is in the README, with what its absence looks like: the workflow
+      goes green and publishes nothing.
 
-**Verification:**
-- [ ] The deployed URL loads, and a hard reload on `/scorepad/session/<id>` renders
-      the session rather than a 404.
-- [ ] **Success criteria 4 and 9 are re-verified against the deployed origin, not
-      `localhost`:** install from the URL, go offline from first paint, create → score →
-      finish → reload with zero network requests recorded.
-- [ ] The build still emits no server entry (**criterion 1**) — Pages cannot serve one, so
-      this is now enforced by the host as well as by the config.
+**Verification:** `src/lib/deploy.test.ts` holds the deploy contract — every assertion in it
+covers something that fails **silently** in production. A wrong basepath breaks every link on
+the site; a root-scoped worker never controls the page and only shows up offline; a missing
+`404.html` only shows up when somebody shares a link.
+
+- [ ] **The deployed URL is not verified, and cannot be from here.** Loading it, hard-reloading
+      `/scorepad/session/<id>`, and re-checking **criteria 4 and 9 against the deployed
+      origin** all need a real browser on a real HTTPS origin. Pushing to `main` and enabling
+      Pages is the trigger; that walk is the first item of checkpoint G.
+- [x] The build emits no server entry, now asserted **in CI** as well as by the config —
+      Pages cannot serve one, so the host enforces criterion 1 too.
+
+**Two decisions and one bug:**
+
+1. **The workflow runs on pull requests as well as `main`,** which the task did not ask for.
+   Gating only on push means a broken change merges and *then* turns `main` red and
+   undeployed — the failure this workflow exists to prevent, moved one step later. The deploy
+   job is fenced with `if: github.ref == 'refs/heads/main'`, so a PR gets the gate and
+   nothing else, and it is one file rather than two with duplicated setup.
+2. **`tsc --noEmit` is a gate,** though the task's chain did not list it. `vite build` does
+   not typecheck, so without it a type error reaches the URL.
+3. **The service worker cached a 404 as the shell.** Task 30's navigation handler cached
+   whatever came back, and on Pages a deep link is answered by `404.html` — the right *body*,
+   with a 404 status. The first visitor to arrive by a shared link would have poisoned their
+   own shell cache, and every later offline navigation would have been a 404. It now caches
+   only a 200; the shell is precached at install anyway, so being strict costs nothing. Found
+   by reading task 30's worker against this task's hosting, which is exactly the pairing the
+   plan asked `doubt-driven-development` for here.
 
 **Dependencies:** 30. **Scope:** S (one workflow file, two config lines, one copy step).
 

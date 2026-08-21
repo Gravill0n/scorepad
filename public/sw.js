@@ -48,8 +48,15 @@ self.addEventListener("fetch", (event) => {
 		event.respondWith(
 			fetch(request)
 				.then((response) => {
-					const copy = response.clone();
-					caches.open(CACHE).then((cache) => cache.put("./index.html", copy));
+					// Only a 200 becomes the cached shell. On GitHub Pages a deep
+					// link is answered by 404.html — the right *body*, with a 404
+					// status — and caching that would make every later offline
+					// navigation a 404 too. The shell is precached at install, so
+					// there is nothing to lose by being strict here.
+					if (response.ok) {
+						const copy = response.clone();
+						caches.open(CACHE).then((cache) => cache.put("./index.html", copy));
+					}
 					return response;
 				})
 				.catch(() =>

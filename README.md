@@ -7,9 +7,10 @@ after the page loads.
 It has to beat paper: legible at arm's length, nothing to learn, offline, and fast enough
 that nobody reaches for a pencil instead.
 
-**Status:** specified, not yet built. The repository still holds the TanStack starter
-scaffold and Prisma leftovers that v1 removes. Start at
-[`docs/spec/SPEC.md`](docs/spec/SPEC.md).
+**Status:** built through phase 8 — every screen, both scoring modes, French, and the PWA.
+Deployment is wired but not yet triggered. Start at
+[`docs/spec/SPEC.md`](docs/spec/SPEC.md); the order of work is
+[`docs/plan/IMPLEMENTATION.md`](docs/plan/IMPLEMENTATION.md).
 
 ## What it does
 
@@ -46,6 +47,31 @@ bun run lint             # biome check .
 bun run lint:fix         # biome check --write .
 bun run format           # biome format --write .
 ```
+
+## Deploying
+
+Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+lint → types → tests → build → publish to GitHub Pages. **Lint and tests gate the deploy** —
+a red suite must not reach the URL people install from, because an installed PWA keeps
+serving itself from cache and a bad deploy outlives the fix.
+
+The site is a **project page**, so it lives at
+`https://gravill0n.github.io/scorepad/` rather than at a domain root. That path is
+written once, as `BASE_PATH` in the workflow, and everything else derives from
+`import.meta.env.BASE_URL` — the router's basepath, the document head's asset URLs, the
+service worker's scope. The manifest and the worker use relative URLs throughout, so they
+are correct at any base without being told which one they are on. A custom domain later is
+`base` going back to `/`.
+
+Deep links work because the build copies `index.html` to `404.html`. GitHub Pages has no
+rewrite rule: it serves a file if one exists and its own 404 otherwise, so a copy of the
+shell at `404.html` *is* the rewrite rule. No hash router, no redirect shim, no dependency.
+
+### One manual step, once
+
+**Set the repository's Pages source to "GitHub Actions"** — Settings → Pages → Build and
+deployment → Source. Without it the workflow builds green and publishes nothing, which is a
+silent failure: the run is a tick and the site is not there.
 
 ## Stack
 

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "vite build && rm -rf dist/server",
+    "build": "vite build && rm -rf dist/server && bun scripts/spa-fallback.ts",
     "test": "vitest run",
     "format": "biome format --write .",
     "lint": "biome check .",

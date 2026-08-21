@@ -16,7 +16,19 @@ import { defineConfig } from "vitest/config";
  */
 const underTest = process.env.VITEST === "true";
 
+/**
+ * GitHub Pages serves this repo as a **project page**, so the app lives under
+ * `/scorepad/` rather than at a domain root. The path is written once, here,
+ * and everything else derives from `import.meta.env.BASE_URL` — the router's
+ * basepath, the document head's asset hrefs, the service worker's scope. A
+ * custom domain later is this line going back to `/`.
+ *
+ * The default is `/` so `bun dev` is unaffected.
+ */
+const base = process.env.BASE_PATH ?? "/";
+
 const config = defineConfig({
+	base,
 	plugins: [
 		devtools(),
 		paraglideVitePlugin({

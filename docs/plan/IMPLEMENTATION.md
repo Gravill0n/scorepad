@@ -734,15 +734,28 @@ race-bar fraction, `toGo`, hand-balance check. Pure functions over plain data, n
 stored.
 
 **Acceptance criteria:**
-- [ ] `density = players <= 3 ? "roomy" : players <= 6 ? "comfortable" : "compact"`, derived
+- [x] `density = players <= 3 ? "roomy" : players <= 6 ? "comfortable" : "compact"`, derived
       at render time, never persisted, never a preference.
-- [ ] `racebar = clamp(total / targetScore, 0, 1)`; progress when `win: "highest"`, distance
-      to bust when `"lowest"`.
-- [ ] `handBalance(r)` sums the round against `handTotal` and **returns a number, not a
-      verdict** — nothing in this module can block a save.
+- [x] `racebar = clamp(total / targetScore, 0, 1)`; progress when `win: "highest"`, distance
+      to bust when `"lowest"` — the same fraction either way, and the colour says which.
+- [x] `handBalance(r)` sums the round against `handTotal` and **returns a number, not a
+      verdict** — nothing in this module can block a save. Signed: 0 balanced, negative with
+      points unplaced, positive when the moon is shot. It scores each cell through
+      `roundScore` first, so a multiplier is respected.
 
 **Verification:** Boundary tests at 3→4 and 6→7 players; a tie yields the same rank and a `=`
-on both.
+on both — all in `features/scoresheet/utils/tally.test.ts`.
+
+**Two shapes the task left open, settled by writing the tests:**
+
+1. **`toGo` and `racebarFraction` return `undefined` without a `targetScore`, not zero.**
+   `counter.json` has no target, and a zero would draw an empty race bar and a `0 to go`
+   line for a game that has nowhere to go. This is the one place the codebase's
+   "missing data resolves to a defined zero" rule does not apply: the target is not missing
+   data, it is a template that has none.
+2. **`standings` reuses `lib/scoring.ranking` and re-sorts into seat order** rather than
+   deriving rank a second time. Rank and the `=` marker have exactly one implementation, and
+   the "rows never re-sort" rule is asserted here as well as in tasks 20 and 28.
 
 **Dependencies:** 4. **Scope:** S.
 

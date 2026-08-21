@@ -136,5 +136,20 @@
   "history_count": "{n} hands",
   "history_tap_to_fix": "Tap a cell to fix",
   "history_empty": "No hands yet",
-  "menu_history": "Hand history"
+  "menu_history": "Hand history",
+  "results_sub": "{game} · finished {time}",
+  "results_winner": "Winner",
+  "results_joint_winners": "Joint winners",
+  "results_final_players": "Final · {count} players",
+  "results_final_teams": "Final · {count} teams",
+  "results_tiebreak": "Tiebreak · {game}",
+  "results_tiebreak_note": "Scorepad won't decide it — the rule is here, the pieces are on the table.",
+  "results_takeaway_sheet": "{count} of {total} categories · {name}",
+  "results_takeaway_tally": "{count} of {total} hands · {name}",
+  "results_empty_cells": "{count} cells were left empty",
+  "results_play_again": "Play again",
+  "results_reopen": "Reopen",
+  "results_export": "Export",
+  "results_back": "Back to games",
+  "results_rank": "Rank {rank}"
 }

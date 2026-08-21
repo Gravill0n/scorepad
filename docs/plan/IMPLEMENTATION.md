@@ -981,26 +981,59 @@ refuse, so the two now agree.
 **Description:** The one moment sorting is allowed.
 
 **Acceptance criteria:**
-- [ ] Winner card: card fill, 1px accent border. **One winner block however many winners** —
+- [x] Winner card: card fill, 1px accent border. **One winner block however many winners** —
       tied players share the block (`JOINT WINNERS`, overlapping tokens, `Chloé and Émile`),
       share the rank number, and carry `=` down the list.
-- [ ] Tiebreak card appears only when ranks tie **and** the snapshot has a `tiebreakNote`:
+- [x] Tiebreak card appears only when ranks tie **and** the snapshot has a `tiebreakNote`:
       eyebrow `TIEBREAK · {game}`, the note, and a line saying out loud that the app will not
       apply it. **A tie stays a tie** — no resolve button, no coin prompt, no confetti.
-- [ ] Ranked rows at 46px; per-category or per-hand takeaways in mono 11 beneath.
-- [ ] An empty cell anywhere produces an **advisory** warning, never a block.
-- [ ] Footer: a three-up row of `Play again` · `Reopen` · `Export` at `--h-tap`, then
+- [x] Ranked rows at `--h-tally-row` (46); a per-category or per-hand takeaway in mono 11
+      beneath.
+- [x] An empty cell anywhere produces an **advisory** warning, never a block.
+- [x] Footer: a three-up row of `Play again` · `Reopen` · `Export` at `--h-tap`, then
       `Back to games` full width. `Reopen` returns the session to `active` and clears
       `finishedAt` in one tap. **`Play again` calls the same `duplicateSession` as Home's
       swipe action** (task 9) and routes to the new session, leaving the finished one
       untouched.
-- [ ] The three-up row is an **approved departure from `1n` / `1o`**, recorded in `SPEC.md`
-      §7. Check the French fit (`Rejouer` / `Rouvrir` / `Exporter` at ~111px) against 390px
-      before building; if it forces a fourth band, the band heights give way, not the button.
+- [x] The three-up row is an **approved departure from `1n` / `1o`**, recorded in `SPEC.md`
+      §7. The fit is bought by **dropping the icons** `1n` draws on `Reopen` and `Export`:
+      three 111px buttons hold `Rejouer` / `Rouvrir` / `Exporter` at `--text-body`, and a
+      16px glyph plus its gap is exactly what would take that away. The spec says the button
+      is what survives, so the icons went.
 
-**Verification:** A hand-built tie fixture renders one shared block, one shared rank and two
-`=` markers, and nothing in the code path picks a winner. `Play again` produces a new active
-session and leaves the finished one's `status` and `rounds` untouched.
+**Verification:** `ResultsScreen.test.tsx`. A hand-built tie renders one shared block, one
+shared rank and two `=` markers; a separate test asserts **no control on the screen offers to
+resolve, break, decide or count anything**, so nothing can quietly start picking a winner.
+`Play again` produces a new active session with the same players and colour indices and
+leaves the finished one's `status` and `rounds` untouched.
+
+**Four things settled here:**
+
+1. **`backup.ts` moved to `lib/`.** Results exports, and so does Home — plan decision 6 put
+   export in `features/sessions/api/` when Home was the only caller, and `CLAUDE.md`'s rule
+   is that anything both features need moves to `lib/`. The alternative was a cross-feature
+   import or injecting the call from the route, and both are ways of not doing what the rule
+   says. `ResultsScreen` now imports no feature module at all.
+2. **Results' `Export` is one session and deliberately does not stamp `lastExportedAt`.**
+   Same envelope, so import merges it by id like any backup — but the stamp is Home's promise
+   that *everything* on the phone is safe somewhere, and keeping one game does not make that
+   true. A stale-backup warning silenced by the wrong export is exactly the thing nobody
+   notices until they need the file. Asserted.
+3. **The takeaway is one line, not a list.** `4 OF 7 CATEGORIES · MARIE` for a sheet,
+   `2 OF 3 HANDS · MARIE` for a tally — one shape for both, since the only difference is
+   whether a contest is a category or a hand. A count tie breaks on seat order: this is a
+   closing remark, and the ranking above it is where a tie is preserved and marked. `1n` draws
+   no takeaway at all and the spec asks for one in a clause; at seven players plus a tiebreak
+   card the screen has room for one line and no more.
+4. **`See results →` reaches this screen mid-game**, which phase 5 built deliberately —
+   passing a target never ends a game. With no `finishedAt` the subtitle would have read
+   `7 Wonders · finished ` with nothing after it, so it falls back to the table size. The
+   screen still ranks, because ranking is what it is for.
+
+*Note:* the ranked list carries an `overflow-y-auto` safety valve, the same one the picker and
+setup rows carry. Seven players fit inside 844 with the tiebreak card showing; twelve is about
+two rows past the band, and clipping a row out of reach is worse than a scroll. Task 32 owns
+the real measurement.
 
 **Dependencies:** 22, 27. **Scope:** M.
 

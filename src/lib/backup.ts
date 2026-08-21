@@ -46,15 +46,14 @@ export const backupFilename = (now: Date = new Date()): string =>
  * Hands the file to the browser and stamps meta.lastExportedAt, which is what
  * the Home backup card renders and turns amber past a fortnight.
  */
-export const exportBackup = async (now: Date = new Date()): Promise<Backup> => {
-	const backup = await buildBackup(now);
-
+/** Hands a backup to the browser as a download. */
+const offerFile = (backup: Backup, filename: string): void => {
 	const url = URL.createObjectURL(
 		new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" }),
 	);
 	const anchor = document.createElement("a");
 	anchor.href = url;
-	anchor.download = backupFilename(now);
+	anchor.download = filename;
 	// In the document and revoked on a later tick: a detached anchor and a URL
 	// revoked in the same task as the click both abort the download in Firefox,
 	// and the failure is silent — the one export somebody made never lands.
@@ -62,8 +61,39 @@ export const exportBackup = async (now: Date = new Date()): Promise<Backup> => {
 	anchor.click();
 	anchor.remove();
 	setTimeout(() => URL.revokeObjectURL(url), 0);
+};
+
+/**
+ * Every session on the phone, and the stamp Home's backup card renders and
+ * turns amber past a fortnight.
+ */
+export const exportBackup = async (now: Date = new Date()): Promise<Backup> => {
+	const backup = await buildBackup(now);
+	offerFile(backup, backupFilename(now));
 
 	await putMeta("lastExportedAt", backup.exportedAt);
+	return backup;
+};
+
+/**
+ * One finished game, in the same envelope — import merges by id, so a
+ * single-session file restores the same way a whole backup does.
+ *
+ * **It does not stamp `lastExportedAt`.** That stamp is Home's promise that
+ * everything on the phone is safe somewhere; keeping one game does not make
+ * that true, and a stale-backup warning silenced by the wrong export is the
+ * kind of thing nobody notices until they need the file.
+ */
+export const exportSession = (
+	session: Session,
+	now: Date = new Date(),
+): Backup => {
+	const backup: Backup = {
+		version: BACKUP_VERSION,
+		exportedAt: now.toISOString(),
+		sessions: [session],
+	};
+	offerFile(backup, backupFilename(now));
 	return backup;
 };
 

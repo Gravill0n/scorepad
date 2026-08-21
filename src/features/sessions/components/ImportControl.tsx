@@ -1,12 +1,12 @@
 import { Upload } from "lucide-react";
 import { useRef, useState } from "react";
-import { m } from "@/paraglide/messages";
 import {
 	type ImportResult,
 	InvalidBackupError,
 	importBackup,
 	readBackupFile,
-} from "../api/backup";
+} from "@/lib/backup";
+import { m } from "@/paraglide/messages";
 
 const problemMessage = (reason: string) => {
 	if (reason === "not-json") return m.backup_error_not_json();

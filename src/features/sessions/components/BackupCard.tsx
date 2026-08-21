@@ -1,9 +1,9 @@
 import { Download } from "lucide-react";
 import { Eyebrow } from "@/components/Eyebrow";
 import { useSettings } from "@/hooks/useSettings";
+import { exportBackup } from "@/lib/backup";
 import { m } from "@/paraglide/messages";
 import { relativeTime } from "@/utils/relativeTime";
-import { exportBackup } from "../api/backup";
 import { ImportControl } from "./ImportControl";
 
 /** The stamp turns advisory past a fortnight, per the spec. */

@@ -136,5 +136,20 @@
   "history_count": "{n} manches",
   "history_tap_to_fix": "Touchez une case pour corriger",
   "history_empty": "Aucune manche",
-  "menu_history": "Historique des manches"
+  "menu_history": "Historique des manches",
+  "results_sub": "{game} · terminé à {time}",
+  "results_winner": "Gagnant",
+  "results_joint_winners": "Ex æquo",
+  "results_final_players": "Final · {count} joueurs",
+  "results_final_teams": "Final · {count} équipes",
+  "results_tiebreak": "Départage · {game}",
+  "results_tiebreak_note": "Scorepad ne tranchera pas — la règle est ici, les pièces sont sur la table.",
+  "results_takeaway_sheet": "{count} catégories sur {total} · {name}",
+  "results_takeaway_tally": "{count} manches sur {total} · {name}",
+  "results_empty_cells": "{count} cases laissées vides",
+  "results_play_again": "Rejouer",
+  "results_reopen": "Rouvrir",
+  "results_export": "Exporter",
+  "results_back": "Retour aux jeux",
+  "results_rank": "Rang {rank}"
 }

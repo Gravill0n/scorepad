@@ -50,7 +50,6 @@ const renderList = (sessions: Session[]) => {
 		path: "/session/$id/results",
 		component: () => <p>results</p>,
 	});
-
 	return render(
 		<RouterProvider
 			router={createRouter({
@@ -107,9 +106,10 @@ describe("an in-progress row", () => {
 
 	it("resumes into the scoresheet", async () => {
 		renderList([session()]);
-		const link = await screen.findByRole("link");
+		// Named, not the only link on the screen: the footer's `New game` is a
+		// link too, and a bare byRole("link") would match both.
+		const link = await screen.findByRole("link", { name: /Resume/ });
 		expect(link.getAttribute("href")).toBe("/session/s1");
-		expect(link.textContent).toContain("Resume");
 	});
 });
 
@@ -124,7 +124,7 @@ describe("a finished row", () => {
 
 	it("opens Results rather than the scoresheet", async () => {
 		renderList([finished]);
-		const link = await screen.findByRole("link");
+		const link = await screen.findByRole("link", { name: /Camping/ });
 		expect(link.getAttribute("href")).toBe("/session/s2/results");
 	});
 

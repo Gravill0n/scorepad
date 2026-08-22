@@ -8,7 +8,8 @@ import {
 import { render, screen } from "@testing-library/react";
 import { AppProvider } from "@/app/provider";
 import { closeDatabase } from "@/lib/db";
-import { loadSessions } from "@/lib/sessions";
+import { createSession, loadSessions } from "@/lib/sessions";
+import { templates } from "@/lib/templates/registry";
 import { overwriteGetLocale, overwriteSetLocale } from "@/paraglide/runtime";
 import { Route } from "./home.page";
 
@@ -70,6 +71,31 @@ describe("Home", () => {
 	it("shows the first-run state when nothing has been scored", async () => {
 		renderHome();
 		expect(await screen.findByText("Nothing scored yet")).toBeDefined();
+	});
+
+	/**
+	 * The reason this suite renders the populated body at all. `New game` used
+	 * to live only in `EmptyHome`, so scoring one game replaced the single route
+	 * to the picker and a second game could not be started — and every test here
+	 * rendered the empty state, which is exactly why nothing caught it.
+	 */
+	it("still offers New game once there is a session to list", async () => {
+		const counter = templates.find((each) => each.id === "counter");
+		if (!counter) throw new Error("the counter template is missing");
+		await createSession({
+			template: counter,
+			players: [
+				{ name: "Alice", colorIndex: 1 },
+				{ name: "Bob", colorIndex: 2 },
+			],
+			locale: "en",
+		});
+		await loadSessions();
+
+		renderHome();
+
+		const link = await screen.findByRole("link", { name: /New game/ });
+		expect(link.getAttribute("href")).toBe("/new");
 	});
 
 	it("always shows the wordmark and the two settings", async () => {

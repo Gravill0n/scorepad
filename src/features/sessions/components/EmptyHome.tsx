@@ -1,9 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { Plus, Tally5 } from "lucide-react";
+import { Tally5 } from "lucide-react";
 import { Eyebrow } from "@/components/Eyebrow";
 import { templates } from "@/lib/templates/registry";
 import { m } from "@/paraglide/messages";
 import { ImportControl } from "./ImportControl";
+import { NewGameLink } from "./NewGameLink";
 
 /**
  * First run (`1e`). The whole list is replaced by one empty state — no
@@ -38,13 +38,7 @@ export const EmptyHome = () => (
 		</div>
 
 		<div className="flex shrink-0 flex-col gap-2.5 px-4 pt-3.5 pb-5">
-			<Link
-				to="/new"
-				className="btn-primary flex h-[var(--h-primary)] items-center justify-center gap-2 rounded-ctrl text-row font-[var(--weight-medium)]"
-			>
-				<Plus size={18} aria-hidden="true" />
-				{m.home_new_game()}
-			</Link>
+			<NewGameLink />
 
 			<ImportControl
 				className="flex h-[var(--h-cell)] items-center justify-center gap-2 rounded-ctrl border border-line bg-card text-body font-[var(--weight-medium)] text-ink"

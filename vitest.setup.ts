@@ -34,3 +34,12 @@ if (
 		this.dispatchEvent(new Event("close"));
 	};
 }
+
+// jsdom implements neither URL.createObjectURL nor revokeObjectURL. This is the
+// same class of gap as the one above, but it fails differently and worse:
+// backup.ts revokes on a `setTimeout`, so the call lands after the test that
+// triggered it has finished and after any per-test stub has been unwound. That
+// is an uncaught exception no test can catch — the suite reports every test
+// passing and still exits 1, which takes the CI deploy gate down with it.
+URL.createObjectURL ??= () => "blob:test";
+URL.revokeObjectURL ??= () => undefined;

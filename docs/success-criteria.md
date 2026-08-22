@@ -5,7 +5,7 @@ verified. **Ten pass automatically, one passes by inspection, and three cannot b
 without a browser on the deployed origin.** Those three are not failures — they are
 unverified, and saying so is the point of this table.
 
-Last walked: 2026-08-21, at the end of phase 8. `bun run test` — 673 tests, 47 files.
+Last walked: 2026-08-22, at the end of phase 8. `bun run test` — 675 tests, 47 files.
 
 | # | Criterion | Verdict | Verified by |
 |---|---|---|---|

@@ -338,14 +338,12 @@ describe("the footer", () => {
 		const finished = await finish();
 		await renderResults({ liveId: finished.id });
 
+		// The object URL is shimmed once in vitest.setup.ts rather than here:
+		// backup.ts revokes on a timer that fires after this test returns, so a
+		// stub unwound at the end of it is already gone by then.
 		const click = vi
 			.spyOn(HTMLAnchorElement.prototype, "click")
 			.mockImplementation(() => undefined);
-		vi.stubGlobal("URL", {
-			...URL,
-			createObjectURL: () => "blob:x",
-			revokeObjectURL: () => undefined,
-		});
 
 		fireEvent.click(screen.getByRole("button", { name: "Export" }));
 		expect(click).toHaveBeenCalled();
@@ -353,7 +351,6 @@ describe("the footer", () => {
 		// Home's stale-backup warning must not be silenced by one game.
 		expect(await getMeta("lastExportedAt")).toBeUndefined();
 		click.mockRestore();
-		vi.unstubAllGlobals();
 	});
 
 	it("goes back to the shelf", async () => {

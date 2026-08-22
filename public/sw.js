@@ -9,6 +9,8 @@
  * Every URL here is relative to the worker's own scope, so it is correct at the
  * site root and under a project sub-path without knowing which it is on.
  */
+
+/** Bump on any change to public/ — see the note in the fetch handler. */
 const CACHE = "scorepad-v1";
 
 /** The shell. Hashed assets join the cache as they are first fetched. */
@@ -68,8 +70,18 @@ self.addEventListener("fetch", (event) => {
 		return;
 	}
 
-	// Everything else is a hashed asset: the URL changes when the file does, so
-	// the cache can never go stale and the network is only for a first sight.
+	// Everything else is served cache-first. For /assets/* that is free of
+	// staleness: the URL carries a content hash, so a changed file is a changed
+	// URL and a cache miss.
+	//
+	// The seven unhashed files at the site root are not free — the manifest,
+	// this worker, robots.txt and the four icons. Their URLs are stable, and
+	// because this file is otherwise static the browser never sees a byte
+	// change, never re-runs install or activate, and never evicts them. An
+	// installed user would keep a superseded icon or manifest indefinitely.
+	//
+	// So CACHE above is the only invalidation mechanism there is: **bump it
+	// whenever anything in public/ changes.** Nothing enforces that.
 	event.respondWith(
 		caches.match(request).then(
 			(cached) =>

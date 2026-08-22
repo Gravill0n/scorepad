@@ -176,9 +176,15 @@ describe.each(THEMES)("%s theme", (theme) => {
 
 describe("the accent primary", () => {
 	/**
-	 * `.btn-primary` puts paper on accent in light and **ink** on accent in
-	 * dark — dark's accent is light enough that paper on it would be unreadable.
-	 * That swap is the whole reason the class exists rather than two utilities.
+	 * `.btn-primary` puts **paper on accent in both themes** — and paper is a
+	 * different colour in each, so the pair passes twice for different reasons.
+	 * Light's accent is dark, so near-white paper reads on it; dark's accent is
+	 * a light orange, so dark's near-black paper reads on it.
+	 *
+	 * It is emphatically *not* ink on accent in dark. Dark's ink is a light
+	 * cream and lands at 2.08:1 on dark's accent — the assertion below records
+	 * that, because the rule looks like a candidate for "simplification" every
+	 * time somebody reads it and the simplification fails criterion 11.
 	 */
 	it("carries paper on accent in light", () => {
 		expect(
@@ -189,16 +195,44 @@ describe("the accent primary", () => {
 		).toBeGreaterThanOrEqual(4.5);
 	});
 
-	it("carries ink on accent in dark, which is what .btn-primary swaps to", () => {
-		expect(tokens).toContain('[data-theme="dark"] .btn-primary');
-		// #201c16 is dark's --color-paper, written literally in the rule.
+	it("carries paper on accent in dark too, which is what .btn-primary pins", () => {
 		expect(
-			contrast("#201c16", tokenValue("dark", "--color-accent")),
+			contrast(
+				tokenValue("dark", "--color-paper"),
+				tokenValue("dark", "--color-accent"),
+			),
 		).toBeGreaterThanOrEqual(4.5);
 	});
 
-	it("would fail the other way round, which is why the swap is not optional", () => {
-		// Light's paper on dark's accent — the bug the class prevents.
+	/**
+	 * The dark rule spells the colour out as a literal instead of reusing the
+	 * token, so this pins the two together: the base rule already sets
+	 * `color: var(--color-paper)`, and under `[data-theme="dark"]` that var
+	 * resolves to exactly this hex — which makes the override's `color:`
+	 * redundant, and the `font-weight` beside it the only line doing work.
+	 * Editing dark's paper without editing the rule would silently unpick that.
+	 */
+	it("keeps the literal in the dark rule equal to the token it duplicates", () => {
+		const rule = tokens.match(
+			/\[data-theme="dark"\]\s*\.btn-primary\s*\{([^}]*)\}/,
+		)?.[1];
+
+		expect(rule).toBeDefined();
+		expect(rule).toContain(tokenValue("dark", "--color-paper"));
+	});
+
+	it("would fail with ink, which is the swap that looks tempting", () => {
+		expect(
+			contrast(
+				tokenValue("dark", "--color-ink"),
+				tokenValue("dark", "--color-accent"),
+			),
+		).toBeLessThan(4.5);
+	});
+
+	it("would fail if paper were not itself theme-specific", () => {
+		// Light's paper on dark's accent: the pairing that breaks if somebody
+		// hoists one literal out of the two themes into a single value.
 		expect(
 			contrast(
 				tokenValue("light", "--color-paper"),

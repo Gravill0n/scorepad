@@ -1320,12 +1320,21 @@ hand-rolled focus trap in six months.
    every screen here waits on a real IndexedDB read before it renders. `vitest.setup.ts` now
    configures `asyncUtilTimeout` once. It costs nothing on a passing assertion — it resolves
    the moment the condition holds — and only lengthens one that was going to fail anyway.
+4. **Checkpoint G's "the suite is clean" was written before it was true.** `bun run test`
+   reported 673 passing and **exited 1**: task 28's Results test is the first to exercise the
+   export download, and `backup.ts` revokes its object URL on a `setTimeout` that fires after
+   the test — and after its `vi.unstubAllGlobals()` — has run. jsdom has no
+   `URL.revokeObjectURL`, so the throw landed outside any test, where nothing could catch it
+   and every assertion still passed. The workflow gates on that exit code, so the deploy
+   would have failed on the first push to `main`. Shimmed in `vitest.setup.ts` beside the
+   `<dialog>` gap, which is the same class of problem and the same right place for it.
 
 **Dependencies:** 31, 32. **Scope:** S.
 
 ### ✅ Checkpoint G — Done
-- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (673 across 47 files) are clean,
-      and `bun run build` emits `dist/client` and nothing else.
+- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (675 across 47 files) are clean,
+      and `bun run build` emits `dist/client` and nothing else. **This was claimed once before
+      it was true** — see task 33's fourth note.
 - [ ] **Eleven of fourteen criteria pass; three are unverified.** Walked in
       [`../success-criteria.md`](../success-criteria.md), which names the test for each. The
       three are 4, 9 and 10 — and they are one errand, not three.

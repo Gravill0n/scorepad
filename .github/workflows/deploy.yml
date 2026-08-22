@@ -37,18 +37,25 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Type check
-        run: bunx tsc --noEmit
-
-      - name: Test
-        run: bun run test
-
+      # Build first, and not for speed: paraglide compiles `messages/*.json`
+      # into `src/paraglide/`, which it gitignores as generated output. A fresh
+      # checkout does not have it, so `tsc` run before anything generates it
+      # fails with TS2307 on every screen in the app — which is exactly what
+      # this workflow did the first time it ran. The vite plugin is what
+      # generates it, so the build has to come first. Do not reorder these
+      # without moving the generation somewhere earlier.
       - name: Build
         run: bun run build
         env:
           # The project sub-path. vite.config.ts defaults to "/" so local
           # development and the test suite are unaffected.
           BASE_PATH: /${{ github.event.repository.name }}/
+
+      - name: Type check
+        run: bunx tsc --noEmit
+
+      - name: Test
+        run: bun run test
 
       - name: Assert the bundle carries no server entry
         # Criterion 1, enforced by the host as well as by the config: Pages

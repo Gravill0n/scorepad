@@ -110,6 +110,22 @@ describe("the workflow", () => {
 		expect(workflow).toContain("bun install --frozen-lockfile");
 	});
 
+	/**
+	 * Paraglide compiles `messages/*.json` into `src/paraglide/` and gitignores
+	 * the result, so a fresh checkout does not have it and only the vite plugin
+	 * puts it there. `tsc` ahead of the build therefore fails with TS2307 on
+	 * every screen in the app — which is what happened the first time this
+	 * workflow ran. Nothing local catches it: the directory is already on disk
+	 * here, so the order only matters on a clean clone.
+	 */
+	it("builds before it typechecks, because the build generates the messages", () => {
+		const build = workflow.indexOf("bun run build");
+		const types = workflow.indexOf("bunx tsc --noEmit");
+
+		expect(build).toBeGreaterThan(-1);
+		expect(types).toBeGreaterThan(build);
+	});
+
 	it("never cancels a deploy mid-flight", () => {
 		// A half-uploaded artifact is a broken site.
 		expect(workflow).toContain(

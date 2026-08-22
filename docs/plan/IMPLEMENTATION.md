@@ -1234,7 +1234,7 @@ the site; a root-scoped worker never controls the page and only shows up offline
 - [x] The build emits no server entry, now asserted **in CI** as well as by the config —
       Pages cannot serve one, so the host enforces criterion 1 too.
 
-**Two decisions and one bug:**
+**Two decisions and two bugs:**
 
 1. **The workflow runs on pull requests as well as `main`,** which the task did not ask for.
    Gating only on push means a broken change merges and *then* turns `main` red and
@@ -1250,6 +1250,16 @@ the site; a root-scoped worker never controls the page and only shows up offline
    only a 200; the shell is precached at install anyway, so being strict costs nothing. Found
    by reading task 30's worker against this task's hosting, which is exactly the pairing the
    plan asked `doubt-driven-development` for here.
+4. **The workflow's own type gate could not pass, and only a real run could show it.**
+   Paraglide compiles `messages/*.json` into `src/paraglide/` and writes a `.gitignore` there,
+   so the directory is generated output that no checkout carries. `tsc --noEmit` ran before
+   anything had generated it and failed `TS2307` on every screen in the app. **Nothing local
+   reproduces this** — the directory is already on disk here — so it survived review and the
+   whole of checkpoint G, and surfaced the first time a pull request actually ran the
+   workflow. Fixed by moving `Build` ahead of `Type check`, the vite plugin being what
+   generates the messages; a compile step of its own would have duplicated `project` and
+   `outdir` out of `vite.config.ts`. `deploy.test.ts` asserts the order now, because putting
+   the cheap check first is the obvious thing for the next person to do.
 
 **Dependencies:** 30. **Scope:** S (one workflow file, two config lines, one copy step).
 
@@ -1332,7 +1342,7 @@ hand-rolled focus trap in six months.
 **Dependencies:** 31, 32. **Scope:** S.
 
 ### ✅ Checkpoint G — Done
-- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (675 across 47 files) are clean,
+- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (676 across 47 files) are clean,
       and `bun run build` emits `dist/client` and nothing else. **This was claimed once before
       it was true** — see task 33's fourth note.
 - [ ] **Eleven of fourteen criteria pass; three are unverified.** Walked in

@@ -657,7 +657,9 @@ would just reward testing getters.
 
 ## Success Criteria
 
-Specific and testable:
+Specific and testable. **The walkthrough of all fourteen, each naming the test that verifies
+it — and naming the three that a browser still has to — is
+[`../success-criteria.md`](../success-criteria.md).**
 
 1. `bun run build` emits a static bundle with **no server entry point**.
 2. All ten seed templates (6 board, 4 card) validate, and each scores a hand-checked
@@ -692,9 +694,12 @@ Specific and testable:
   prerendering.** Task 0 is now "pick one and pin it", not "find out if this is possible".
 - ~~How is the unidirectional import rule enforced?~~ **Convention and review, documented in
   `CLAUDE.md` and `README.md`.** No second linter.
-- Does the installed `@tanstack/react-db` ship a local/IndexedDB collection adapter, or is
-  a thin hand-written store simpler than adapting a query-oriented one? The last stack
-  question standing.
+- ~~Does the installed `@tanstack/react-db` ship a local/IndexedDB collection adapter, or is
+  a thin hand-written store simpler?~~ — **decided: hand-written.** Both it and
+  `@tanstack/react-query` are dropped; the store is `lib/db.ts` over raw IndexedDB with a
+  migration runner, read through `useSyncExternalStore`. See
+  [ADR-001](../decisions/001-hand-written-indexeddb.md) and
+  [ADR-002](../decisions/002-no-fetch-cache.md). **No stack question remains open.**
 - ~~`handTotal` and `entry: "player" | "team"`~~ — **both approved.** `handTotal` is
   advisory, not blocking; `entry` labels the setup screen and nothing else. Specified in
   `template-grammar.md`; no open decision remains.
@@ -705,9 +710,18 @@ Specific and testable:
 - ~~The inline ledger at ≤3 players~~ — **decided: keep it.** `2e` ships as drawn.
 - ~~`Play again` on Results~~ — **decided: reinstated as a fourth footer action**, a
   deliberate departure from `1n` / `1o` approved 2026-08-19. It duplicates the session and
-  opens it. Home's swipe-`Duplicate` stays; the two share one function. Tell the designer,
-  so the footer row comes back as three-up.
+  opens it. Home's swipe-`Duplicate` stays; the two share one function. Recorded as
+  [ADR-007](../decisions/007-play-again-on-results.md). **Still owed to the designer**,
+  along with the rest of the list in [`../success-criteria.md`](../success-criteria.md) —
+  the footer row comes back as three-up, and the icons come off `Reopen` and `Export` to
+  hold the French.
 - Do finished sessions become immutable, with "reopen" as an explicit action? `1n` draws
   `Reopen` as a peer of `Export`, so: no, and reopening is one tap.
-- Is a service worker needed in v1 for offline, given the bundle is static and cacheable
-  by the browser anyway? Needed for installability regardless.
+- ~~Is a service worker needed in v1 for offline, given the bundle is static and cacheable
+  by the browser anyway?~~ — **shipped**, and installability was the reason. It precaches
+  the shell, answers navigations network-first so a deploy is picked up, and serves hashed
+  assets cache-first. It is the one file in the project that touches the Fetch API.
+
+- ~~How many tiles does the shelf show?~~ — **eleven**, counter included, with the count
+  derived from the registry so the copy cannot drift when a twelfth template lands. `1f`'s
+  literal "ten" is superseded.

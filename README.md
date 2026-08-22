@@ -7,9 +7,10 @@ after the page loads.
 It has to beat paper: legible at arm's length, nothing to learn, offline, and fast enough
 that nobody reaches for a pencil instead.
 
-**Status:** specified, not yet built. The repository still holds the TanStack starter
-scaffold and Prisma leftovers that v1 removes. Start at
-[`docs/spec/SPEC.md`](docs/spec/SPEC.md).
+**Status:** built through phase 8 — every screen, both scoring modes, French, and the PWA.
+Deployment is wired but not yet triggered. Start at
+[`docs/spec/SPEC.md`](docs/spec/SPEC.md); the order of work is
+[`docs/plan/IMPLEMENTATION.md`](docs/plan/IMPLEMENTATION.md).
 
 ## What it does
 
@@ -38,14 +39,43 @@ bun dev                  # vite dev --port 3000
 ```
 
 ```bash
-bun run build            # must emit a static bundle, no server entry
+bun run build            # static bundle + 404.html; no server entry
 bun run preview
-bun test                 # vitest run
+bun run icons            # regenerate the app icon from tokens.css
+bun run test             # vitest run — NOT `bun test`, which runs Bun's own runner
 bunx vitest              # watch
 bun run lint             # biome check .
 bun run lint:fix         # biome check --write .
 bun run format           # biome format --write .
 ```
+
+## Deploying
+
+**Live at [`https://gravill0n.github.io/scorepad/`](https://gravill0n.github.io/scorepad/)**
+once the workflow has run on `main` and the one manual step below is done.
+
+Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+lint → types → tests → build → publish to GitHub Pages. **Lint and tests gate the deploy** —
+a red suite must not reach the URL people install from, because an installed PWA keeps
+serving itself from cache and a bad deploy outlives the fix.
+
+The site is a **project page**, so it lives at
+`https://gravill0n.github.io/scorepad/` rather than at a domain root. That path is
+written once, as `BASE_PATH` in the workflow, and everything else derives from
+`import.meta.env.BASE_URL` — the router's basepath, the document head's asset URLs, the
+service worker's scope. The manifest and the worker use relative URLs throughout, so they
+are correct at any base without being told which one they are on. A custom domain later is
+`base` going back to `/`.
+
+Deep links work because the build copies `index.html` to `404.html`. GitHub Pages has no
+rewrite rule: it serves a file if one exists and its own 404 otherwise, so a copy of the
+shell at `404.html` *is* the rewrite rule. No hash router, no redirect shim, no dependency.
+
+### One manual step, once
+
+**Set the repository's Pages source to "GitHub Actions"** — Settings → Pages → Build and
+deployment → Source. Without it the workflow builds green and publishes nothing, which is a
+silent failure: the run is a tick and the site is not there.
 
 ## Stack
 
@@ -99,6 +129,13 @@ directional rule, and a second linter to police four bullet points costs more th
 
 Tests are colocated: `scoring.ts` → `scoring.test.ts`.
 
+**Why these are written down twice.** They have no linter behind them — Biome's
+`noRestrictedImports` restricts import *sources* and cannot express a directory-scoped
+directional rule. Review is the only enforcement, so the rule has to be somewhere a reviewer
+and an agent will both read. The reasoning behind each is in
+[`docs/decisions/`](docs/decisions/README.md); ADR-006 is the one that has already been
+applied twice, when the session store and then the backup module needed a second caller.
+
 ## Design
 
 The design pass is complete and lives in
@@ -126,4 +163,7 @@ Contracts that are correctness, not taste — this is read across a table, not a
 | [`docs/spec/data-model.md`](docs/spec/data-model.md) | IndexedDB shape, types, what is derived and never stored |
 | [`docs/design_handoff_scorepad/`](docs/design_handoff_scorepad/README.md) | The design: artboards, tokens, and the rationale under each decision |
 | [`docs/ideas/scoresheet-first.md`](docs/ideas/scoresheet-first.md) | Where the direction came from |
+| [`docs/plan/IMPLEMENTATION.md`](docs/plan/IMPLEMENTATION.md) | The order of work, thirty-three tasks in eight phases, with what each one found |
+| [`docs/decisions/`](docs/decisions/README.md) | Eight ADRs — the decisions the spec left to implementation, and what was rejected |
+| [`docs/success-criteria.md`](docs/success-criteria.md) | All fourteen criteria, each naming the test that verifies it — and the three a browser still has to |
 | [`CLAUDE.md`](CLAUDE.md) | Rules for agents working in this repo |

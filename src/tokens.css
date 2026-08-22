@@ -1,0 +1,158 @@
+/* Scorepad — design tokens.
+   Paste the @theme block into a Tailwind 4 entry stylesheet; the :root blocks
+   below are the plain-CSS statement of the same values for anything outside
+   Tailwind's reach (the PWA splash colour, the manifest, HeroUI overrides).
+
+   Two rules the values encode:
+   1. Two signal colours only — accent (#a8431d) and alarm (#b3261e). Everything
+      else is warm paper neutral. A player colour is neither: it is an index.
+   2. Every interactive box is >= 44px, and body type is 16px, because this
+      phone is read across a table rather than at a desk.
+*/
+
+@theme {
+  /* ---- Surfaces: light ------------------------------------------------- */
+  --color-paper:        #f6f1e7;  /* app background */
+  --color-paper-dim:    #ece4d4;  /* pressed key, secondary fill, progress track */
+  --color-card:         #fffdf7;  /* cards, inputs, filled cells, keypad */
+  --color-ink:          #2b2620;  /* primary text, numerals */
+  --color-ink-soft:     #6b6354;  /* meta, eyebrows, running totals */
+  --color-ink-faint:    #a39882;  /* empty-cell dash, disabled glyph */
+  --color-line:         #d8cdb8;  /* 1px hairline — the only elevation */
+  --color-line-strong:  #cfc5b0;  /* 2px section rule */
+  --color-line-dashed:  #c6bba4;  /* empty / add-new outlines */
+
+  /* ---- Signals (never used for players) -------------------------------- */
+  --color-accent:       #a8431d;  /* current position, totals, primary action */
+  --color-alarm:        #b3261e;  /* destructive + blocking validation only */
+  --color-alarm-bg:     #fbeeea;
+  --color-alarm-ink:    #8a2418;
+  --color-advisory:     #c88a2e;  /* target passed, team-game note */
+  --color-advisory-bg:  #f7efdd;
+  --color-advisory-ink: #7a5a1e;
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-eyebrow:  0.6875rem; /* 11 mono, +0.06em, UPPERCASE — labels, running totals */
+  --text-meta:     0.8125rem; /* 13 — notes under a title, caption lines */
+  --text-body:     1rem;      /* 16 — body. NOT 14: arm's-length legibility */
+  --text-row:      1.0625rem; /* 17 — player / category row label */
+  --text-strong:   1.125rem;  /* 18 — session title, primary button, team name */
+  --text-screen:   1.375rem;  /* 22 — screen title */
+  --text-cell:     1.625rem;  /* 26 — a value in a cell, a keypad digit */
+  --text-category: 1.75rem;   /* 28 — the category being entered */
+  --text-total:    2.75rem;   /* 44 — a tally total, a winning score */
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semi:   600;
+  --weight-bold:   700;
+  --tracking-eyebrow: 0.06em;
+  --tracking-wordmark: 0.14em;
+
+  /* ---- Space: 4px grid ------------------------------------------------- */
+  --space-1:  0.25rem;  /*  4 — icon to label */
+  --space-2:  0.5rem;   /*  8 — keypad gap, chip gap */
+  --space-3:  0.75rem;  /* 12 — row internals, tile gap */
+  --space-4:  1rem;     /* 16 — screen gutter, card padding */
+  --space-5:  1.25rem;  /* 20 — bottom safe padding */
+  --space-8:  2rem;     /* 32 — between sections */
+
+  /* ---- Fixed heights (the thumb contract) ------------------------------ */
+  --h-icon-btn:  2.5rem;   /* 40 — header icon button (inside a 44 hit area) */
+  --h-tap:       2.75rem;  /* 44 — floor for anything interactive */
+  --h-tally-row: 2.875rem; /* 46 — one hand in the ledger (read-only) */
+  --h-cell:      3rem;     /* 48 — numeric cell, text input */
+  --h-primary:   3.25rem;  /* 52 — primary button */
+  --h-key:       3.75rem;  /* 60 — keypad key (58 in the dark/FR variant) */
+  --h-sheet-row: 4.5rem;   /* 72 — player row on the scoresheet */
+
+  /* ---- Radius ---------------------------------------------------------- */
+  --radius-chip:   4px;   /* category strip, small chips */
+  --radius-ctrl:   6px;   /* buttons, inputs, cells, keys */
+  --radius-card:   12px;  /* cards, bottom sheets (top corners only) */
+  --radius-token:  999px; /* player token, pill, progress */
+  --radius-tile:   28px;  /* app icon at 128; 22% of edge at any size */
+
+  /* ---- Elevation: hairline first --------------------------------------- */
+  --shadow-sheet: 0 -8px 24px rgb(43 38 32 / 0.14); /* keypad + colour sheet only */
+  --scrim:        rgb(43 38 32 / 0.5);
+  --focus-ring:   0 0 0 3px color-mix(in srgb, var(--color-accent) 50%, transparent);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --dur-value: 120ms;  /* a total or rank label changing */
+  --dur-sheet: 200ms;  /* keypad and colour sheet in/out */
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ---- Player palette: 12 indices, not 12 signals ---------------------- */
+  /* Fixed L and C, hue-only variation, so no player shouts louder than
+     another. Assignment order is front-loaded for dichromatic separability:
+     the first six (blue, orange, teal, magenta, green, red) stay pairwise
+     distinct under protan/deutan/tritan. Colour is ALWAYS accompanied by the
+     player's initial on the token — it is an index, never the identity. */
+  --player-01: oklch(0.53 0.14 258); /* blue    */
+  --player-02: oklch(0.53 0.14 52);  /* orange  */
+  --player-03: oklch(0.53 0.14 190); /* teal    */
+  --player-04: oklch(0.53 0.14 330); /* magenta */
+  --player-05: oklch(0.53 0.14 140); /* green   */
+  --player-06: oklch(0.53 0.14 20);  /* red     */
+  --player-07: oklch(0.53 0.14 285); /* violet  */
+  --player-08: oklch(0.53 0.14 215); /* sky     */
+  --player-09: oklch(0.53 0.14 100); /* olive   */
+  --player-10: oklch(0.53 0.14 355); /* rose    */
+  --player-11: oklch(0.53 0.14 165); /* jade    */
+  --player-12: oklch(0.53 0.14 70);  /* amber   */
+  --player-ink: #fffdf7;             /* the initial, on light */
+}
+
+/* Dark = dimmed paper, never neutral black. Same token names, swapped values.
+   Both themes are first-class: this is a toggle in the app (language + theme
+   are the only two settings that exist), defaulting to the OS preference. */
+[data-theme="dark"] {
+  --color-paper:        #201c16;
+  --color-paper-dim:    #181410;
+  --color-card:         #2a241c;
+  --color-ink:          #e6ddcc;
+  --color-ink-soft:     #a39882;
+  --color-ink-faint:    #6f6555;
+  --color-line:         #443c2f;
+  --color-line-strong:  #554b3c;
+  --color-line-dashed:  #554b3c;
+
+  --color-accent:       #e0824f;
+  --color-alarm:        #e2574a;
+  --color-alarm-bg:     #3a201c;
+  --color-alarm-ink:    #f0b9ad;
+  --color-advisory:     #d9a24e;
+  --color-advisory-bg:  #322616;
+  --color-advisory-ink: #e6c88f;
+
+  --shadow-sheet: 0 -8px 24px rgb(0 0 0 / 0.4);
+  --scrim:        rgb(0 0 0 / 0.6);
+
+  /* Re-derived, not reused: lifted to L 0.72 so each hue clears 4.5:1 on
+     dimmed paper, and the initial flips to ink. */
+  --player-01: oklch(0.72 0.13 258);
+  --player-02: oklch(0.72 0.13 52);
+  --player-03: oklch(0.72 0.13 190);
+  --player-04: oklch(0.72 0.13 330);
+  --player-05: oklch(0.72 0.13 140);
+  --player-06: oklch(0.72 0.13 20);
+  --player-07: oklch(0.72 0.13 285);
+  --player-08: oklch(0.72 0.13 215);
+  --player-09: oklch(0.72 0.13 100);
+  --player-10: oklch(0.72 0.13 355);
+  --player-11: oklch(0.72 0.13 165);
+  --player-12: oklch(0.72 0.13 70);
+  --player-ink: #201c16;
+}
+
+/* Numbers never jitter as they recompute. Apply to every figure in the app. */
+.num { font-variant-numeric: tabular-nums; }
+
+/* The accent button in dark carries ink, not paper: #e0824f with paper-white
+   text is 2.1:1 and fails. Encode it rather than remembering it. */
+.btn-primary { background: var(--color-accent); color: var(--color-paper); }
+[data-theme="dark"] .btn-primary { color: #201c16; font-weight: var(--weight-semi); }

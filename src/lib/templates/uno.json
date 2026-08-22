@@ -1,0 +1,16 @@
+{
+	"id": "uno",
+	"name": "Uno",
+	"players": [2, 10],
+	"mode": "tally",
+	"win": "highest",
+	"targetScore": 500,
+	"setupNote": "Official scoring: the player who goes out banks the value of everyone else's remaining cards. First to 500 wins.",
+	"categories": [
+		{
+			"key": "points",
+			"label": "Points won",
+			"hint": "Number cards face value · action cards 20 · wilds 50"
+		}
+	]
+}

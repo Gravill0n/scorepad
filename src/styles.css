@@ -1,3 +1,24 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
-@import "@heroui/styles";
+@import "./tokens.css";
+
+/* The bottom sheet's only motion, at --dur-sheet with --ease. Keyframes are
+   not a token namespace Tailwind can generate, so they are declared once here
+   and referenced by name from the sheet. */
+@keyframes sheet-in {
+	from {
+		transform: translateY(100%);
+	}
+}
+
+@keyframes sheet-out {
+	to {
+		transform: translateY(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@keyframes sheet-in {
+	}
+	@keyframes sheet-out {
+	}
+}

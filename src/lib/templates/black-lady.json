@@ -1,0 +1,17 @@
+{
+	"id": "black-lady",
+	"name": "Black Lady",
+	"players": [3, 6],
+	"mode": "tally",
+	"win": "lowest",
+	"targetScore": 100,
+	"handTotal": 26,
+	"setupNote": "Hearts variant with the Queen of Spades. Lowest score wins; the game ends when someone reaches 100.",
+	"categories": [
+		{
+			"key": "penalty",
+			"label": "Penalty points",
+			"hint": "1 per heart, 13 for the Queen of Spades. Shooting the moon: 26 to each opponent, or −26 to yourself."
+		}
+	]
+}

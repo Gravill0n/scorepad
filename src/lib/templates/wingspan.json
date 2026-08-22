@@ -1,0 +1,16 @@
+{
+	"id": "wingspan",
+	"name": "Wingspan",
+	"players": [1, 5],
+	"mode": "sheet",
+	"win": "highest",
+	"tiebreakNote": "Most unused food tokens wins.",
+	"categories": [
+		{ "key": "birds", "label": "Birds" },
+		{ "key": "bonus", "label": "Bonus cards" },
+		{ "key": "goals", "label": "End-of-round goals" },
+		{ "key": "eggs", "label": "Eggs" },
+		{ "key": "food", "label": "Food on cards" },
+		{ "key": "tucked", "label": "Tucked cards" }
+	]
+}

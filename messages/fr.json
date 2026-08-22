@@ -2,5 +2,336 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Accueil",
   "language_label": "Langue",
-  "current_locale": "Langue actuelle : {locale}"
+  "current_locale": "Langue actuelle : {locale}",
+  "home_empty_title": "Rien de marqué",
+  "home_empty_copy": "Choisissez un jeu, ajoutez les joueurs, remplissez la feuille. {count} jeux sont inclus, et tout reste sur ce téléphone.",
+  "home_offline_promise": "Sans compte · Sans serveur · Fonctionne hors ligne",
+  "home_new_game": "Nouvelle partie",
+  "home_import_backup": "Importer une sauvegarde",
+  "home_switch_to_dark": "Passer au thème sombre",
+  "home_switch_to_light": "Passer au thème clair",
+  "home_switch_language": "Changer la langue pour {locale}",
+  "relative_never": "Jamais",
+  "relative_just_now": "À l'instant",
+  "home_in_progress": "En cours",
+  "home_finished": "Terminées · {count}",
+  "home_progress_hand": "manche {n}",
+  "home_progress_category": "catégorie {n} sur {total}",
+  "home_of_target": "sur {target}",
+  "home_resume": "Reprendre",
+  "home_winner": "{name} gagne",
+  "home_joint_winners": "{names} à égalité",
+  "badge_sheet": "Feuille",
+  "badge_tally": "Manches",
+  "row_duplicate": "Dupliquer",
+  "row_delete": "Supprimer",
+  "row_actions": "Actions pour {name}",
+  "delete_title": "Supprimer cette partie ?",
+  "delete_body": "{name} et tous ses scores seront effacés de ce téléphone. C'est irréversible.",
+  "delete_cancel": "Conserver",
+  "delete_confirm": "Supprimer",
+  "backup_eyebrow": "Sauvegarde",
+  "backup_summary": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} partie n'existe que sur ce téléphone. Le fichier JSON est la seule sauvegarde.",
+        "countPlural=*": "{count} parties n'existent que sur ce téléphone. Le fichier JSON est la seule sauvegarde."
+      }
+    }
+  ],
+  "backup_export": "Exporter",
+  "backup_import": "Importer",
+  "backup_imported": [
+    {
+      "declarations": [
+        "input imported",
+        "local importedPlural = imported: plural",
+        "input skipped",
+        "local skippedPlural = skipped: plural"
+      ],
+      "selectors": [
+        "importedPlural",
+        "skippedPlural"
+      ],
+      "match": {
+        "importedPlural=one,skippedPlural=one": "{imported} restaurée, {skipped} déjà présente",
+        "importedPlural=one,skippedPlural=*": "{imported} restaurée, {skipped} déjà présentes",
+        "importedPlural=*,skippedPlural=one": "{imported} restaurées, {skipped} déjà présente",
+        "importedPlural=*,skippedPlural=*": "{imported} restaurées, {skipped} déjà présentes"
+      }
+    }
+  ],
+  "backup_unreadable": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} illisible",
+        "countPlural=*": "{count} illisibles"
+      }
+    }
+  ],
+  "backup_error_not_json": "Ce fichier n'est pas du JSON valide.",
+  "backup_error_not_a_backup": "Ce fichier n'est pas une sauvegarde Scorepad.",
+  "backup_error_too_new": "Cette sauvegarde vient d'une version plus récente de Scorepad.",
+  "back": "Retour",
+  "picker_title": "Choisir un jeu",
+  "picker_filter": "Filtrer les {count} jeux",
+  "picker_clear_filter": "Effacer le filtre",
+  "picker_no_match_title": "Aucun jeu ne correspond à « {query} »",
+  "picker_no_match_copy": "{count} jeux sont inclus et aucun autre ne peut être ajouté. Le compteur tient les scores de tout le reste.",
+  "picker_meta_sheet": "{count} catégories · {min}–{max}",
+  "picker_meta_tally": "jusqu'à {target} · {min}–{max}",
+  "picker_meta_teams": "jusqu'à {target} · 2 équipes",
+  "picker_meta_players": "{min}–{max}",
+  "setup_title_players": "Joueurs",
+  "setup_title_teams": "Équipes",
+  "setup_sub_range": "{game} · {min} à {max}",
+  "setup_sub_exact": "{game} · exactement {count}",
+  "setup_sub_range_teams": "{game} · {min} à {max} équipes",
+  "setup_sub_exact_teams": "{game} · exactement {count} équipes",
+  "setup_count": "{count} / {max}",
+  "setup_name_placeholder": "Nom",
+  "setup_name_label": "Nom du joueur {n}",
+  "setup_team_label": "Nom de l'équipe {n}",
+  "setup_add_player": "Ajouter un joueur",
+  "setup_add_team": "Ajouter une équipe",
+  "setup_remove": "Retirer {name}",
+  "setup_reorder": "Réordonner {name}",
+  "setup_unnamed": "ligne {n}",
+  "setup_recent": "Noms récents",
+  "setup_recent_add": "Ajouter {name}",
+  "setup_start": "Commencer la partie",
+  "sheet_close": "Fermer",
+  "sheet_grab": "Glissez vers le bas pour fermer",
+  "colour_title": "Couleur de {name}",
+  "colour_title_unnamed": "Choisir une couleur",
+  "colour_swatch": "Couleur {n}",
+  "colour_swatch_taken": "Couleur {n}, déjà prise",
+  "colour_note": "Les couleurs déjà prises sont estompées. L'initiale reste sur la pastille partout, pour que la couleur ne soit jamais la seule différence entre deux joueurs.",
+  "setup_recolor": "Couleur de {name}",
+  "setup_error_too_few": [
+    {
+      "declarations": [
+        "input min",
+        "local minPlural = min: plural"
+      ],
+      "selectors": [
+        "minPlural"
+      ],
+      "match": {
+        "minPlural=one": "{game} demande au moins {min} joueur.",
+        "minPlural=*": "{game} demande au moins {min} joueurs."
+      }
+    }
+  ],
+  "setup_error_too_few_teams": "{game} demande {min} équipes.",
+  "setup_error_too_many": "{game} accepte au plus {max} joueurs.",
+  "setup_error_too_many_teams": "{game} accepte au plus {max} équipes.",
+  "setup_error_empty": "Chaque joueur doit avoir un nom.",
+  "setup_error_empty_teams": "Chaque équipe doit avoir un nom.",
+  "setup_error_duplicate": "Deux joueurs portent le même nom. Renommez-en un pour continuer.",
+  "setup_error_duplicate_teams": "Deux équipes portent le même nom. Renommez-en une pour continuer.",
+  "setup_fix_names": "Corrigez les noms pour continuer",
+  "setup_fix_count": "Corrigez la composition pour continuer",
+  "keypad_sign": "Positif ou négatif",
+  "keypad_backspace": "Effacer un chiffre",
+  "keypad_digit": "{digit}",
+  "sheet_sub_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{game} · {count} joueur",
+        "countPlural=*": "{game} · {count} joueurs"
+      }
+    }
+  ],
+  "sheet_sub_teams": "{game} · {count} équipes",
+  "sheet_category_of": "Catégorie {n} sur {total}",
+  "sheet_so_far": "{total} jusqu'ici",
+  "sheet_next_category": "Catégorie suivante",
+  "sheet_see_results": "Voir les résultats",
+  "sheet_cell": "{player} : {value}",
+  "sheet_cell_empty": "{player} : rien de saisi",
+  "sheet_go_to_category": "Catégorie {n}, {label}",
+  "sheet_entered_count": "{done} sur {total} saisis",
+  "menu_open": "Plus",
+  "sheet_clear": "Effacer",
+  "sheet_next_player": "Suivant — {name}",
+  "sheet_close_keypad": "Fermer le pavé",
+  "menu_rename": "Renommer la partie",
+  "menu_finish": "Terminer la partie",
+  "menu_name_label": "Nom de la partie",
+  "menu_new_player_label": "Nom du nouveau joueur",
+  "menu_new_team_label": "Nom de la nouvelle équipe",
+  "menu_save": "Enregistrer",
+  "menu_add": "Ajouter",
+  "menu_late_player_note": "Les catégories déjà jouées restent vides et comptent 0.",
+  "tally_to_target": "à {target}",
+  "tally_to_go": "{n} restants",
+  "tally_won": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} gagnée",
+        "nPlural=*": "{n} gagnées"
+      }
+    }
+  ],
+  "tally_last": "{delta} dernière",
+  "tally_no_score": "Aucun point",
+  "tally_leads": "Mène",
+  "tally_safest": "Plus bas",
+  "tally_rank": "Rang {rank}",
+  "tally_recap": "Manche {n} · {name} prend {score}",
+  "tally_edit_last": "Modifier",
+  "tally_enter_hand": "Saisir la manche {n}",
+  "tally_passed": "{name} a dépassé {target} · terminez depuis ⋯ quand la table a fini",
+  "ledger_hand": "Manche",
+  "entry_hand": "Manche {n}",
+  "entry_to_place": "Manche {n} · {total} à répartir · {placed} placés",
+  "entry_done": "Terminer",
+  "entry_tile": "{name}, {value}",
+  "entry_tile_empty": "{name}, non saisi",
+  "history_title": "Historique des manches",
+  "history_sub": [
+    {
+      "declarations": [
+        "input hands",
+        "local handsPlural = hands: plural",
+        "input players",
+        "local playersPlural = players: plural"
+      ],
+      "selectors": [
+        "handsPlural",
+        "playersPlural"
+      ],
+      "match": {
+        "handsPlural=one,playersPlural=one": "{session} · {hands} manche · {players} joueur",
+        "handsPlural=one,playersPlural=*": "{session} · {hands} manche · {players} joueurs",
+        "handsPlural=*,playersPlural=one": "{session} · {hands} manches · {players} joueur",
+        "handsPlural=*,playersPlural=*": "{session} · {hands} manches · {players} joueurs"
+      }
+    }
+  ],
+  "history_per_hand": "Par manche",
+  "history_running": "Cumul",
+  "history_total": "Total",
+  "history_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} manche",
+        "nPlural=*": "{n} manches"
+      }
+    }
+  ],
+  "history_tap_to_fix": "Touchez une case pour corriger",
+  "history_empty": "Aucune manche",
+  "menu_history": "Historique des manches",
+  "results_sub": "{game} · terminé à {time}",
+  "results_winner": "Gagnant",
+  "results_joint_winners": "Ex æquo",
+  "results_final_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Final · {count} joueur",
+        "countPlural=*": "Final · {count} joueurs"
+      }
+    }
+  ],
+  "results_final_teams": "Final · {count} équipes",
+  "results_tiebreak": "Départage · {game}",
+  "results_tiebreak_note": "Scorepad ne tranchera pas — la règle est ici, les pièces sont sur la table.",
+  "results_takeaway_sheet": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} catégorie sur {total} · {name}",
+        "countPlural=*": "{count} catégories sur {total} · {name}"
+      }
+    }
+  ],
+  "results_takeaway_tally": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} manche sur {total} · {name}",
+        "countPlural=*": "{count} manches sur {total} · {name}"
+      }
+    }
+  ],
+  "results_empty_cells": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} case laissée vide",
+        "countPlural=*": "{count} cases laissées vides"
+      }
+    }
+  ],
+  "results_play_again": "Rejouer",
+  "results_reopen": "Rouvrir",
+  "results_export": "Exporter",
+  "results_back": "Retour aux jeux",
+  "results_rank": "Rang {rank}",
+  "install_eyebrow": "Installer",
+  "install_copy": "Ajoutez Scorepad à votre écran d'accueil. Une app installée garde ses parties — un navigateur peut effacer un site qu'il n'a pas vu depuis une semaine.",
+  "install_action": "Ajouter à l'écran d'accueil",
+  "install_ios": "Touchez Partager, puis « Sur l'écran d'accueil »."
 }

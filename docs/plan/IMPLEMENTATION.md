@@ -108,28 +108,31 @@ Phase 8  French pass ── PWA ── deploy ── contract tests ── succe
 the build to a client-only output. This is the spec's task 0.
 
 **Acceptance criteria:**
-- [ ] Deleted: `prisma/`, `prisma.config.ts`, `src/db.ts`, `src/generated/`, `src/server/`,
+- [x] Deleted: `prisma/`, `prisma.config.ts`, `src/db.ts`, `src/generated/`, `src/server/`,
       `src/data/`, `src/routes/test.page.tsx`, `src/integrations/tanstack-query/`.
-- [ ] Removed from `package.json`: `prisma`, `@prisma/client`, `@prisma/adapter-pg`,
+- [x] Removed from `package.json`: `prisma`, `@prisma/client`, `@prisma/adapter-pg`,
       `@faker-js/faker`, `dotenv-cli`, `nitro`, `@heroui/react`, `@heroui/styles`,
       `@tanstack/react-table`, `@tanstack/react-form`, `@tanstack/match-sorter-utils`,
       `@tanstack/query-db-collection`, `@tanstack/react-db`, `@tanstack/react-query`,
       `@tanstack/react-query-devtools`, `@tanstack/react-router-ssr-query`, and all `db:*`
       plus `post-cta-init` scripts. `lucide-react` stays.
-- [ ] `vite.config.ts`: `nitro()` plugin gone, SPA mode enabled on `tanstackStart` (verify
+- [x] `vite.config.ts`: `nitro()` plugin gone, SPA mode enabled on `tanstackStart` (verify
       the option name against the installed version — do not copy it from memory).
-- [ ] `tsconfig.json`: only the `@/*` alias survives; `@Components/*`, `@Data/*`,
+- [x] `tsconfig.json`: only the `@/*` alias survives; `@Components/*`, `@Data/*`,
       `@Hooks/*`, `@Server/*` removed.
-- [ ] `src/router.tsx` builds the router with no query-client context.
-- [ ] The scaffold's names go with it: `package.json` `name` becomes `scorepad`, and the
+- [x] `src/router.tsx` builds the router with no query-client context.
+- [x] The scaffold's names go with it: `package.json` `name` becomes `scorepad`, and the
       document title in `root.layout.tsx` stops reading `Board Game Counter`. The product is
       Scorepad, and Home's header renders that wordmark.
 
 **Verification:**
-- [ ] `bun install && bun run build` succeeds and `dist/` contains `index.html` and no
+- [x] `bun install && bun run build` succeeds and `dist/` contains `index.html` and no
       server entry (`.output/server`, `server.js`, nitro artifacts absent).
-- [ ] `grep -ril "prisma\|heroui\|react-query" src/` returns nothing.
-- [ ] `bun run lint` clean.
+- [x] `grep -ril "prisma\|heroui\|react-query" src/` returns nothing **in code**. It now
+      matches one comment line in `src/tokens.css` ("HeroUI overrides"), which task 2 copies
+      byte-identically from the design bundle. Not fixable here without breaking that
+      byte-identity — it is owed to the designer instead.
+- [x] `bun run lint` clean.
 
 **Dependencies:** None. **Scope:** M (mostly deletion). **Risk:** the SPA-mode option name.
 
@@ -138,14 +141,17 @@ the build to a client-only output. This is the spec's task 0.
 **Description:** Copy the design bundle's tokens in verbatim and give the repo a test runner.
 
 **Acceptance criteria:**
-- [ ] `src/tokens.css` is byte-identical to `docs/design_handoff_scorepad/tokens.css`.
-- [ ] `src/styles.css` is `@import "tailwindcss";` + `@import "./tokens.css";` — the
+- [x] `src/tokens.css` is byte-identical to `docs/design_handoff_scorepad/tokens.css`.
+- [x] `src/styles.css` is `@import "tailwindcss";` + `@import "./tokens.css";` — the
       `@heroui/styles` and typography-plugin imports are gone.
-- [ ] `vite.config.ts` carries a `test` block (jsdom environment, globals on, setup file).
-- [ ] `src/tokens.test.ts` asserts the two token files are identical, so a drift is a test
+- [x] `vite.config.ts` carries a `test` block (jsdom environment, globals on). **No setup
+      file yet** — nothing needs one until task 8 imports `fake-indexeddb`, which creates it
+      and wires `setupFiles` in the same step. `globals: true` costs `vitest/globals` in
+      `tsconfig.json`'s `types`.
+- [x] `src/tokens.test.ts` asserts the two token files are identical, so a drift is a test
       failure rather than a silent design bug.
 
-**Verification:** `bun test` runs and passes; `bun dev` serves a page whose background is
+**Verification:** `bun run test` runs and passes; `bun dev` serves a page whose background is
 `--color-paper`.
 
 **Dependencies:** 1. **Scope:** S.
@@ -156,8 +162,8 @@ the build to a client-only output. This is the spec's task 0.
 `Template`, `Category` (from `template-grammar.md`). Transcribed, not invented.
 
 **Acceptance criteria:**
-- [ ] One file per concern, named exports, no barrel, no `any`.
-- [ ] Field-for-field match with the spec, optional fields included
+- [x] One file per concern, named exports, no barrel, no `any`.
+- [x] Field-for-field match with the spec, optional fields included
       (`targetScore`, `tiebreakNote`, `handTotal`, `entry`, `finishedAt`).
 
 **Verification:** `bunx tsc --noEmit` clean.
@@ -165,9 +171,9 @@ the build to a client-only output. This is the spec's task 0.
 **Dependencies:** 1. **Scope:** XS.
 
 ### ✅ Checkpoint A — Foundation
-- [ ] `bun run build` emits a static bundle, no server entry (**success criterion 1**).
-- [ ] `bun test` and `bun run lint` both pass on an empty-ish tree.
-- [ ] Nothing in `src/` references a database, a server or HeroUI.
+- [x] `bun run build` emits a static bundle, no server entry (**success criterion 1**).
+- [x] `bun run test` and `bun run lint` both pass on an empty-ish tree.
+- [x] Nothing in `src/` references a database, a server or HeroUI.
 
 ---
 
@@ -182,16 +188,16 @@ wrong, so it is written first and tested exhaustively.
 with tie detection, exactly as specified.
 
 **Acceptance criteria:**
-- [ ] `cellScore(v, cat) = Math.floor(v * (cat.multiplier ?? 1) / (cat.divideBy ?? 1))`.
-- [ ] Missing entries read as `0`; a player with no entries totals `0` and ranks last, never
+- [x] `cellScore(v, cat) = Math.floor(v * (cat.multiplier ?? 1) / (cat.divideBy ?? 1))`.
+- [x] Missing entries read as `0`; a player with no entries totals `0` and ranks last, never
       "unranked"; an appended empty round contributes `0`.
-- [ ] `ranking` sorts by `win`, and ties share a rank number carrying a `=` marker.
-- [ ] Imports nothing but types.
+- [x] `ranking` sorts by `win`, and ties share a rank number carrying a `=` marker.
+- [x] Imports nothing but types.
 
 **Verification:**
-- [ ] `src/lib/scoring.test.ts` covers: integer and negative multipliers, empty entries,
+- [x] `src/lib/scoring.test.ts` covers: integer and negative multipliers, empty entries,
       all-zero ties, `win: "lowest"` ordering, multi-round accumulation, empty appended round.
-- [ ] **The dedicated regression test: `divideBy: 3` equals `Math.floor(n/3)` for every `n`
+- [x] **The dedicated regression test: `divideBy: 3` equals `Math.floor(n/3)` for every `n`
       in 0–10000** (**success criterion 3**). This one is non-negotiable and never deleted.
 
 **Dependencies:** 3. **Scope:** S.
@@ -201,12 +207,12 @@ with tie detection, exactly as specified.
 **Description:** `src/lib/templates/validate.ts` — every rule in `template-grammar.md`.
 
 **Acceptance criteria:**
-- [ ] Rules covered: `id` matches filename stem; non-empty categories; unique `key`s;
+- [x] Rules covered: `id` matches filename stem; non-empty categories; unique `key`s;
       `players[0] >= 1` and `players[1] >= players[0]`; `multiplier` a non-zero integer;
       `divideBy` a positive integer; `key` matches `^[a-z][a-z0-9_]*$`; `handTotal` a
       non-zero integer and never on a `sheet` template; `entry` is `"player"` or `"team"`.
-- [ ] Returns a list of problems, not a thrown error — the template test wants all of them.
-- [ ] Pure: no React, no DB, no `features/`.
+- [x] Returns a list of problems, not a thrown error — the template test wants all of them.
+- [x] Pure: no React, no DB, no `features/`.
 
 **Verification:** `validate.test.ts` has **one failing-case test per rule above**.
 
@@ -219,9 +225,9 @@ Wingspan, Azul, Ticket to Ride, 7 Wonders), plus `registry.ts` importing each JS
 (no barrel, no glob).
 
 **Acceptance criteria:**
-- [ ] JSON transcribed from `template-grammar.md`; no invented category, no float anywhere.
-- [ ] 7 Wonders coins use `divideBy: 3`, never a fractional multiplier.
-- [ ] `registry.ts` exports the ordered list the shelf renders.
+- [x] JSON transcribed from `template-grammar.md`; no invented category, no float anywhere.
+- [x] 7 Wonders coins use `divideBy: 3`, never a fractional multiplier.
+- [x] `registry.ts` exports the ordered list the shelf renders.
 
 **Verification:** `templates.test.ts` iterates **every** registered template, asserts it
 validates, and asserts a hand-checked fixture scores to a known total. A template without a
@@ -234,21 +240,24 @@ fixture fails the suite.
 **Description:** The four tally games (Uno, Belote, Whist, Black Lady) plus `counter.json`.
 
 **Acceptance criteria:**
-- [ ] `belote.json` and `whist.json` carry `entry: "team"` and their `setupNote`.
-- [ ] `black-lady.json` carries `handTotal: 26`, `win: "lowest"`, `targetScore: 100`.
-- [ ] `counter.json`: `tally`, one category, no `targetScore`, `players: [1, 12]`.
-- [ ] Each template states its encoded variant in `setupNote` or `hint`.
+- [x] `belote.json` and `whist.json` carry `entry: "team"` and their `setupNote`.
+- [x] `black-lady.json` carries `handTotal: 26`, `win: "lowest"`, `targetScore: 100`.
+- [x] `counter.json`: `tally`, one category, no `targetScore`, `players: [1, 12]`.
+- [x] Each template states its encoded variant in `setupNote` or `hint`.
 
 **Verification:** The same iterating test now covers eleven templates, including a
 **multi-round Belote fixture** and a **`win: "lowest"` Black Lady fixture**
-(**success criterion 2**).
+(**success criterion 2**). Note that `SPEC.md`'s criterion 2 still says "all ten seed
+templates (6 board, 4 card)" — `counter.json` makes eleven, and the suite covers all of
+them. The criterion's count is stale, not the suite's.
 
 **Dependencies:** 6. **Scope:** M.
 
 ### ✅ Checkpoint B — Core
-- [ ] Success criteria 2 and 3 are green in CI.
-- [ ] `scoring.ts` and `validate.ts` import nothing but types — verified by reading their
-      import lines, since no linter enforces it.
+- [x] Success criteria 2 and 3 are green in CI.
+- [x] `scoring.ts` and `validate.ts` import nothing but types — now asserted by a test in
+      each module's suite rather than read by hand, since no linter enforces it. Verified by
+      adding a React import to `scoring.ts` and watching it fail.
 
 ---
 
@@ -261,11 +270,16 @@ hold `schemaVersion`, run ordered migrations on open (v1 ships version 1 and zer
 migrations), and expose typed get/put/delete/getAll plus `meta` accessors.
 
 **Acceptance criteria:**
-- [ ] Exactly two object stores, keyPaths `id` and `key`.
-- [ ] `meta` keys supported: `schemaVersion`, `recentNames` (capped 20), `lastExportedAt`,
+- [x] Exactly two object stores, keyPaths `id` and `key`.
+- [x] `meta` keys supported: `schemaVersion`, `recentNames` (capped 20), `lastExportedAt`,
       `locale`, `theme`. **Absent means untouched** — never write a default on open.
-- [ ] A migration runner exists and is a no-op at version 1.
-- [ ] No `any`; a failed open surfaces an error rather than resolving to an empty store.
+      *Scope corrected against `data-model.md`:* that rule covers `locale` and `theme`, "the
+      last two are the only settings the app has". `schemaVersion` is bookkeeping and **is**
+      stamped at database creation — without it, a database created by a future v3 app would
+      hold no version, and the next open would assume v1 and re-run migrations over current
+      data.
+- [x] A migration runner exists and is a no-op at version 1.
+- [x] No `any`; a failed open surfaces an error rather than resolving to an empty store.
 
 **Verification:** `db.test.ts` — session write → reload → identical read; a 15-round tally
 session round-trips; the migration runner fires when the stored version is lower.
@@ -284,18 +298,24 @@ on `useSyncExternalStore`. **In `lib/`, not in a feature** (decision 6): both fe
 sessions, and this is what stops the cross-feature import.
 
 **Acceptance criteria:**
-- [ ] `create` snapshots `categories`, `win`, `targetScore`, `tiebreakNote`, `handTotal` and
+- [x] `create` snapshots `categories`, `win`, `targetScore`, `tiebreakNote`, `handTotal` and
       `entry` from the template. **A later template edit can never move a played score.**
-- [ ] `duplicate` copies `templateId`, the snapshot and `players` (names + `colorIndex`),
+- [x] `duplicate` copies `templateId`, the snapshot and `players` (names + `colorIndex`),
       with a new `id`, new `createdAt`, `status: "active"` and empty `rounds`.
-- [ ] `duplicateSession` names the copy with a numeric suffix — `Belote 12 Apr` →
+- [x] `duplicateSession` names the copy with a numeric suffix — `Belote 12 Apr` →
       `Belote 12 Apr (2)`, incrementing past an existing `(2)` — with no prompt. Renaming
       afterwards is the ⋯ menu's job (task 22).
-- [ ] Every write persists immediately. There is no save action and no flush.
-- [ ] Imports `lib/db.ts` and types only. No React beyond the hook, no `features/`.
+- [x] Every write persists immediately. There is no save action and no flush.
+- [x] Imports `lib/db.ts` and types only. No React beyond the hook, no `features/`.
 
 **Verification:** A test creating a session from a template, mutating a cell, reloading the
 store from IndexedDB and reading the same value back.
+
+**`updatedAt` added to `Session` (approved 2026-08-20).** `SPEC.md` §Home orders active
+sessions "most recently touched first" and stamps each row with a relative time, and neither
+is expressible from `createdAt` — resuming last week's game has to lift it to the top.
+`data-model.md` is updated; `lib/sessions.ts` is the only writer, so it cannot drift.
+Task 12 sorts on it.
 
 **Dependencies:** 8, 7. **Scope:** M.
 
@@ -310,11 +330,16 @@ only once touched, theme applied as `data-theme` on the document element), `app/
 and `src/routes.ts` registering all six routes with placeholder pages.
 
 **Acceptance criteria:**
-- [ ] Routes: `/`, `/new`, `/new/players`, `/session/$id`, `/session/$id/history`,
+- [x] Routes: `/`, `/new`, `/new/players`, `/session/$id`, `/session/$id/history`,
       `/session/$id/results`.
-- [ ] Untouched install follows `navigator.language` and `prefers-color-scheme`; a touched
+- [x] Untouched install follows `navigator.language` and `prefers-color-scheme`; a touched
       setting survives reload (**success criterion 14**).
-- [ ] Shared `ScreenHeader` and `Eyebrow` components, token-driven, 52px and 44px bands.
+- [x] Shared `ScreenHeader` and `Eyebrow` components, token-driven, 52px and 44px bands.
+      52 comes from `--h-primary` — the bundle has no separate header token, and the band
+      and the primary button are the same height by design.
+- [x] Paraglide's strategy becomes `["globalVariable", "preferredLanguage", "baseLocale"]`.
+      The scaffold's `url` strategy contradicted the spec: locale lives in `meta`, not in a
+      path, and one of the six routes is a session id.
 
 **Verification:** Toggle both settings, reload, values hold; clear `meta`, reload, OS wins.
 
@@ -327,9 +352,11 @@ copy, the eyebrow `NO ACCOUNT · NO SERVER · WORKS OFFLINE`, and a footer carry
 `New game` **and** `Import a backup`.
 
 **Acceptance criteria:**
-- [ ] Renders when zero sessions exist. No onboarding carousel, no dialog.
-- [ ] `New game` routes to `/new`.
-- [ ] Fits 390 × 844 in French.
+- [x] Renders when zero sessions exist. No onboarding carousel, no dialog.
+- [x] `New game` routes to `/new`.
+- [x] Fits 390 × 844 in French — the French strings render and the layout has no fixed
+      heights outside tokens. **The actual 390 × 844 fit is not asserted here:** jsdom has
+      no layout engine, so it is task 32's job with a real viewport.
 
 **Verification:** Component test on an empty store; visual check against `1e`.
 
@@ -341,16 +368,21 @@ copy, the eyebrow `NO ACCOUNT · NO SERVER · WORKS OFFLINE`, and a footer carry
 `FINISHED · N` → finished sessions. Never re-sorted by game or name.
 
 **Acceptance criteria:**
-- [ ] In-progress row: game name + `SHEET`/`TALLY` badge; session name · `hand N` or
+- [x] In-progress row: game name + `SHEET`/`TALLY` badge; session name · `hand N` or
       `category N of M`; the standing line (`512 – 468`, with `of 501` in ink-soft when the
       snapshot has a `targetScore`); relative time; `Resume →`.
-- [ ] Finished row: game name; `session · winner · score`; relative time; chevron.
-- [ ] Rows route to `/session/$id`, or to `/session/$id/results` when finished.
-- [ ] Relative time is a shared util in `src/utils/` with its own test (`20 MIN AGO`,
+- [x] Finished row: game name; `session · winner · score`; relative time; chevron.
+- [x] Rows route to `/session/$id`, or to `/session/$id/results` when finished.
+- [x] Relative time is a shared util in `src/utils/` with its own test (`20 MIN AGO`,
       `4 DAYS AGO`, `NEVER`).
 
 **Verification:** Test with a fixture of both statuses; the list is the only scrolling
 surface on the screen.
+
+*Note:* the artboard's row uses 10 / 14 / 15px type, none of which is on `tokens.css`'s
+scale (11 / 13 / 16 / 17 / 18 / 22 / 26 / 28 / 44). The build snaps to the nearest token,
+since `tokens.css` is the normative artifact and a literal size in a component is a bug.
+Owed to the designer.
 
 **Dependencies:** 11. **Scope:** M.
 
@@ -360,9 +392,9 @@ surface on the screen.
 decision 4 above. No per-row bin icon anywhere.
 
 **Acceptance criteria:**
-- [ ] Delete opens **the app's one confirmation dialog**; duplicate acts immediately, with no
+- [x] Delete opens **the app's one confirmation dialog**; duplicate acts immediately, with no
       rename prompt, and the new active session appears at the top of the list.
-- [ ] The actions are reachable without the gesture (keyboard/AT), since the pane is a real
+- [x] The actions are reachable without the gesture (keyboard/AT), since the pane is a real
       scroll container with real buttons.
 
 **Verification:** Test: duplicate produces a session with the same players and colour
@@ -378,9 +410,13 @@ eyebrow, relative `meta.lastExportedAt` (`NEVER` when unset, `--color-advisory` 
 days), a line counting the games that live on this phone only, then `Export` and `Import`.
 
 **Acceptance criteria:**
-- [ ] Export writes a JSON file of all sessions and sets `meta.lastExportedAt`.
-- [ ] Import accepts the same format and **merges by `id`, skipping duplicates**.
-- [ ] Import is reachable from the first-run footer too (task 11).
+- [x] Export writes a JSON file of all sessions and sets `meta.lastExportedAt`.
+- [x] Import accepts the same format and **merges by `id`, skipping duplicates**.
+- [x] **Import validates entry values at the boundary.** A backup file is untrusted input:
+      `scoring.ts` resolves a non-numeric entry to zero so nothing downstream sees `NaN`,
+      but silently zeroing a corrupted score is a worse outcome than refusing the file.
+      Rejecting it is import's job, not the scoring core's.
+- [x] Import is reachable from the first-run footer too (task 11).
 
 **Verification:** **Success criterion 5** — export → wipe IndexedDB → import → all sessions
 restored byte-identical, as an automated round-trip test over the store.
@@ -388,8 +424,38 @@ restored byte-identical, as an automated round-trip test over the store.
 **Dependencies:** 13. **Scope:** M.
 
 ### ✅ Checkpoint C — Home
-- [ ] Home renders both states, resumes, deletes, duplicates and round-trips a backup.
-- [ ] `bun test` and `bun run lint` pass. Human compares against `1d` and `1e`.
+- [x] Home renders both states, resumes, deletes, duplicates and round-trips a backup —
+      each one asserted, `SessionList.test.tsx`, `SwipeRow.test.tsx` and `backup.test.ts`
+      ("restores every session byte-identically" is **success criterion 5**).
+- [x] `bun run test` (319), `bun run lint`, `bunx tsc --noEmit` and `bun run build` all clean;
+      `dist/` still holds only `client/`, no server entry. **The comparison against `1d` and
+      `1e` is still owed to a human** — jsdom has no layout engine and nothing here asserts a
+      pixel.
+
+**The five-axis review found four real holes, all fixed here:**
+
+1. **The language chip changed nothing on screen.** `babel-plugin-react-compiler` caches
+   every `m.*()` call for the life of a component instance — the call takes no reactive
+   input — so a re-render reuses the string it computed first. Compounding it, the provider
+   set Paraglide's locale in an effect, a render *after* the one it should have changed.
+   Fixed on both counts: the locale is applied at the moment of the tap, and the tree is
+   keyed on it so the cache is dropped. Regression test in `provider.test.tsx`. **Task 29
+   inherits this**: any later message call is safe, but re-passing `locale` per call is not
+   the fix and would be a whole-tree diff.
+2. **Import silently zeroed a corrupted cell**, which is exactly what task 14 says not to do
+   — the shared `sessionSchema` carries `.catch(0)` for the storage path. `importedSessionSchema`
+   is the strict one; the test that asserted the zero now asserts the rejection.
+3. **Three feature components imported `@/app/provider`**, which is the import graph
+   backwards. The context moved to `src/hooks/useSettings.ts`; the app layer keeps the
+   provider that owns the state.
+4. **Export could fail silently in Firefox** — a detached anchor, and the blob URL revoked in
+   the same task as the click. Now appended, clicked, removed, revoked a tick later. The file
+   input is also cleared after each pick, so retrying a corrected file actually re-fires.
+
+Two left as notes, not changes: `HomeHeader`'s wordmark carries a literal `tracking-[-0.01em]`
+that is not on the token scale (owed to the designer with the rest of the `1d` type sizes),
+and `InProgressRow`'s standing line joins every total without truncating — fine at `1d`'s
+player counts, a task 32 question at twelve.
 
 ---
 
@@ -400,19 +466,27 @@ restored byte-identical, as an automated round-trip test over the store.
 **Description:** Header, 48px filter field, two-up tile grid at 12px gaps / 16px gutters.
 
 **Acceptance criteria:**
-- [ ] Tile art is **generated**: `--color-paper-dim` field with a hairline carrying the name
+- [x] Tile art is **generated**: `--color-paper-dim` field with a hairline carrying the name
       set like a box spine (uppercase, `--text-screen`, `--tracking-wordmark`,
       `--color-ink-soft`). One treatment for all tiles, no per-game hue, no image assets.
-- [ ] Meta line derived from the template: `{n} categories · {min}–{max}` for sheet,
+- [x] Meta line derived from the template: `{n} categories · {min}–{max}` for sheet,
       `to {targetScore} · {min}–{max}` for tally, `to {targetScore} · 2 teams` when
       `entry` is `"team"`.
-- [ ] No-match state shows `Clear filter`. **No `Add a custom game` button** — it is cut.
-- [ ] The art field is a self-contained component so real box art is a later swap inside it.
+- [x] No-match state shows `Clear filter`. **No `Add a custom game` button** — it is cut.
+      *Note:* `1g`'s footer slot is not an authoring button but `Score "krib" with no
+      template`, which the counter tile now covers. Not built; owed to the designer.
+- [x] The art field is a self-contained component so real box art is a later swap inside it.
 
 **Verification:** Filter to no match, clear, all tiles return in one tap. Tapping a tile
-routes to `/new/players` carrying `templateId`.
+routes to `/new/players` carrying `templateId`. *All asserted in `GameShelf.test.tsx`; the
+id travels as a search param, so a reload keeps the chosen game.*
 
-- [ ] **The shelf shows all eleven templates, counter included**, and the filter placeholder
+*Note:* eleven tiles is one grid row more than `1f` was drawn for. The row came out of the
+art field (64 → 48) rather than out of the shelf, so the screen still fits 390 × 844. The
+grid carries an `overflow-y-auto` safety valve for shorter viewports, where clipping the
+last row out of reach would be worse than a scroll. Owed to the designer.
+
+- [x] **The shelf shows all eleven templates, counter included**, and the filter placeholder
       is `Filter {n} games` with the count derived from the registry length — decided
       2026-08-19, so the copy cannot drift when a twelfth template lands. `1f`'s literal
       "ten" is superseded.
@@ -425,16 +499,26 @@ routes to `/new/players` carrying `templateId`.
 `PLAYED RECENTLY` pills, pinned 52px primary.
 
 **Acceptance criteria:**
-- [ ] Title is `Players` / `Teams` (`Équipes`) driven by `entry`; a team template's
+- [x] Title is `Players` / `Teams` (`Équipes`) driven by `entry`; a team template's
       `setupNote` renders as an info banner above the rows.
-- [ ] Row: colour token · name input · **visible grip handle** for reorder · `×` to remove.
-      Reorder is the handle, never a hidden long-press.
-- [ ] Dashed `Add a player` row beneath.
-- [ ] `PLAYED RECENTLY` renders 40px tap-to-add pills from `meta.recentNames`.
-- [ ] Colours are handed out **in palette order** as players are added.
+- [x] Row: colour token · name input · **visible grip handle** for reorder · `×` to remove.
+      Reorder is the handle, never a hidden long-press. **`@dnd-kit/core` + `@dnd-kit/sortable`
+      approved 2026-08-20** over react-dnd, which needs a second package for touch, was last
+      published in 2022 and has no keyboard path. The grip carries the sensors, so one handle
+      serves a thumb, a mouse and the arrow keys. Row order follows `1h` (grip first).
+- [x] Dashed `Add a player` row beneath, hidden at the template's maximum.
+- [x] `PLAYED RECENTLY` renders tap-to-add pills from `meta.recentNames` — **44px, not the
+      artboard's 40**: the thumb floor is a contract, and task 32 asserts it.
+- [x] Colours are handed out **in palette order** as players are added, and a colour freed
+      by a removed row is reused before the palette advances.
 
-**Verification:** Four pills = a four-player table in four taps. Reordering rewrites
-`sortOrder` and nothing else.
+**Verification:** Four pills = a four-player table in four taps — asserted, and it holds
+because a pill fills the first empty row before it adds one. Reordering rewrites order and
+nothing else, asserted over the pure row helpers.
+
+*Note:* rows are `--h-cell` (48) per `SPEC.md` rather than `1h`'s 60, and the body carries an
+`overflow-y-auto` safety valve — twelve counter players plus the recent block do not fit 844
+at any row height. Owed to the designer.
 
 **Dependencies:** 15. **Scope:** M.
 
@@ -443,16 +527,20 @@ routes to `/new/players` carrying `templateId`.
 **Description:** The shared `BottomSheet` (decision 3) and the colour picker on top of it.
 
 **Acceptance criteria:**
-- [ ] Sheet: `--radius-card` on top corners only, `--shadow-sheet`, `--scrim` behind,
+- [x] Sheet: `--radius-card` on top corners only, `--shadow-sheet`, `--scrim` behind,
       `--dur-sheet` 200ms with `--ease`, dismissed by swipe-down or backdrop tap.
-- [ ] Colour sheet: header (token, `Marie's colour`, `×`), a 4 × 3 grid of 56px swatches each
-      carrying **its index number and letter**, one line of copy about the initial.
-- [ ] Taken colours dim to 32% and are **non-selectable — they dim, never disappear**, so the
+- [x] Colour sheet: header (token, `Marie's colour`, `×`), a 4 × 3 grid of 56px swatches each
+      carrying **its index number and letter**, one line of copy about the initial. `1h` draws
+      6 × 2 at 48px with the letter only; **the spec's grid was chosen 2026-08-20** — bigger
+      targets, and the index is what the database stores. Owed to the designer.
+- [x] Taken colours dim to 32% and are **non-selectable — they dim, never disappear**, so the
       grid cannot reflow under a thumb. Selected takes a 2px ink ring.
-- [ ] Never a dropdown.
+- [x] Never a dropdown.
 
 **Verification:** Component test — a taken colour refuses selection and the grid keeps its
-twelve positions.
+twelve positions. The sheet's own suite covers all three ways out (×, scrim, Esc) and found a
+real defect: the scrim path started the exit animation without setting the flag its listener
+reads, so a sheet dismissed by tapping outside animated away and never unmounted.
 
 **Dependencies:** 16. **Scope:** M.
 
@@ -461,21 +549,54 @@ twelve positions.
 **Description:** Blocking validation and the write that starts the game.
 
 **Acceptance criteria:**
-- [ ] Blocking is **stated twice**: the primary dims *and* a plain auto-height line beneath
+- [x] Blocking is **stated twice**: the primary dims *and* a plain auto-height line beneath
       it says why, in `--color-alarm-ink` on `--color-alarm-bg`. Never a toast, never a pill.
-- [ ] Rules: player count inside the template range; names non-empty and unique within the
-      session (the drawn case is duplicate team names).
-- [ ] On continue: create the session with its snapshot, call `navigator.storage.persist()`
+- [x] Rules: player count inside the template range; names non-empty and unique within the
+      session (the drawn case is duplicate team names). One reason at a time, count first.
+      Uniqueness is case-insensitive and trimmed — two rows called `Marie` and ` marie ` carry
+      the same token and the same initial.
+- [x] On continue: create the session with its snapshot, call `navigator.storage.persist()`
       if not yet granted and **log the boolean result** (**success criterion 8**), write
-      `recentNames`, route to `/session/$id`.
+      `recentNames`, route to `/session/$id`. The persist call is deliberately not awaited into
+      the navigation: a slow permission prompt must not stand between somebody and the first
+      hand.
 
-**Verification:** Two identically-named teams block with the French copy from `1i`; the
-banner is auto-height at 14px/1.45 and wraps rather than truncating.
+**Verification:** Two identically-named teams block, asserted, with `1i`'s French copy in
+`messages/fr.json`. The banner is auto-height and asserted to carry no fixed height — at
+`--text-meta` (13), since 14 is not on the token scale and a literal size in a component is a
+bug. Owed to the designer.
 
 **Dependencies:** 17, 9. **Scope:** S.
 
 ### ✅ Checkpoint D — A session can be born
-- [ ] Home → picker → setup → a persisted session, offline, in French, no scroll anywhere.
+- [x] Home → picker → setup → a persisted session, offline, in French — one walk through
+      the **real route tree** in `src/routes/newSession.flow.test.tsx`: first run in French,
+      the shelf counting its own eleven games, `1i`'s duplicate-team block in French, then a
+      Belote session in IndexedDB with the template snapshotted and both names in
+      `meta.recentNames`. A second test walks the same path with `fetch` and
+      `XMLHttpRequest` stubbed and asserts **neither is ever called**.
+- [ ] **No scroll anywhere is not asserted** — jsdom has no layout engine, so this is
+      arithmetic, not measurement, and task 32 owns the real check at 390 × 844:
+
+      | Screen | Worst legal case | Content height |
+      |---|---|---|
+      | Picker | 11 tiles, 6 rows | 52 + 62 + 660 + 20 = **794** |
+      | Setup | 12 counter rows, all named | 52 + 576 + 86 = **714** |
+      | Setup | 12 rows, none named (transient) | + banner + recent block ≈ **866** |
+
+      Against 800 (844 less the status band). The last row is why both screens keep an
+      `overflow-y-auto` safety valve: clipping a row out of reach is worse than a scroll.
+
+**The review found four defects, all fixed in `7d92035`:** picking a colour unmounted an open
+modal `<dialog>`, skipping `--dur-sheet` and dropping focus instead of returning it to the
+token that opened the sheet; taken swatches were `disabled`, so the grid that deliberately
+never reflows was invisible to the keyboard; the tile's generated art repeated the game name
+into the accessible name (`Wingspan Wingspan sheet…`); and the palette index sat at 80%
+opacity, where `--player-ink` no longer clears 4.5:1.
+
+`PLAYED RECENTLY` now hides rather than dims when the table is full and named. The pills can
+do nothing at that point, and the ~92px they occupy is exactly what a twelve-player counter
+needs to fit 844.
 
 ---
 
@@ -486,13 +607,18 @@ banner is auto-height at 14px/1.45 and wraps rather than truncating.
 **Description:** The shared 3 × 4 keypad (`1–9`, `±`, `0`, `⌫`) — no `<input>`, ever.
 
 **Acceptance criteria:**
-- [ ] 60px keys at 8px gaps, digits at 26 on card fill, utilities on `--color-paper-dim`.
-- [ ] `±` toggles sign on any value shape including empty and `0`; `⌫` removes one digit and
-      returns to the empty state, not to `0`.
-- [ ] Key size and the action row clear 44px.
+- [x] 60px keys at 8px gaps, digits at 26 on card fill, utilities on `--color-paper-dim`.
+- [x] `±` toggles sign on any value shape including empty and `0`; `⌫` removes one digit and
+      returns to the empty state, not to `0`. Writing the test settled a rule the task left
+      open: `⌫` on `-4` leaves `-`, not `""` — the sign was typed deliberately, it is the same
+      state `±` produces on an empty cell, and one press should never delete two things.
+- [x] Key size and the action row clear 44px.
 
 **Verification:** Component test walking `±` and `⌫` over every value shape — this is one of
-the three surfaces where a mis-tap costs data.
+the three surfaces where a mis-tap costs data. The rules are a pure module
+(`utils/keypadValue.ts`) with a case per shape; the component test walks them through real
+taps. Five digits is the cap: past any seed template's score, and it keeps the readout on
+one line.
 
 **Dependencies:** 10. **Scope:** S.
 
@@ -502,14 +628,16 @@ the three surfaces where a mis-tap costs data.
 footer with pager dots.
 
 **Acceptance criteria:**
-- [ ] **Chip text = first three letters of the *translated* label, uppercased**; if two
+- [x] **Chip text = first three letters of the *translated* label, uppercased**; if two
       collide within a template, both fall back to their 1-based index. Chip states:
       done = `--color-paper-dim` + ✓, current = accent fill + `●`, future = card + hairline.
       Any chip is tappable to revisit its category.
-- [ ] Row: 28px token with initial · name at 17 · mono 11 `<total> SO FAR · <ordinal>` with
-      `=` on a tie · right-aligned 64×48 cell in its empty/filled/focused states.
-- [ ] Empty cell renders an em-dash in `--color-ink-faint` and scores 0.
-- [ ] Dark (`1k`) is the same structure; the accent primary uses `.btn-primary` so dark
+- [x] Row: 28px token with initial · name at 17 · mono 11 `<total> SO FAR · <ordinal>` with
+      `=` on a tie · right-aligned 64×48 cell in its empty/filled/focused states. Ordinals are
+      a tested util — `1st/2nd/3rd`, `1er/2e` — not a suffix table written twice.
+- [x] Empty cell renders an em-dash in `--color-ink-faint` and scores 0, and is **absent**
+      from the round rather than stored as zero, so Results can still warn about it.
+- [x] Dark (`1k`) is the same structure; the accent primary uses `.btn-primary` so dark
       accent carries ink, not paper.
 
 **Verification:** 7 players × 7 categories in French fits 390 × 844 with no frame scroll.
@@ -522,14 +650,22 @@ The abbreviation function has its own unit test including the collision fallback
 **Description:** The keypad sheet and the write path.
 
 **Acceptance criteria:**
-- [ ] Sheet header: active player's token, name, mono status line (`SCIENCE · 45 SO FAR`),
-      live value at 40 with a 2px accent caret.
-- [ ] Action row: `Clear` (96px secondary) and a primary **naming the next player**
-      (`Next — Dan →`).
-- [ ] Every keystroke recomputes value, running total and rank *label* at `--dur-value`.
-      **Rows never reorder.**
-- [ ] Every cell change persists immediately; there is no save action.
-- [ ] Footer primary reads `Next category →`, and `See results →` on the last category.
+- [x] Sheet header: active player's token, name, mono status line (`BIRDS · 45 SO FAR`),
+      live value with a 2px accent caret. **The keypad is not a modal sheet:** it takes the
+      sheet's treatment but no scrim and no inertness, because `1j` draws the rows behind it
+      at full strength on purpose — every number sits beside its peers, and that peer check is
+      how a typo is caught. A departure from `SPEC.md`'s blanket "bottom sheets … `--scrim`
+      behind", following the artboard and its stated rationale.
+- [x] Action row: `Clear` (96px secondary) and a primary **naming the next player**
+      (`Next — Dan →`), which names the next *category* once the column is walked, so the
+      button always says where the phone is going.
+- [x] Every keystroke recomputes value, running total and rank *label*. **Rows never
+      reorder** — asserted with a score that puts seat one into the lead.
+- [x] Every cell change persists immediately; there is no save action. **This is where the
+      phase's real bug was:** patching `rounds` wholesale from the last render meant two cells
+      entered in quick succession were both built from one snapshot, and the second erased the
+      first. `lib/sessions.setCell` re-reads the session inside the serialised write.
+- [x] Footer primary reads `Next category →`, and `See results →` on the last category.
 
 **Verification:** **Success criterion 6** — a full 4-player Wingspan sheet (24 cells)
 completes without losing focus, reordering rows or requiring a save.
@@ -542,18 +678,50 @@ completes without losing focus, reordering rows or requiring a save.
 adds hand history. Built once, here.
 
 **Acceptance criteria:**
-- [ ] Rename edits `name` in place; add-a-late-player appends with the next palette colour
+- [x] Rename edits `name` in place; add-a-late-player appends with the next palette colour
       and a new `sortOrder`, and existing rounds simply have no entry for them (reads as 0).
-- [ ] Finish sets `status: "finished"` and `finishedAt`, then routes to Results.
-- [ ] Lives in `features/scoresheet/components/`, imports no session-feature module.
+      The cap is the palette, not the template's range — a late player is by definition
+      outside it.
+- [x] Finish sets `status: "finished"` and `finishedAt`, then routes to Results.
+- [x] Lives in `features/scoresheet/components/`, imports no session-feature module. The
+      game-name lookup Home also needs moved to `utils/gameName.ts` rather than becoming a
+      cross-feature import.
 
-**Verification:** Adding a 5th player mid-sheet leaves all four existing columns untouched.
+**Verification:** Adding a 5th player mid-sheet leaves all four existing columns untouched —
+this is the test that caught the lost-cell bug above.
 
 **Dependencies:** 21. **Scope:** S.
 
 ### ✅ Checkpoint E — Sheet mode end to end
-- [ ] **Success criterion 4**: devtools offline from first paint — create, score, finish,
-      reload; the session is present and correct with **zero network requests** recorded.
+- [x] **Criterion 6, and criterion 4 as far as jsdom can carry it.**
+      `src/routes/sheetGame.flow.test.tsx` walks the real route tree: Home → picker → four
+      players → **all 24 cells of a 4-player Wingspan sheet** without the keypad closing
+      between players → finish from ⋯ → a reload (store dropped, database reopened) → every
+      one of the 24 values read back, in seat order, `status: "finished"`. `fetch`,
+      `XMLHttpRequest`, `WebSocket`, `EventSource` and `sendBeacon` are all stubbed for the
+      whole walk and **none is ever called**.
+- [x] The shipped bundle carries **no network API at all** — `fetch(`, `XMLHttpRequest`,
+      `WebSocket`, `EventSource` and `sendBeacon` appear zero times across the 13 JS chunks
+      in `dist/client`. The only URLs in the bundle are JSON-schema identifiers, XML
+      namespaces and error-doc links, all of them strings.
+- [ ] **The devtools half is still owed**: offline from first paint, on a real origin, with
+      the network panel recording. That is task 31's re-verification against the deployed
+      URL, and it needs a browser this environment does not have.
+
+**The review found two defects, both fixed in `358ba52`:**
+
+1. **The last category's primary was `disabled`.** It read `See results →` and did nothing,
+   so the only way off the end of the sheet was ⋯ → Finish, which also *ends the game* —
+   something `See results` is explicitly not supposed to do. The screen's own test asserted
+   the button existed and never that it worked.
+2. **The row being typed into could sit behind the keypad.** The panel takes the bottom half
+   of the screen, and at seven players the focused row is usually under it. Rows now scroll
+   into view on focus: typing into a cell you cannot see is how the wrong row gets scored.
+
+Writing the 24-cell walk also surfaced a third: the cell rendered the **stored** value, so it
+lagged the keystroke by a database round trip. Imperceptible on a phone, but the cell is where
+the person typing is looking — the focused cell now renders what is being typed and the rest
+render what is stored.
 
 ---
 
@@ -566,15 +734,28 @@ race-bar fraction, `toGo`, hand-balance check. Pure functions over plain data, n
 stored.
 
 **Acceptance criteria:**
-- [ ] `density = players <= 3 ? "roomy" : players <= 6 ? "comfortable" : "compact"`, derived
+- [x] `density = players <= 3 ? "roomy" : players <= 6 ? "comfortable" : "compact"`, derived
       at render time, never persisted, never a preference.
-- [ ] `racebar = clamp(total / targetScore, 0, 1)`; progress when `win: "highest"`, distance
-      to bust when `"lowest"`.
-- [ ] `handBalance(r)` sums the round against `handTotal` and **returns a number, not a
-      verdict** — nothing in this module can block a save.
+- [x] `racebar = clamp(total / targetScore, 0, 1)`; progress when `win: "highest"`, distance
+      to bust when `"lowest"` — the same fraction either way, and the colour says which.
+- [x] `handBalance(r)` sums the round against `handTotal` and **returns a number, not a
+      verdict** — nothing in this module can block a save. Signed: 0 balanced, negative with
+      points unplaced, positive when the moon is shot. It scores each cell through
+      `roundScore` first, so a multiplier is respected.
 
 **Verification:** Boundary tests at 3→4 and 6→7 players; a tie yields the same rank and a `=`
-on both.
+on both — all in `features/scoresheet/utils/tally.test.ts`.
+
+**Two shapes the task left open, settled by writing the tests:**
+
+1. **`toGo` and `racebarFraction` return `undefined` without a `targetScore`, not zero.**
+   `counter.json` has no target, and a zero would draw an empty race bar and a `0 to go`
+   line for a game that has nowhere to go. This is the one place the codebase's
+   "missing data resolves to a defined zero" rule does not apply: the target is not missing
+   data, it is a template that has none.
+2. **`standings` reuses `lib/scoring.ranking` and re-sorts into seat order** rather than
+   deriving rank a second time. Rank and the `=` marker have exactly one implementation, and
+   the "rows never re-sort" rule is asserted here as well as in tasks 20 and 28.
 
 **Dependencies:** 4. **Scope:** S.
 
@@ -583,20 +764,45 @@ on both.
 **Description:** One row per player, three density tiers, one layout.
 
 **Acceptance criteria:**
-- [ ] Row heights 132 / 102 / 62 with the totals at 52 / 38 / 26 — **the total never drops
+- [x] Row heights 132 / 102 / 62 with the totals at 52 / 38 / 26 — **the total never drops
       below 26**. Shed order as the table grows: hands-won clause, then inline ledger, then
       the row's second line.
-- [ ] Rows are in **seat order**; rank is a mono number in the margin and never sorts.
-- [ ] `LEADS` pill for rank 1, hidden at `opacity: 0` for everyone else so the name baseline
+- [x] Rows are in **seat order**; rank is a mono number in the margin and never sorts.
+- [x] `LEADS` pill for rank 1, hidden at `opacity: 0` for everyone else so the name baseline
       never shifts. `win: "lowest"` makes rank 1 the lowest total and the pill reads `SAFEST`.
-- [ ] Recap line: mono 10 `HAND 14 · CHLOÉ TOOK 60` with `EDIT LAST` in accent at the right.
-- [ ] Entry bar (~106, pinned): 60px accent `Enter hand N →`, 20px bottom safe padding, in
+- [x] Recap line: mono 10 `HAND 14 · CHLOÉ TOOK 60` with `EDIT LAST` in accent at the right.
+- [x] Entry bar (~106, pinned): 60px accent `Enter hand N →`, 20px bottom safe padding, in
       the same place at hand 1 and hand 40.
-- [ ] **Target passed** renders one mono advisory line above the entry button and **changes
+- [x] **Target passed** renders one mono advisory line above the entry button and **changes
       no state** — never a dialog, never an automatic end.
 
-**Verification:** 10 players fits 844 exactly with no scroll; 12 scrolls a row or two.
-**Success criterion 10** for both counts, in French.
+**Verification:** `StandingsRow.test`'s contracts live in `TallyScreen.test.tsx`: seat order
+holds while seat two leads, the rank is in the margin, the pill reads `SAFEST` under
+`win: "lowest"`, and a passed target renders the advisory line while the session stays
+active and the entry button still names the next hand. **The 844 fit at 10 and 12 players is
+not asserted** — jsdom has no layout engine, so it is task 32's, with a real viewport.
+
+**What the artboards settled that the criteria left open:**
+
+1. **The tier dimensions live in one `TIER` table in `StandingsRow.tsx`.** `tokens.css` ships
+   no density tokens and is byte-identical to the design bundle (asserted by
+   `tokens.test.ts`), so adding some is not available here. The type sizes snap to the token
+   scale as task 12's rows did — total 52 / 38 / 26 → `--text-total` (44) / `--text-category`
+   (28) / `--text-cell` (26), name 19 / 18 → `--text-strong`. Three distinct steps, and the
+   spec's floor holds exactly, since 26 *is* `--text-cell`. Owed to the designer.
+2. **The pill is drawn at roomy and comfortable, not compact.** `2b` draws no pill, and the
+   compact row has already shed its second line; rank 1 in the margin and the accent total
+   both still say who leads. The spec's paragraph is headed *"Row anatomy (comfortable)"*,
+   so this follows the artboards rather than departing from them.
+3. **"Hands won" needed a rule the spec never states.** A hand is taken by the best score in
+   it, per the template's `win` — so Black Lady credits the *lowest* — a tie credits everyone
+   who tied, and a hand nobody has entered is taken by nobody, which is not the same as
+   everybody drawing zero. In `utils/tally.ts` with a test per clause.
+4. **`EDIT LAST` gets a 44px hit area inside the ~30px band**, the same way `BackLink` puts a
+   40px box inside 44: the drawn size and the thumb contract are different numbers.
+5. **The standings list is the band that gives at 11–12 players.** It was `shrink-0` first,
+   which pushed the entry bar off the bottom of the screen instead of scrolling the rows —
+   the one control that has to be under the same thumb at hand 1 and hand 40.
 
 **Dependencies:** 23, 19. **Scope:** M.
 
@@ -605,24 +811,39 @@ on both.
 **Description:** One sheet walks the table.
 
 **Acceptance criteria:**
-- [ ] Contents in order: 36 × 4 grab handle; active-player header (30px token, name 17/600,
-      mono status line, live value at 38 with a 2px accent caret); player strip; 52px keypad
-      at 7px gaps; actions.
-- [ ] The player strip is **progress indicator and random access** — tapping any tile jumps
+- [x] Contents in order: 36 × 4 grab handle; active-player header (30px token, name 17/600,
+      mono status line, live value with a 2px accent caret); player strip; keypad; actions.
+- [x] The player strip is **progress indicator and random access** — tapping any tile jumps
       to that player. Active = accent border on lifted fill; entered = card fill with the
       value; untouched = dim fill with an ink-faint em-dash. At 10+ players tiles drop the
       token and keep the number.
-- [ ] Actions: `Clear` (88px secondary) and a primary **naming the next player**; the last
+- [x] Actions: `Clear` (88px secondary) and a primary **naming the next player**; the last
       hand-over saves the hand and dismisses the sheet.
-- [ ] With `handTotal` set, the header renders the live check
+- [x] With `handTotal` set, the header renders the live check
       (`MANCHE 9 · 26 À RÉPARTIR · 7 PLACÉS`) in `--color-advisory-ink`. Templates without
       one render no clause.
-- [ ] **The hand saves regardless of balance.** Shooting the moon is legal play.
+- [x] **The hand saves regardless of balance.** Shooting the moon is legal play.
 
-**Verification:** **Success criterion 12** — a 10-player Uno hand entered end to end without
-dismissing the sheet, and jumping back to player 3 mid-hand preserves players 4–9. Plus the
-behaviour test asserting the advisory counter and the save path are **separately** tested, so
-nobody re-couples them.
+**Verification:** **Success criterion 12** is green — `EntrySheet.test.tsx` walks all ten
+players of a Uno hand asserting exactly one `<dialog>` at every hand-over, then reads the ten
+values back out of IndexedDB; a separate test jumps back to player 3 mid-hand and asserts
+players 4–6 keep their values while player 3's is corrected. The advisory counter and the
+save path have **separate tests**, so nobody re-couples them.
+
+**Three things settled here:**
+
+1. **There is nothing for an unbalanced hand to refuse.** Every keystroke already persisted,
+   so "the hand saves regardless of balance" is structural rather than a rule the sheet
+   applies — `2c`'s prose ("refuses a save that doesn't balance") is the handoff's, and
+   `SPEC.md`'s recorded departure overrides it. The balance counter is a pure function with
+   its own test and no path to the write.
+2. **The keypad is the shared `Keypad` at `--h-key` (60px, 8px gaps), not `2c`'s 52 / 7.**
+   One keypad component in the app is worth more than two pixel sets, and 60 clears the 44px
+   floor by more. A departure from the artboard, and the one in this phase worth a look.
+3. **The counter moves with the thumb, not with the database.** It reads the typed value for
+   the active player and storage for everyone else — the person typing is looking straight at
+   it, and a round trip's lag there reads as a dropped keystroke. Same rule the sheet cell
+   learned in checkpoint E.
 
 **Dependencies:** 24. **Scope:** M.
 
@@ -632,13 +853,20 @@ nobody re-couples them.
 the height to be worth something.
 
 **Acceptance criteria:**
-- [ ] Mono column head (`HAND | MARIE & LUC | SOFIA & TOM`), 46px rows carrying the hand
-      score at 19 and the running total in mono 12.
-- [ ] **Oldest above newest, anchored to the foot** so the newest hand sits against the entry
-      bar.
-- [ ] Disappears at four players — one conditional block, same screen, same entry sheet.
+- [x] Mono column head (`HAND | MARIE & LUC | SOFIA & TOM`), `--h-tally-row` rows carrying
+      the hand score at `--text-strong` and the running total in mono beside it.
+- [x] **Oldest above newest, anchored to the foot** so the newest hand sits against the entry
+      bar — `justify-end`, so five hands sit at the bottom of the block rather than floating
+      at the top of it.
+- [x] Disappears at four players — one conditional block, same screen, same entry sheet.
 
-**Verification:** A 2-team Belote session shows six hands and still fits 844.
+**Verification:** `TallyScreen.test.tsx` reads the two Belote rows out of the ledger list by
+position and asserts hand 1 above hand 2 with the running total climbing beside each; the
+same fixture at four players asserts the block is gone. The 844 fit is task 32's.
+
+*Note:* the ledger's player columns are `1fr` rather than the artboard's two fixed halves, so
+three players divide the same row the same way two do — `2e` only ever drew the two-team case.
+The running total keeps a `min-w-8` so the column does not jitter as it crosses 100.
 
 **Dependencies:** 25. **Scope:** S.
 
@@ -647,23 +875,102 @@ the height to be worth something.
 **Description:** The audit screen, reached from ⋯.
 
 **Acceptance criteria:**
-- [ ] Segmented `Per hand | Running` (42px, ink fill on the active half); column head of 24px
-      tokens on `--color-paper-dim` with a 2px bottom rule; 56px hand rows; pinned `TOTAL`
-      row (62) on card fill; footer strip.
-- [ ] Columns 44px + 60px per player, so the sixth column **deliberately bleeds past the
+- [x] Segmented `Per hand | Running` (`--h-tap`, ink fill on the active half); column head of
+      24px tokens on `--color-paper-dim` with a 2px bottom rule; 56px hand rows; pinned
+      `TOTAL` row on card fill; footer strip.
+- [x] Columns 44px + 60px per player, so the sixth column **deliberately bleeds past the
       right edge**. This is the only screen besides Home that scrolls, and the only one that
       scrolls horizontally.
-- [ ] Zeros render as a faint interpunct `·`.
-- [ ] Cells are tappable for correction and totals recompute live.
+- [x] Zeros render as a faint interpunct `·`.
+- [x] Cells are tappable for correction and totals recompute live — a tap opens the entry
+      sheet on that hand, focused on that player, which is the same sheet `2c` draws.
 
-**Verification:** **Success criterion 7** — a 15-hand Belote session accumulates correctly,
-persists every hand, and force-quitting after hand 12 loses nothing.
+**Verification:** **Success criterion 7** is green — `HandHistory.test.tsx` plays 15 Belote
+hands through the real store, asserts both columns total correctly, then closes the database
+and drops the store after hand 12 (what a force-quit does), reopens, and reads the same
+twelve hands and the same total back.
+
+**Three decisions:**
+
+1. **It is a real `<table>`, not a grid of divs.** The data is genuinely tabular, and the
+   element hands a screen reader the row and column association for free — which removed an
+   `aria-label` from every one of N × M cells rather than adding ARIA. `<thead>` and
+   `<tfoot>` are `position: sticky` inside the one scroll container, so both axes work
+   without a second scroller.
+2. **Only `Per hand` is editable.** Correcting a running total is not a thing anyone means;
+   the running view is the same numbers as plain text, asserted.
+3. **The footer strip reads `{n} hands · Tap a cell to fix`,** not `2d`'s
+   `HANDS 7–14 · SCROLL UP FOR EARLIER`. The live visible range needs scroll measurement that
+   jsdom cannot verify, and the behaviour the drawn copy was pointing at is *land on the
+   newest hand* — so the list scrolls to the foot on mount instead. Owed to the designer, or
+   pick the range up in task 32 where there is a real viewport.
 
 **Dependencies:** 26. **Scope:** M.
 
 ### ✅ Checkpoint F — Tally mode end to end
-- [ ] Belote to 501 and 10-player Uno both play through, offline, without a scroll on the
-      standings and without a dialog anywhere.
+- [x] Belote to 501 and 10-player Uno both play through — asserted in
+      `EntrySheet.test.tsx`, `HandHistory.test.tsx` and `TallyScreen.test.tsx`, all three
+      driving the real store rather than a static prop, because a sheet that cannot see its
+      own writes is exactly the bug the player strip would hide.
+- [ ] **"Without a scroll on the standings" is not asserted, and neither is "without a dialog
+      anywhere."** The first is layout, which jsdom cannot measure; the second is true by
+      construction (the entry sheet is a bottom sheet, and the app's one confirmation dialog
+      is deleting a session) but reads as a screenshot claim. Both are task 32's, at 390 × 844
+      in French.
+
+- [x] **A tally evening through the real route tree**, `src/routes/tallyGame.flow.test.tsx`:
+      Home → picker → a ten-player Uno table → four hands entered through the sheet without
+      it closing between players → a wrong cell corrected from hand history → finish → a
+      reload (store dropped, database reopened) → every hand read back, in seat order,
+      `status: "finished"`. `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and
+      `sendBeacon` are stubbed for the whole walk and **none is ever called**.
+
+**The five-axis review found four defects, all fixed here:**
+
+1. **An abandoned hand survived as a phantom.** `setCell` wrote `round[playerId] = {}` even
+   when the last cell was cleared, so opening the entry sheet, typing a number and clearing
+   it again left a hand behind — a row of zeros in the ledger, a recap line naming somebody
+   who never scored, and the hand counter one ahead of the table. Fixed at the root, in the
+   shared write path: an empty cell record is deleted, and a *trailing* hand nobody entered
+   is dropped. An empty hand with a played hand after it stays, because that is a skipped
+   hand and hand 3 is still hand 3. This also makes good on task 20's rule that an empty
+   cell is **absent** from the round — it was only half true before. Three regression tests
+   in `sessions.test.ts`.
+2. **The pinned `TOTAL` row almost certainly did not pin.** Hand history was
+   `border-collapse: collapse` with `position: sticky` on the `<tr>`, which Chrome ignores
+   outright, and a sticky `<th>` loses its border under collapse as well. The table is now
+   `border-separate` with both axes pinned from the *cells* — and the hand column pins to
+   the left too, which `2d` asks for ("hands down the pinned left column") and the first
+   build missed entirely.
+3. **The entry sheet kept its state across a hand change.** `entering` going 0 → 1 re-rendered
+   the sheet rather than remounting it, so the active player and the typed value carried into
+   the next hand. It cannot happen through the UI today — the sheet covers the controls that
+   would change it — but the failure mode is a number landing in the wrong hand, so both call
+   sites now key the sheet on the hand. The flow test found this, by being the one place the
+   close animation does not complete.
+4. **The standings list was `shrink-0`**, so a twelve-player table pushed the entry bar off
+   the bottom of the screen rather than scrolling the rows — the one control that must sit
+   under the same thumb at hand 1 and hand 40.
+
+Two more, both in phase 5's code and fixed here: `SheetEntry.test.tsx` read storage without
+awaiting the write in two places, which flaked under load; and `2c`'s prose refuses a save
+that does not balance, which `SPEC.md` deliberately reversed — the sheet has no save to
+refuse, so the two now agree.
+
+**Left as notes, not changes:**
+
+- **`handBalance` has no production caller.** Splitting `handPlaced` out of it (task 25) left
+  the signed difference unused — the entry-sheet header wants what is *placed*, not the gap.
+  It is one line, fully tested, and names the concept `template-grammar.md` uses, so it is
+  kept rather than deleted. Delete it with its tests if nothing wants it by task 28.
+- **Correcting a cell from hand history opens the sheet mid-table**, so its primary reads
+  `Next — {the next player}` rather than offering a way out. The correction is on disk the
+  moment it is typed and the sheet closes four ways, so nothing is lost — but the accent
+  button invites walking a hand nobody meant to enter. Worth a look at task 32 alongside the
+  rest of the tally screens.
+- **`passer` re-derives every total `standings` has just computed.** 480 `roundScore` calls
+  at twelve players and forty hands, on a screen that re-renders per keystroke. Immaterial
+  now; it is the first thing to fold into `standings` if the standings ever feel slow.
 
 ---
 
@@ -674,26 +981,88 @@ persists every hand, and force-quitting after hand 12 loses nothing.
 **Description:** The one moment sorting is allowed.
 
 **Acceptance criteria:**
-- [ ] Winner card: card fill, 1px accent border. **One winner block however many winners** —
+- [x] Winner card: card fill, 1px accent border. **One winner block however many winners** —
       tied players share the block (`JOINT WINNERS`, overlapping tokens, `Chloé and Émile`),
       share the rank number, and carry `=` down the list.
-- [ ] Tiebreak card appears only when ranks tie **and** the snapshot has a `tiebreakNote`:
+- [x] Tiebreak card appears only when ranks tie **and** the snapshot has a `tiebreakNote`:
       eyebrow `TIEBREAK · {game}`, the note, and a line saying out loud that the app will not
       apply it. **A tie stays a tie** — no resolve button, no coin prompt, no confetti.
-- [ ] Ranked rows at 46px; per-category or per-hand takeaways in mono 11 beneath.
-- [ ] An empty cell anywhere produces an **advisory** warning, never a block.
-- [ ] Footer: a three-up row of `Play again` · `Reopen` · `Export` at `--h-tap`, then
+- [x] Ranked rows at `--h-tally-row` (46); a per-category or per-hand takeaway in mono 11
+      beneath.
+- [x] An empty cell anywhere produces an **advisory** warning, never a block.
+- [x] Footer: a three-up row of `Play again` · `Reopen` · `Export` at `--h-tap`, then
       `Back to games` full width. `Reopen` returns the session to `active` and clears
       `finishedAt` in one tap. **`Play again` calls the same `duplicateSession` as Home's
       swipe action** (task 9) and routes to the new session, leaving the finished one
       untouched.
-- [ ] The three-up row is an **approved departure from `1n` / `1o`**, recorded in `SPEC.md`
-      §7. Check the French fit (`Rejouer` / `Rouvrir` / `Exporter` at ~111px) against 390px
-      before building; if it forces a fourth band, the band heights give way, not the button.
+- [x] The three-up row is an **approved departure from `1n` / `1o`**, recorded in `SPEC.md`
+      §7. The fit is bought by **dropping the icons** `1n` draws on `Reopen` and `Export`:
+      three 111px buttons hold `Rejouer` / `Rouvrir` / `Exporter` at `--text-body`, and a
+      16px glyph plus its gap is exactly what would take that away. The spec says the button
+      is what survives, so the icons went.
 
-**Verification:** A hand-built tie fixture renders one shared block, one shared rank and two
-`=` markers, and nothing in the code path picks a winner. `Play again` produces a new active
-session and leaves the finished one's `status` and `rounds` untouched.
+**Verification:** `ResultsScreen.test.tsx`. A hand-built tie renders one shared block, one
+shared rank and two `=` markers; a separate test asserts **no control on the screen offers to
+resolve, break, decide or count anything**, so nothing can quietly start picking a winner.
+`Play again` produces a new active session with the same players and colour indices and
+leaves the finished one's `status` and `rounds` untouched.
+
+**Four things settled here:**
+
+1. **`backup.ts` moved to `lib/`.** Results exports, and so does Home — plan decision 6 put
+   export in `features/sessions/api/` when Home was the only caller, and `CLAUDE.md`'s rule
+   is that anything both features need moves to `lib/`. The alternative was a cross-feature
+   import or injecting the call from the route, and both are ways of not doing what the rule
+   says. `ResultsScreen` now imports no feature module at all.
+2. **Results' `Export` is one session and deliberately does not stamp `lastExportedAt`.**
+   Same envelope, so import merges it by id like any backup — but the stamp is Home's promise
+   that *everything* on the phone is safe somewhere, and keeping one game does not make that
+   true. A stale-backup warning silenced by the wrong export is exactly the thing nobody
+   notices until they need the file. Asserted.
+3. **The takeaway is one line, not a list.** `4 OF 7 CATEGORIES · MARIE` for a sheet,
+   `2 OF 3 HANDS · MARIE` for a tally — one shape for both, since the only difference is
+   whether a contest is a category or a hand. A count tie breaks on seat order: this is a
+   closing remark, and the ranking above it is where a tie is preserved and marked. `1n` draws
+   no takeaway at all and the spec asks for one in a clause; at seven players plus a tiebreak
+   card the screen has room for one line and no more.
+4. **`See results →` reaches this screen mid-game**, which phase 5 built deliberately —
+   passing a target never ends a game. With no `finishedAt` the subtitle would have read
+   `7 Wonders · finished ` with nothing after it, so it falls back to the table size. The
+   screen still ranks, because ranking is what it is for.
+
+*Note:* the ranked list carries an `overflow-y-auto` safety valve, the same one the picker and
+setup rows carry. Seven players fit inside 844 with the tiebreak card showing; twelve is about
+two rows past the band, and clipping a row out of reach is worse than a scroll. Task 32 owns
+the real measurement.
+
+**The five-axis review found five defects, all fixed here.** Four of them are the mid-game
+visit and the degenerate tie — the two states `1n` does not draw, and therefore the two the
+first build did not think about:
+
+1. **The × stranded you away from a running game.** `See results →` opens this screen without
+   finishing, and closing it went to the shelf — so a peek at the standings cost you your
+   place. It now closes back to the session while the game is active, and to the shelf once it
+   is finished.
+2. **`Reopen` showed on a game that was never closed.** A button that lies about the state.
+   Hidden while the session is active; `Play again` and `Export` still mean something there
+   and stay.
+3. **A twelve-way tie spilled out of the winner card.** Finishing a game nobody scored ties
+   the whole table at zero, and twelve overlapping 40px tokens are wider than the card. The
+   stack caps at four and the names line clamps to two lines — every winner is still named,
+   and every one of them is still ranked first in the list below.
+4. **The empty-cell advisory fired mid-game**, where every unplayed cell is empty by
+   definition. Noise is how a warning stops being read for the finished game it exists for, so
+   it only shows once the game is over.
+5. **An unparseable `finishedAt` crashed the screen.** It is validated as a string and nothing
+   more, and a backup file is untrusted input — `Intl` throws a `RangeError` on an Invalid
+   Date, taking Results down over one hand-edited field. Guarded the way `relativeTime`
+   already guards, which is the lesson this codebase had learned once and not applied here.
+
+**Left as a note:** `takeaway`'s `{total}` counts the contests that were actually *played*,
+not the ones the game has — so a 7-category sheet with two blank categories reads
+`3 of 5 categories`. Defensible, and it keeps one shape for both modes, but the empty-cell
+advisory beneath is what carries the gap. Worth a second look at task 32 with the real copy on
+screen.
 
 **Dependencies:** 22, 27. **Scope:** M.
 
@@ -707,12 +1076,57 @@ session and leaves the finished one's `status` and `rounds` untouched.
 constraint rather than a translation.
 
 **Acceptance criteria:**
-- [ ] No literal user-facing string left in a component.
-- [ ] `EN`/`FR` chip in the Home header switches without reload and persists to `meta`.
-- [ ] **Every container is sized for the French string.** Validation banners and buttons are
-      auto-height at 14px/1.45 — never fixed-height pills.
+- [x] No literal user-facing string left in a component. **Audited rather than assumed:** a
+      scan of every JSX text node and every user-facing prop across `src/` returns only
+      comments. The two criteria below were already true when this task started — the chip
+      landed in task 10 and was fixed at checkpoint C — so the work here was the audit and
+      the layout pass, not the plumbing.
+- [x] `EN`/`FR` chip in the Home header switches without reload and persists to `meta`,
+      asserted in `provider.test.tsx` since task 10.
+- [x] **Every container is sized for the French string.** Validation banners and buttons are
+      auto-height — never fixed-height pills — asserted on the setup banner and on Results'
+      three-up footer, the two tightest containers in the app.
 
-**Verification:** Every screen rendered in French at its worst-case player count.
+**Verification:** `src/routes/french.test.tsx` renders **every screen in French at its
+worst-case player count** — the eleven-tile shelf, twelve-player setup, a seven-player
+7 Wonders sheet, twelve-player standings, the twelve-player entry sheet, twelve-column hand
+history and a twelve-player tied Results — with French names that actually stress a row
+(`Marie-Christine`, `Jean-Sébastien`). A component that hardcoded English, or a key missing
+from `fr.json`, fails here. The 390 × 844 measurement stays task 32's.
+
+**The audit found one real bug, and it was not French-specific.**
+
+**A count of one read `1 manches` and `1 hands`** everywhere a figure met a noun — hand
+history's title and footer, the table size on three screens, Results' section head, the
+takeaway line, the empty-cell advisory and three backup strings. Reachable immediately:
+open hand history after the first hand, or score anything with `counter.json`, whose range
+starts at one player.
+
+Fixed with **paraglide's plural variants**, so `Intl.PluralRules` decides per locale and
+neither language carries a hand-written rule. Seven messages gained variants in English,
+twelve in French — French needs more because it agrees nouns English leaves alone
+(`1 gagnée`, `1 catégorie sur 3`), and a message may carry variants in one locale and stay a
+plain string in the other. Two messages select on **two** counts at once
+(`{hands} manches · {players} joueurs`), which is four variants each.
+
+*The JSON shape is undocumented offline:* a complex message is an **array** whose first
+element holds `declarations`, `selectors` and `match`. Read out of the cached plugin in
+`project.inlang/cache/`, since guessing it cost two failed compiles.
+
+French counting zero as singular (`0 manche`) and English not (`0 hands`) comes free from
+`Intl` and is asserted, because it is exactly the kind of rule a hand-written table gets
+wrong.
+
+**Left alone deliberately:** `sheet_sub_teams`, `results_final_teams` and `picker_meta_sheet`
+also meet a number, but no template can produce one team or one category — belote and whist
+are `[2, 2]`, and every sheet template has at least three categories. Variants there would be
+unreachable code.
+
+*One layout change:* `Eyebrow` gained `text-balance`. First run's offline promise is 38
+characters in English and 50 in French, and 50 at mono 11 with `--tracking-eyebrow` lands
+within a few pixels of 390's usable width — a balanced wrap is right whichever side of that
+it falls on, and it is a no-op for every single-line eyebrow. Which side it actually falls on
+is task 32's to measure.
 
 **Dependencies:** 28. **Scope:** M.
 
@@ -721,13 +1135,58 @@ constraint rather than a translation.
 **Description:** Manifest, icon, service worker, installability.
 
 **Acceptance criteria:**
-- [ ] The app icon from `1p` — a tally of five, diagonal, in accent, `--radius-tile` —
+- [x] The app icon from `1p` — a tally of five, diagonal, in accent, `--radius-tile` —
       exported at the manifest's sizes. The only asset that ships.
-- [ ] Manifest colours come from `tokens.css`; a service worker caches the static bundle.
-- [ ] Add-to-Home-Screen is prompted, per the durability mitigation.
+- [x] Manifest colours come from `tokens.css` (asserted against the file, not copied by
+      eye); a service worker caches the static bundle.
+- [x] Add-to-Home-Screen is prompted, per the durability mitigation.
 
-**Verification:** **Success criterion 9** — installable, valid manifest, offline cold start
-after install.
+**Verification:** `src/lib/pwa.test.ts` — the manifest parses and carries a scope, a start
+URL and `display: standalone`; each icon is a real PNG at the size it claims, read out of its
+own IHDR; the worker versions its cache, drops every other one on activate and answers only
+same-origin GETs. **Criterion 9's third clause — the offline cold start — is not asserted
+here:** it needs a real install on a real origin, and it is task 31's re-verification against
+the deployed URL.
+
+**Four things settled here:**
+
+1. **The icons are generated, not drawn.** `1p` specifies the mark exactly — four ink
+   uprights and one accent diagonal on a 24 × 24 viewBox — so `scripts/icons.ts` rasterises
+   that geometry straight from `tokens.css`'s colours. Five round-capped segments and a
+   rounded rectangle are a distance field, and a distance field is exact at any size and
+   antialiases for free, which is why this needs no renderer and no dependency. `bun run
+   icons` regenerates them; a change to the accent colour is a re-run, not a redraw.
+   Four PNGs ship: 192 and 512 as the tile `1p` draws, a full-bleed maskable 512 with the
+   glyph inside the safe circle, and a 180 `apple-touch-icon` — square, because iOS applies
+   its own squircle and ignores transparency.
+2. **Task 1 missed the scaffold's artwork.** `logo192.png`, `logo512.png`, `favicon.ico` and
+   a `manifest.json` still calling the app *"Create TanStack App Sample"* were all still in
+   `public/`, and would have shipped as the installed app's name and icon. Deleted, with a
+   test that fails if any of them comes back.
+3. **Every URL in the manifest and the worker is relative.** A manifest's relative URLs
+   resolve against its own address, and the worker's against its scope — so both are already
+   correct under task 31's `/scorepad/` sub-path without knowing they are on one. That turns
+   task 31's manifest and scope re-check into a confirmation rather than a rewrite. The
+   document head derives its own hrefs from `import.meta.env.BASE_URL` for the same reason.
+4. **The install prompt is two mechanisms, because there is no one API.** Chromium fires
+   `beforeinstallprompt`, which the card takes over (and `preventDefault`s, or the browser
+   shows its own bar as well). **iOS fires nothing and offers nothing** — so there the card
+   says where the Share button is. That is not a nicety: the mitigation exists to survive
+   *Safari's* ~7-day eviction, so leaving iOS out would drop it exactly where it is needed.
+   The card is **not drawn on `1d`** — the spec requires the prompt and the artboards predate
+   it, so it borrows the backup card's shape rather than inventing a second one, and removes
+   itself the moment the app is installed.
+
+**One defect found and fixed while building:** the status-bar colour was a
+`prefers-color-scheme` pair of `<meta name="theme-color">`, which is the usual way to do it —
+but **the router dedupes meta by `name`**, so only the last one reached the document and
+light mode had no `theme-color` at all. It is one tag now, owned by the provider, which is
+more correct anyway: the provider knows the *effective* theme, including a choice the OS does
+not know about. A test pins the single tag.
+
+*Note:* `public/sw.js` is the one file in the project that uses the Fetch API. Checkpoint E's
+"no network API in the bundle" still holds — the worker is not part of the bundle, and it
+touches `fetch` to answer from a cache rather than to reach the network on the app's behalf.
 
 **Dependencies:** 29. **Scope:** M.
 
@@ -740,33 +1199,67 @@ and tested from a real HTTPS origin rather than `localhost`. The repo is
 sub-path.
 
 **Acceptance criteria:**
-- [ ] `vite.config.ts` sets `base: "/scorepad/"` (via `BASE_PATH` env with `/` as
-      the local default, so `bun dev` is unaffected).
-- [ ] The router takes its `basepath` from `import.meta.env.BASE_URL` — never a hardcoded
-      string in two places.
-- [ ] **SPA deep links work.** GitHub Pages has no rewrite rule, so `/session/abc` 404s on a
-      hard reload. Fix: copy `index.html` to `404.html` as a build step. That is the whole
-      mechanism — no hash router, no redirect shim, no dependency.
-- [ ] Task 30's manifest and service worker are re-checked against the sub-path: `start_url`
-      and `scope` are `/scorepad/`, icon paths are relative, and the SW registers
-      with the same scope. A root-scoped SW silently fails to control the page here.
-- [ ] A GitHub Actions workflow (`.github/workflows/deploy.yml`) on push to `main`:
-      `bun install --frozen-lockfile` → `bun run lint` → `bun test` → `bun run build` →
-      `actions/upload-pages-artifact` → `actions/deploy-pages`, with `permissions: pages:
-      write, id-token: write`. Official actions only — **no `gh-pages` npm package**.
-- [ ] **Lint and tests gate the deploy.** A red suite must not reach the URL people install
-      from.
-- [ ] Pages is set to "GitHub Actions" as its source in the repo settings (one manual step,
-      done once — note it in the README).
+- [x] `vite.config.ts` takes `base` from a `BASE_PATH` env with `/` as the local default, so
+      `bun dev` and the whole test suite are unaffected. **The literal `/scorepad/` is not in
+      the repository at all** — the workflow supplies it as
+      `/${{ github.event.repository.name }}/`, so renaming the repo needs no code change.
+- [x] The router takes its `basepath` from `import.meta.env.BASE_URL` — never a hardcoded
+      string in two places. Trailing slash trimmed, and an empty result means "no basepath",
+      which is what the domain root wants.
+- [x] **SPA deep links work.** `scripts/spa-fallback.ts` copies the built `index.html` to
+      `404.html`. Pages serves `404.html` for any unmatched path, so a copy of the shell
+      there *is* the rewrite rule. No hash router — it would put a `#` in every link somebody
+      shares — no redirect shim, no dependency.
+- [x] Task 30's manifest and service worker re-checked against the sub-path. They needed no
+      change: every URL in both is **relative**, so `start_url` and `scope` resolve to
+      `/scorepad/` on their own. Verified against the compiled bundle rather than assumed —
+      it registers `/scorepad/sw.js` with `{ scope: "/scorepad/" }`, and a worker may claim
+      its own directory, so the scope is legal.
+- [x] A GitHub Actions workflow on `main` with the full chain and
+      `permissions: pages: write, id-token: write`. Official actions only, no `gh-pages`.
+- [x] **Lint and tests gate the deploy** — `deploy` carries `needs: quality`, so nothing
+      reaches Pages unless lint, `tsc --noEmit`, the suite and the build all passed.
+- [x] The one manual step is in the README, with what its absence looks like: the workflow
+      goes green and publishes nothing.
 
-**Verification:**
-- [ ] The deployed URL loads, and a hard reload on `/scorepad/session/<id>` renders
-      the session rather than a 404.
-- [ ] **Success criteria 4 and 9 are re-verified against the deployed origin, not
-      `localhost`:** install from the URL, go offline from first paint, create → score →
-      finish → reload with zero network requests recorded.
-- [ ] The build still emits no server entry (**criterion 1**) — Pages cannot serve one, so
-      this is now enforced by the host as well as by the config.
+**Verification:** `src/lib/deploy.test.ts` holds the deploy contract — every assertion in it
+covers something that fails **silently** in production. A wrong basepath breaks every link on
+the site; a root-scoped worker never controls the page and only shows up offline; a missing
+`404.html` only shows up when somebody shares a link.
+
+- [ ] **The deployed URL is not verified, and cannot be from here.** Loading it, hard-reloading
+      `/scorepad/session/<id>`, and re-checking **criteria 4 and 9 against the deployed
+      origin** all need a real browser on a real HTTPS origin. Pushing to `main` and enabling
+      Pages is the trigger; that walk is the first item of checkpoint G.
+- [x] The build emits no server entry, now asserted **in CI** as well as by the config —
+      Pages cannot serve one, so the host enforces criterion 1 too.
+
+**Two decisions and two bugs:**
+
+1. **The workflow runs on pull requests as well as `main`,** which the task did not ask for.
+   Gating only on push means a broken change merges and *then* turns `main` red and
+   undeployed — the failure this workflow exists to prevent, moved one step later. The deploy
+   job is fenced with `if: github.ref == 'refs/heads/main'`, so a PR gets the gate and
+   nothing else, and it is one file rather than two with duplicated setup.
+2. **`tsc --noEmit` is a gate,** though the task's chain did not list it. `vite build` does
+   not typecheck, so without it a type error reaches the URL.
+3. **The service worker cached a 404 as the shell.** Task 30's navigation handler cached
+   whatever came back, and on Pages a deep link is answered by `404.html` — the right *body*,
+   with a 404 status. The first visitor to arrive by a shared link would have poisoned their
+   own shell cache, and every later offline navigation would have been a 404. It now caches
+   only a 200; the shell is precached at install anyway, so being strict costs nothing. Found
+   by reading task 30's worker against this task's hosting, which is exactly the pairing the
+   plan asked `doubt-driven-development` for here.
+4. **The workflow's own type gate could not pass, and only a real run could show it.**
+   Paraglide compiles `messages/*.json` into `src/paraglide/` and writes a `.gitignore` there,
+   so the directory is generated output that no checkout carries. `tsc --noEmit` ran before
+   anything had generated it and failed `TS2307` on every screen in the app. **Nothing local
+   reproduces this** — the directory is already on disk here — so it survived review and the
+   whole of checkpoint G, and surfaced the first time a pull request actually ran the
+   workflow. Fixed by moving `Build` ahead of `Type check`, the vite plugin being what
+   generates the messages; a compile step of its own would have duplicated `project` and
+   `outdir` out of `vite.config.ts`. `deploy.test.ts` asserts the order now, because putting
+   the cheap check first is the obvious thing for the next person to do.
 
 **Dependencies:** 30. **Scope:** S (one workflow file, two config lines, one copy step).
 
@@ -798,20 +1291,78 @@ design contract.
 fourteen success criteria by hand, recording the result.
 
 **Acceptance criteria:**
-- [ ] The architectural rules are stated in `README.md` and `CLAUDE.md` — they are the only
-      enforcement the import graph has.
-- [ ] Each of the fourteen criteria is marked pass, with the automated ones naming their test.
-- [ ] The spec's open questions are updated: the TanStack DB question closed by decision 1,
-      the shelf-count question by task 15, and the `Play again` note carried back to the
-      designer.
-- [ ] `README.md` carries the live URL and the one-time "set Pages source to GitHub Actions"
-      step.
+- [x] The architectural rules are stated in `README.md` and `CLAUDE.md`, now with *why they
+      are written twice*: they have no linter behind them, so review is the only enforcement
+      and the rule has to sit where a reviewer and an agent will both read it. Both point at
+      [ADR-006](../decisions/006-session-store-in-lib.md), which has already been applied
+      twice — the session store, then the backup module — each time a second caller appeared.
+- [x] Each of the fourteen criteria is walked in [`../success-criteria.md`](../success-criteria.md),
+      naming the test. **Ten pass automatically, one passes by inspection, and three are
+      unverified because they need a browser.** The table says so rather than rounding up.
+- [x] The spec's open questions are updated. **None remain open**: the TanStack DB question
+      is closed by ADRs 001 and 002, the shelf count by task 15, the service-worker question
+      by task 30, and the `Play again` note is carried to the designer along with the rest of
+      the list at the foot of the walkthrough.
+- [x] `README.md` carries the live URL and the one-time "set Pages source to GitHub Actions"
+      step, with what its absence looks like — the workflow goes green and publishes nothing.
+
+**The eight decisions are now ADRs**, in [`../decisions/`](../decisions/README.md), because
+this plan is an order-of-operations document that goes stale the moment the work is done, and
+a decision has to outlive it. Each record adds what the plan omitted: **the alternatives that
+were rejected, and why.** They are the reason somebody does not re-decide `<dialog>` versus a
+hand-rolled focus trap in six months.
+
+**Two things the docs pass found:**
+
+1. **`README.md` told you to run the wrong test command.** It listed `bun test`, which runs
+   Bun's own runner rather than vitest — the exact mistake `CLAUDE.md` carries a warning
+   about. The two files disagreed, and the one a newcomer opens first was wrong.
+2. **Criterion 13's second half had no assertion at all.** Task 32 did the 44px floor and not
+   "no body type under 16px". Half of it is not automatable as stated — the scale sanctions
+   13px for notes and captions in `--text-meta`'s own comment, so *which* slot counts as
+   "body" is a judgment. What is enforceable now is that the nine-step scale is **closed**:
+   every font size in the app is a token, nothing arbitrary, asserted in `contracts.test.tsx`.
+3. **A third intermittent failure, fixed at the class rather than the instance.** Two tests
+   had already been given their own budgets in phases 6 and 8; a third — the provider's
+   "a touched setting beats the OS preference" — failed once in a full run and passed alone.
+   The pattern is always the same: Testing Library's default one second for `waitFor` is
+   comfortable idle and marginal when forty-seven files contend for the machine, and almost
+   every screen here waits on a real IndexedDB read before it renders. `vitest.setup.ts` now
+   configures `asyncUtilTimeout` once. It costs nothing on a passing assertion — it resolves
+   the moment the condition holds — and only lengthens one that was going to fail anyway.
+4. **Checkpoint G's "the suite is clean" was written before it was true.** `bun run test`
+   reported 673 passing and **exited 1**: task 28's Results test is the first to exercise the
+   export download, and `backup.ts` revokes its object URL on a `setTimeout` that fires after
+   the test — and after its `vi.unstubAllGlobals()` — has run. jsdom has no
+   `URL.revokeObjectURL`, so the throw landed outside any test, where nothing could catch it
+   and every assertion still passed. The workflow gates on that exit code, so the deploy
+   would have failed on the first push to `main`. Shimmed in `vitest.setup.ts` beside the
+   `<dialog>` gap, which is the same class of problem and the same right place for it.
 
 **Dependencies:** 31, 32. **Scope:** S.
 
 ### ✅ Checkpoint G — Done
-- [ ] All fourteen success criteria pass, with 4 and 9 checked on the deployed URL.
-- [ ] `bun run lint` and `bun test` clean, and the deploy workflow is green on `main`.
+- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (676 across 47 files) are clean,
+      and `bun run build` emits `dist/client` and nothing else. **This was claimed once before
+      it was true** — see task 33's fourth note.
+- [ ] **Eleven of fourteen criteria pass; three are unverified.** Walked in
+      [`../success-criteria.md`](../success-criteria.md), which names the test for each. The
+      three are 4, 9 and 10 — and they are one errand, not three.
+- [ ] The deploy workflow is green on `main`. **Not yet triggered**: the eight-PR stack has
+      to land first, and Pages has to be set to "GitHub Actions" as its source, which is a
+      repository setting and not a file in this repo.
+
+**What is owed to a browser, collected in one place.** Everything below has been deferred
+here by a task that could not do it in jsdom, and each one needs a real viewport on the
+deployed origin:
+
+| Owed | Criterion | Deferred from |
+|---|---|---|
+| Every screen fits 390 × 844 in French at its worst-case count, frame unscrolled | 10 | Checkpoints D, E, F; tasks 24, 28, 32 |
+| Offline from first paint, on a real origin, network panel recording | 4 | Checkpoint E |
+| Installable, and a cold start offline after install | 9 | Task 30 |
+| A hard reload on `/scorepad/session/<id>` renders the session, not a 404 | — | Task 31 |
+| The artboards compared by a human, screen by screen | — | Task 32 |
 
 ---
 
@@ -847,3 +1398,6 @@ Not blockers — messages, not decisions:
 - `1f` should lose the literal "ten" from its filter placeholder.
 - `1g` should lose the `Add a custom game` button (cut from v1 by the spec).
 - `1n` / `1o` gain a fourth footer action; the paired row becomes three-up.
+- `tokens.css`'s header comment still cites "HeroUI overrides". HeroUI is cut, and the file
+  is copied byte-identically into `src/`, so the stale line is the one thing keeping task
+  1's `grep` from returning clean.

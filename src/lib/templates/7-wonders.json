@@ -1,0 +1,26 @@
+{
+	"id": "7-wonders",
+	"name": "7 Wonders",
+	"players": [3, 7],
+	"mode": "sheet",
+	"win": "highest",
+	"tiebreakNote": "Most coins wins.",
+	"categories": [
+		{ "key": "military", "label": "Military conflicts" },
+		{
+			"key": "treasury",
+			"label": "Coins",
+			"divideBy": 3,
+			"hint": "Enter your coin count; 3 coins = 1 point"
+		},
+		{ "key": "wonders", "label": "Wonder stages" },
+		{ "key": "civilian", "label": "Civilian structures" },
+		{
+			"key": "science",
+			"label": "Science",
+			"hint": "n² per symbol type, +7 per set of three — enter the total yourself"
+		},
+		{ "key": "commercial", "label": "Commercial structures" },
+		{ "key": "guilds", "label": "Guilds" }
+	]
+}

@@ -1,0 +1,24 @@
+{
+	"id": "ticket-to-ride",
+	"name": "Ticket to Ride",
+	"players": [2, 5],
+	"mode": "sheet",
+	"win": "highest",
+	"tiebreakNote": "Most completed destination tickets wins.",
+	"categories": [
+		{ "key": "routes", "label": "Route points" },
+		{ "key": "tickets_complete", "label": "Completed tickets" },
+		{
+			"key": "tickets_failed",
+			"label": "Uncompleted tickets",
+			"multiplier": -1,
+			"hint": "Enter the total as a positive number"
+		},
+		{
+			"key": "longest_path",
+			"label": "Longest continuous path",
+			"multiplier": 10,
+			"hint": "1 if held, else 0"
+		}
+	]
+}

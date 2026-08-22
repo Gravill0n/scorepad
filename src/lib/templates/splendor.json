@@ -1,0 +1,13 @@
+{
+	"id": "splendor",
+	"name": "Splendor",
+	"players": [2, 4],
+	"mode": "sheet",
+	"win": "highest",
+	"targetScore": 15,
+	"tiebreakNote": "Fewest development cards wins.",
+	"categories": [
+		{ "key": "cards", "label": "Prestige from cards" },
+		{ "key": "nobles", "label": "Nobles", "multiplier": 3 }
+	]
+}

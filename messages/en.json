@@ -2,5 +2,261 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Home page",
   "language_label": "Language",
-  "current_locale": "Current locale: {locale}"
+  "current_locale": "Current locale: {locale}",
+  "home_empty_title": "Nothing scored yet",
+  "home_empty_copy": "Pick a game, add players, fill in the sheet. {count} games are built in, and everything stays on this phone.",
+  "home_offline_promise": "No account · No server · Works offline",
+  "home_new_game": "New game",
+  "home_import_backup": "Import a backup",
+  "home_switch_to_dark": "Switch to dark theme",
+  "home_switch_to_light": "Switch to light theme",
+  "home_switch_language": "Switch language to {locale}",
+  "relative_never": "Never",
+  "relative_just_now": "Just now",
+  "home_in_progress": "In progress",
+  "home_finished": "Finished · {count}",
+  "home_progress_hand": "hand {n}",
+  "home_progress_category": "category {n} of {total}",
+  "home_of_target": "of {target}",
+  "home_resume": "Resume",
+  "home_winner": "{name} won",
+  "home_joint_winners": "{names} tied",
+  "badge_sheet": "Sheet",
+  "badge_tally": "Tally",
+  "row_duplicate": "Duplicate",
+  "row_delete": "Delete",
+  "row_actions": "Actions for {name}",
+  "delete_title": "Delete this game?",
+  "delete_body": "{name} and every score in it are removed from this phone. This cannot be undone.",
+  "delete_cancel": "Keep it",
+  "delete_confirm": "Delete",
+  "backup_eyebrow": "Backup",
+  "backup_summary": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} game lives on this phone only. The JSON file is the whole backup.",
+        "countPlural=*": "{count} games live on this phone only. The JSON file is the whole backup."
+      }
+    }
+  ],
+  "backup_export": "Export",
+  "backup_import": "Import",
+  "backup_imported": "{imported} restored, {skipped} already here",
+  "backup_unreadable": "{count} could not be read",
+  "backup_error_not_json": "That file is not valid JSON.",
+  "backup_error_not_a_backup": "That file is not a Scorepad backup.",
+  "backup_error_too_new": "That backup was written by a newer version of Scorepad.",
+  "back": "Back",
+  "picker_title": "Choose a game",
+  "picker_filter": "Filter {count} games",
+  "picker_clear_filter": "Clear the filter",
+  "picker_no_match_title": "No game matches “{query}”",
+  "picker_no_match_copy": "{count} games ship built in and nothing else can be added. The counter keeps score for anything that is not here.",
+  "picker_meta_sheet": "{count} categories · {min}–{max}",
+  "picker_meta_tally": "to {target} · {min}–{max}",
+  "picker_meta_teams": "to {target} · 2 teams",
+  "picker_meta_players": "{min}–{max}",
+  "setup_title_players": "Players",
+  "setup_title_teams": "Teams",
+  "setup_sub_range": "{game} · {min} to {max}",
+  "setup_sub_exact": "{game} · exactly {count}",
+  "setup_sub_range_teams": "{game} · {min} to {max} teams",
+  "setup_sub_exact_teams": "{game} · exactly {count} teams",
+  "setup_count": "{count} / {max}",
+  "setup_name_placeholder": "Name",
+  "setup_name_label": "Name of player {n}",
+  "setup_team_label": "Name of team {n}",
+  "setup_add_player": "Add a player",
+  "setup_add_team": "Add a team",
+  "setup_remove": "Remove {name}",
+  "setup_reorder": "Reorder {name}",
+  "setup_unnamed": "row {n}",
+  "setup_recent": "Played recently",
+  "setup_recent_add": "Add {name}",
+  "setup_start": "Start scoring",
+  "sheet_close": "Close",
+  "sheet_grab": "Drag down to dismiss",
+  "colour_title": "{name}'s colour",
+  "colour_title_unnamed": "Choose a colour",
+  "colour_swatch": "Colour {n}",
+  "colour_swatch_taken": "Colour {n}, already taken",
+  "colour_note": "Taken colours are dimmed. The initial stays on the token everywhere, so colour is never the only difference between two players.",
+  "setup_recolor": "Colour for {name}",
+  "setup_error_too_few": [
+    {
+      "declarations": [
+        "input min",
+        "local minPlural = min: plural"
+      ],
+      "selectors": [
+        "minPlural"
+      ],
+      "match": {
+        "minPlural=one": "{game} needs at least {min} player.",
+        "minPlural=*": "{game} needs at least {min} players."
+      }
+    }
+  ],
+  "setup_error_too_few_teams": "{game} needs {min} teams.",
+  "setup_error_too_many": "{game} takes at most {max} players.",
+  "setup_error_too_many_teams": "{game} takes at most {max} teams.",
+  "setup_error_empty": "Every player needs a name.",
+  "setup_error_empty_teams": "Every team needs a name.",
+  "setup_error_duplicate": "Two players share a name. Rename one to continue.",
+  "setup_error_duplicate_teams": "Two teams share a name. Rename one to continue.",
+  "setup_fix_names": "Fix the names to continue",
+  "setup_fix_count": "Fix the line-up to continue",
+  "keypad_sign": "Positive or negative",
+  "keypad_backspace": "Delete one digit",
+  "keypad_digit": "{digit}",
+  "sheet_sub_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{game} · {count} player",
+        "countPlural=*": "{game} · {count} players"
+      }
+    }
+  ],
+  "sheet_sub_teams": "{game} · {count} teams",
+  "sheet_category_of": "Category {n} of {total}",
+  "sheet_so_far": "{total} so far",
+  "sheet_next_category": "Next category",
+  "sheet_see_results": "See results",
+  "sheet_cell": "{player}: {value}",
+  "sheet_cell_empty": "{player}: not entered",
+  "sheet_go_to_category": "Category {n}, {label}",
+  "sheet_entered_count": "{done} of {total} entered",
+  "menu_open": "More",
+  "sheet_clear": "Clear",
+  "sheet_next_player": "Next — {name}",
+  "sheet_close_keypad": "Close the keypad",
+  "menu_rename": "Rename session",
+  "menu_finish": "Finish game",
+  "menu_name_label": "Session name",
+  "menu_new_player_label": "New player's name",
+  "menu_new_team_label": "New team's name",
+  "menu_save": "Save",
+  "menu_add": "Add",
+  "menu_late_player_note": "Earlier categories stay empty for them, and score 0.",
+  "tally_to_target": "to {target}",
+  "tally_to_go": "{n} to go",
+  "tally_won": "{n} won",
+  "tally_last": "{delta} last",
+  "tally_no_score": "No score",
+  "tally_leads": "Leads",
+  "tally_safest": "Safest",
+  "tally_rank": "Rank {rank}",
+  "tally_recap": "Hand {n} · {name} took {score}",
+  "tally_edit_last": "Edit last",
+  "tally_enter_hand": "Enter hand {n}",
+  "tally_passed": "{name} passed {target} · finish from ⋯ when the table is done",
+  "ledger_hand": "Hand",
+  "entry_hand": "Hand {n}",
+  "entry_to_place": "Hand {n} · {total} to place · {placed} placed",
+  "entry_done": "Done",
+  "entry_tile": "{name}, {value}",
+  "entry_tile_empty": "{name}, not entered",
+  "history_title": "Hand history",
+  "history_sub": [
+    {
+      "declarations": [
+        "input hands",
+        "local handsPlural = hands: plural",
+        "input players",
+        "local playersPlural = players: plural"
+      ],
+      "selectors": [
+        "handsPlural",
+        "playersPlural"
+      ],
+      "match": {
+        "handsPlural=one,playersPlural=one": "{session} · {hands} hand · {players} player",
+        "handsPlural=one,playersPlural=*": "{session} · {hands} hand · {players} players",
+        "handsPlural=*,playersPlural=one": "{session} · {hands} hands · {players} player",
+        "handsPlural=*,playersPlural=*": "{session} · {hands} hands · {players} players"
+      }
+    }
+  ],
+  "history_per_hand": "Per hand",
+  "history_running": "Running",
+  "history_total": "Total",
+  "history_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} hand",
+        "nPlural=*": "{n} hands"
+      }
+    }
+  ],
+  "history_tap_to_fix": "Tap a cell to fix",
+  "history_empty": "No hands yet",
+  "menu_history": "Hand history",
+  "results_sub": "{game} · finished {time}",
+  "results_winner": "Winner",
+  "results_joint_winners": "Joint winners",
+  "results_final_players": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Final · {count} player",
+        "countPlural=*": "Final · {count} players"
+      }
+    }
+  ],
+  "results_final_teams": "Final · {count} teams",
+  "results_tiebreak": "Tiebreak · {game}",
+  "results_tiebreak_note": "Scorepad won't decide it — the rule is here, the pieces are on the table.",
+  "results_takeaway_sheet": "{count} of {total} categories · {name}",
+  "results_takeaway_tally": "{count} of {total} hands · {name}",
+  "results_empty_cells": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} cell was left empty",
+        "countPlural=*": "{count} cells were left empty"
+      }
+    }
+  ],
+  "results_play_again": "Play again",
+  "results_reopen": "Reopen",
+  "results_export": "Export",
+  "results_back": "Back to games",
+  "results_rank": "Rank {rank}",
+  "install_eyebrow": "Install",
+  "install_copy": "Add Scorepad to your home screen. An installed app keeps its games — a browser can clear a site it has not seen for a week.",
+  "install_action": "Add to home screen",
+  "install_ios": "Tap the Share button, then Add to Home Screen."
 }

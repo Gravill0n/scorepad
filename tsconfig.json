@@ -5,19 +5,16 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {
-      "@/*": ["./src/*"],
-      "@Components/*": ["./src/components/*"],
-      "@Data/*": ["./src/data/*"],
-      "@Hooks/*": ["./src/hooks/*"],
-      "@Server/*": ["./src/server/*"],
+      "@/*": ["./src/*"]
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "vitest/globals"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "allowJs": true,
+    "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
 

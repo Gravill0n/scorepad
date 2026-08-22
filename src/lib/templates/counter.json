@@ -1,0 +1,15 @@
+{
+	"id": "counter",
+	"name": "Counter",
+	"players": [1, 12],
+	"mode": "tally",
+	"win": "highest",
+	"setupNote": "A plain counter for a game with no template. Each tick is a hand, so every entry is kept and can be corrected in the hand history.",
+	"categories": [
+		{
+			"key": "points",
+			"label": "Points",
+			"hint": "Any whole number; use ± to subtract"
+		}
+	]
+}

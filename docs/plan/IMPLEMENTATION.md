@@ -1342,7 +1342,7 @@ hand-rolled focus trap in six months.
 **Dependencies:** 31, 32. **Scope:** S.
 
 ### ✅ Checkpoint G — Done
-- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (676 across 47 files) are clean,
+- [x] `bun run lint`, `bunx tsc --noEmit` and `bun run test` (677 across 47 files) are clean,
       and `bun run build` emits `dist/client` and nothing else. **This was claimed once before
       it was true** — see task 33's fourth note.
 - [ ] **Eleven of fourteen criteria pass; three are unverified.** Walked in
